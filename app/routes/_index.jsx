@@ -92,14 +92,14 @@ function PromoWideBanner() {
       <div style={{ maxWidth: '1340px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '100px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ flex: 1 }}>
           <p style={{ fontSize: '22px', fontWeight: '800', color: '#fff', margin: '0 0 4px', lineHeight: 1.2 }}>
-            WIN 1 of 10 x <span style={{ color: '#5bc8f5' }}>$1000 Vestoraa Gift Cards</span>
+            Pay over time for orders over <span style={{ color: '#5bc8f5' }}>$35.00</span>
           </p>
-          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.75)', margin: '0 0 6px' }}>with AfterPay — shop now, pay later</p>
-          <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>* Eligibility criteria, terms & exclusions apply. See full terms on AfterPay website.</p>
+          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.75)', margin: '0 0 6px' }}>with Shop Pay — flexible installments at checkout</p>
+          <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>* Eligibility criteria apply. Learn more at checkout.</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <div style={{ backgroundColor: '#b2fcf4', borderRadius: '40px', padding: '12px 28px' }}>
-            <span style={{ fontSize: '18px', fontWeight: '900', color: '#111', letterSpacing: '0.02em' }}>AfterPay</span>
+          <div style={{ backgroundColor: '#5a31f4', borderRadius: '40px', padding: '12px 28px' }}>
+            <span style={{ fontSize: '18px', fontWeight: '900', color: '#fff', letterSpacing: '0.02em' }}>shop<span style={{ color: '#b2fcf4' }}>pay</span></span>
           </div>
           <div style={{ width: '200px', height: '100px', background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.15) 0%, transparent 70%)', borderRadius: '50%', position: 'absolute', right: '180px' }} />
         </div>
