@@ -99,7 +99,7 @@ function FilterSection({ section, activeFilters, onToggle }) {
 
 function Sidebar({ activeFilters, onToggle, onClearAll, totalActive }) {
   return (
-    <aside style={{ width: '260px', minWidth: '260px', flexShrink: 0, paddingRight: '32px', borderRight: '1px solid #e8e8e8', alignSelf: 'flex-start' }}>
+    <aside style={{ width: '260px', minWidth: '260px', flexShrink: 0, paddingRight: '32px', borderRight: '1px solid #e8e8e8', alignSelf: 'flex-start', position: 'sticky', top: '80px', maxHeight: 'calc(100vh - 100px)', overflowY: 'auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', paddingBottom: '12px', borderBottom: '1px solid #ebebeb' }}>
         <span style={{ fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#111' }}>
           Filter {totalActive > 0 && <span style={{ color: '#999' }}>({totalActive})</span>}
@@ -237,7 +237,7 @@ export default function Collection() {
       </div>
 
       {/* Sidebar + Grid */}
-      <div style={{ maxWidth: '1340px', margin: '0 auto', padding: '28px 40px', display: 'flex', flexDirection: 'row', gap: '40px', alignItems: 'flex-start', width: '100%', boxSizing: 'border-box' }}>
+      <div style={{ maxWidth: '1340px', margin: '0 auto', padding: '28px 40px', display: 'flex', flexDirection: 'row', gap: '40px', alignItems: 'stretch', width: '100%', boxSizing: 'border-box' }}>
         <Sidebar activeFilters={activeFilters} onToggle={toggleFilter} onClearAll={clearAll} totalActive={totalActive} />
 
         <div style={{ flex: 1, minWidth: 0 }}>
