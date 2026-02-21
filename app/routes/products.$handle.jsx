@@ -164,7 +164,6 @@ export default function Product() {
                   }} />
                 </button>
               ))}
-              <WearItWithStrip products={products.slice(0, 6)} />
             </div>
             {/* Main image */}
             <div style={{ flex: 1, position: 'relative', backgroundColor: '#f5f5f5' }}>
@@ -188,6 +187,8 @@ export default function Product() {
                 ♡
               </button>
             </div>
+            {/* WEAR IT WITH strip below main image */}
+            <WearItWithStrip products={products.slice(0, 6)} />
           </div>
 
           {/* RIGHT: Product info panel */}
