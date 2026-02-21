@@ -217,12 +217,12 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
 
 const PRODUCT_QUERY = `#graphql
   query Product(
-    \$country: CountryCode
-    \$handle: String!
-    \$language: LanguageCode
-    \$selectedOptions: [SelectedOptionInput!]!
-  ) @inContext(country: \$country, language: \$language) {
-    product(handle: \$handle) {
+    $country: CountryCode
+    $handle: String!
+    $language: LanguageCode
+    $selectedOptions: [SelectedOptionInput!]!
+  ) @inContext(country: $country, language: $language) {
+    product(handle: $handle) {
       id title vendor handle descriptionHtml description
       encodedVariantExistence encodedVariantAvailability
       options {
@@ -233,23 +233,23 @@ const PRODUCT_QUERY = `#graphql
           swatch { color image { previewImage { url } } }
         }
       }
-      selectedOrFirstAvailableVariant(selectedOptions: \$selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {
+      selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {
         ...ProductVariant
       }
-      adjacentVariants(selectedOptions: \$selectedOptions) { ...ProductVariant }
+      adjacentVariants(selectedOptions: $selectedOptions) { ...ProductVariant }
       images(first: 10) { nodes { id url altText width height } }
 
       seo { description title }
     }
   }
-  \${PRODUCT_VARIANT_FRAGMENT}
+  ${PRODUCT_VARIANT_FRAGMENT}
 `;
 
 const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   query ProductPageRecommended(
-    \$country: CountryCode
-    \$language: LanguageCode
-  ) @inContext(country: \$country, language: \$language) {
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
     products(first: 8, sortKey: UPDATED_AT, reverse: true) {
       nodes {
         id title handle vendor
