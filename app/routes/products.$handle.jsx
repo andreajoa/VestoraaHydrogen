@@ -40,14 +40,14 @@ async function loadCriticalData({ context, params, request }) {
   ]);
   if (!product?.id) throw new Response('Product not found', { status: 404 });
   redirectIfHandleIsLocalized(request, { handle, data: product });
-  return { product };
+  const recommendedProducts = await context.storefront
+    .query(RECOMMENDED_PRODUCTS_QUERY)
+    .catch(() => null);
+  return { product, recommendedProducts };
 }
 
 function loadDeferredData({ context, params }) {
-  const recommendedProducts = context.storefront
-    .query(RECOMMENDED_PRODUCTS_QUERY)
-    .catch((error) => { console.error(error); return null; });
-  return { recommendedProducts };
+  return {};
 }
 
 export default function Product() {
@@ -101,26 +101,23 @@ export default function Product() {
   })();
   const careInfo = getMeta('care_instructions') || getMeta('care') || null;
 
+  const materialContent = (() => {
+    if (materialInfo && !materialInfo.includes('gid://') && !materialInfo.startsWith('[')) return materialInfo;
+    const d = product.descriptionHtml || product.description || '';
+    const c = d.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+    const pct = c.match(/(\d+%\s*[A-Za-z][A-Za-z\s]*(?:,\s*\d+%\s*[A-Za-z][A-Za-z\s]*)*)/);
+    if (pct) return pct[0].trim();
+    const lbl = c.match(/(?:material|fabric|composition|content|made of|made from)[:\s]+([^.\n]{3,80})/i);
+    if (lbl) return lbl[1].trim();
+    const fab = c.match(/\b(cotton|polyester|silk|linen|wool|nylon|spandex|elastane|rayon|viscose|satin|chiffon|denim|jersey|crepe|velvet|suede|leather)[\w\s,]*\b/i);
+    if (fab) return fab[0].trim();
+    return 'Please refer to the product label for material information.';
+  })();
+
   const accordionItems = [
     {
       title: 'Material',
-      content: (() => {
-        // Se metafield tem valor real (nao gid reference)
-        if (materialInfo && !materialInfo.includes('gid://') && !materialInfo.startsWith('[')) return materialInfo;
-        // Tentar extrair da descricao HTML
-        const d = product.descriptionHtml || product.description || '';
-        const c = d.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-        // Padrao: 95% Polyester, 5% Elastane
-        const pct = c.match(/(\d+%\s*[A-Za-z][A-Za-z\s]*(?:,\s*\d+%\s*[A-Za-z][A-Za-z\s]*)*)/);
-        if (pct) return pct[0].trim();
-        // Padrao: Material: Cotton ou Fabric: Silk
-        const lbl = c.match(/(?:material|fabric|composition|content|made of|made from)[:\s]+([^.\n]{3,80})/i);
-        if (lbl) return lbl[1].trim();
-        // Padrao: mencao direta de tecido
-        const fab = c.match(/\b(cotton|polyester|silk|linen|wool|nylon|spandex|elastane|rayon|viscose|satin|chiffon|denim|jersey|crepe|velvet|suede|leather)[\w\s,]*\b/i);
-        if (fab) return fab[0].trim();
-        return 'Please refer to the product label for material information.';
-      })(),
+      content: materialContent,
     },
     {
       title: 'Size & fit',

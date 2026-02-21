@@ -124,6 +124,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
                             navigate(linkTo, { replace: true, preventScrollReset: true });
                           }
                           setSizeOpen(false);
+                          setUserPickedSize(true);
                         }}
                         style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 14px', fontSize: '13px', color: unavail ? '#bbb' : sel ? '#111' : '#444', backgroundColor: sel ? '#fffcf0' : '#fff', fontWeight: sel ? '700' : '400', textDecoration: 'none', borderBottom: '1px solid #f5f5f5', cursor: (unavail || !exists) ? 'not-allowed' : 'pointer', width: '100%', border: 'none', borderBottomStyle: 'solid', borderBottomWidth: '1px', borderBottomColor: '#f5f5f5', textAlign: 'left' }}>
                         <span style={{ textDecoration: unavail ? 'line-through' : 'none' }}>{value.name}</span>
