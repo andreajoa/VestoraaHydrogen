@@ -67,6 +67,25 @@ function HeroBanner() {
   );
 }
 
+// ── Gender Categories ────────────────────────────────────────────────────────
+function GenderCategories() {
+  const cats = [
+    { label: 'UNDER $80', href: '/collections/under-80', img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80' },
+    { label: 'UNDER $150', href: '/collections/under-150', img: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80' },
+    { label: 'UNDER $300', href: '/collections/under-300', img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80' },
+  ];
+  return (
+    <div style={{ display: "flex", gap: "6px", padding: "24px 40px", maxWidth: "1340px", margin: "0 auto", boxSizing: "border-box" }}>
+      {cats.map(cat => (
+        <a key={cat.label} href={cat.href} style={{ flex: 1, position: "relative", overflow: "hidden", textDecoration: "none", display: "block", aspectRatio: "3/4" }}>
+          <img src={cat.img} alt={cat.label} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          <span style={{ position: "absolute", bottom: "28px", left: "24px", fontSize: "22px", fontWeight: "800", letterSpacing: "0.25em", color: "#f5d800", textTransform: "uppercase", fontStyle: "italic", textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>{cat.label}</span>
+        </a>
+      ))}
+    </div>
+  );
+}
+
 // ── Shop by Category ──────────────────────────────────────────────────────────
 const CATEGORIES = [
   { label: 'Dresses', handle: 'dress', emoji: '👗' },
@@ -233,6 +252,7 @@ export default function Homepage() {
       <PromoBanner />
       <HeroBanner />
       <USPStrip />
+      <GenderCategories />
       <ShopByCategory collections={data.collections} />
       <PromoCards />
       <NewArrivalsSection newArrivals={data.newArrivals} />
