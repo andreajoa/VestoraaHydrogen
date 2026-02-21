@@ -197,7 +197,7 @@ export default function Product() {
   );
 }
 
-const PRODUCT_VARIANT_FRAGMENT = \`#graphql
+const PRODUCT_VARIANT_FRAGMENT = `#graphql
   fragment ProductVariant on ProductVariant {
     availableForSale
     compareAtPrice { amount currencyCode }
@@ -210,9 +210,9 @@ const PRODUCT_VARIANT_FRAGMENT = \`#graphql
     title
     unitPrice { amount currencyCode }
   }
-\`;
+`;
 
-const PRODUCT_QUERY = \`#graphql
+const PRODUCT_QUERY = `#graphql
   query Product(
     \$country: CountryCode
     \$handle: String!
@@ -244,9 +244,9 @@ const PRODUCT_QUERY = \`#graphql
     }
   }
   \${PRODUCT_VARIANT_FRAGMENT}
-\`;
+`;
 
-const RECOMMENDED_PRODUCTS_QUERY = \`#graphql
+const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   query ProductPageRecommended(
     \$country: CountryCode
     \$language: LanguageCode
@@ -260,4 +260,4 @@ const RECOMMENDED_PRODUCTS_QUERY = \`#graphql
       }
     }
   }
-\`;
+`;
