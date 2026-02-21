@@ -32,7 +32,7 @@ function loadDeferredData({context}) {
 function PromoBanner() {
   return (
     <div style={{ backgroundColor: '#111', color: '#fff', textAlign: 'center', padding: '10px', fontSize: '13px', letterSpacing: '0.05em' }}>
-      <span>FREE SHIPPING ON ORDERS OVER $100 — </span>
+      <span>FREE SHIPPING AUSTRALIA & NEW ZEALAND — </span>
       <a href="/collections/new-arrival" style={{ color: '#fff', fontWeight: '700', textDecoration: 'underline' }}>SHOP NEW ARRIVALS</a>
     </div>
   );
