@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { AddToCartButton } from '~/components/AddToCartButton';
 import { useState, useEffect } from 'react';
 import { SizeGuideModal } from '~/components/Product/SizeGuideModal';
@@ -22,15 +22,23 @@ function WishlistButton({ productHandle }) {
     } catch {}
   };
   return (
-    <button onClick={toggle} type="button" style={{ width: '54px', height: '54px', flexShrink: 0, border: wished ? `1.5px solid ${GOLD}` : '1px solid #ddd', borderRadius: '8px', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '20px', color: wished ? '#e33' : '#bbb', transition: 'all 0.2s' }} title={wished ? 'Remove from wishlist' : 'Add to wishlist'}>
+    <button onClick={toggle} type="button" style={{ width: '56px', height: '56px', flexShrink: 0, border: wished ? '1.5px solid ' + GOLD : '1px solid #ddd', borderRadius: '8px', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '20px', color: wished ? '#e33' : '#bbb', transition: 'all 0.2s' }} title={wished ? 'Remove from wishlist' : 'Add to wishlist'}>
       {wished ? '♥' : '♡'}
     </button>
   );
 }
 
+function getOptionLink(value) {
+  if (value.to) return value.to;
+  if (value.variantUriQuery) return '?' + value.variantUriQuery;
+  if (value.search) return '?' + value.search;
+  return '#';
+}
+
 export function ProductForm({ productOptions, selectedVariant }) {
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [sizeOpen, setSizeOpen] = useState(false);
+  const navigate = useNavigate();
 
   if (!productOptions || productOptions.length === 0) return null;
 
@@ -51,14 +59,37 @@ export function ProductForm({ productOptions, selectedVariant }) {
             {colorOption.optionValues.map((value) => {
               const sel = value.selected;
               const unavail = !value.available;
+              const exists = value.exists !== undefined ? value.exists : true;
               const img = value.swatch?.image?.previewImage?.url || value.firstSelectableVariant?.image?.url;
               const color = value.swatch?.color;
+              const isDifferentProduct = value.isDifferentProduct;
+              const linkTo = getOptionLink(value);
+
+              if (isDifferentProduct) {
+                return (
+                  <Link key={value.name} to={linkTo} preventScrollReset replace prefetch="intent" title={value.name}
+                    style={{ display: 'block', width: '62px', height: '80px', borderRadius: '10px', overflow: 'hidden', position: 'relative', flexShrink: 0, textDecoration: 'none', opacity: unavail ? 0.35 : 1, outline: sel ? '2px solid ' + GOLD : '1.5px solid #ddd', outlineOffset: sel ? '2px' : '0', transition: 'all 0.15s ease' }}>
+                    {img ? <img src={img} alt={value.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} /> : <div style={{ width: '100%', height: '100%', backgroundColor: color || '#eee' }} />}
+                    {unavail && (<div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,255,255,0.5)' }}><div style={{ position: 'absolute', top: '50%', left: '10%', right: '10%', height: '1px', background: '#999', transform: 'rotate(45deg)' }} /></div>)}
+                  </Link>
+                );
+              }
+
               return (
-                <Link key={value.name} to={value.to || '#'} preventScrollReset replace prefetch="intent" title={value.name}
-                  style={{ display: 'block', width: '62px', height: '80px', borderRadius: '10px', overflow: 'hidden', position: 'relative', flexShrink: 0, textDecoration: 'none', opacity: unavail ? 0.35 : 1, outline: sel ? `2px solid ${GOLD}` : '1.5px solid #ddd', outlineOffset: sel ? '2px' : '0', transition: 'all 0.15s ease' }}>
+                <button
+                  key={value.name}
+                  type="button"
+                  disabled={!exists}
+                  title={value.name}
+                  onClick={() => {
+                    if (!sel && exists) {
+                      navigate(linkTo, { replace: true, preventScrollReset: true });
+                    }
+                  }}
+                  style={{ display: 'block', width: '62px', height: '80px', borderRadius: '10px', overflow: 'hidden', position: 'relative', flexShrink: 0, textDecoration: 'none', opacity: unavail ? 0.35 : !exists ? 0.2 : 1, outline: sel ? '2px solid ' + GOLD : '1.5px solid #ddd', outlineOffset: sel ? '2px' : '0', transition: 'all 0.15s ease', cursor: exists ? 'pointer' : 'not-allowed', padding: 0, border: 'none', background: 'none' }}>
                   {img ? <img src={img} alt={value.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} /> : <div style={{ width: '100%', height: '100%', backgroundColor: color || '#eee' }} />}
-                  {unavail && (<div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,255,255,0.5)' }}><div style={{ position: 'absolute', top: '50%', left: '10%', right: '10%', height: '1px', background: '#999', transform: 'rotate(45deg)' }} /></div>)}
-                </Link>
+                  {unavail && exists && (<div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,255,255,0.5)' }}><div style={{ position: 'absolute', top: '50%', left: '10%', right: '10%', height: '1px', background: '#999', transform: 'rotate(45deg)' }} /></div>)}
+                </button>
               );
             })}
           </div>
@@ -79,13 +110,26 @@ export function ProductForm({ productOptions, selectedVariant }) {
                   {sizeOption.optionValues.map((value) => {
                     const sel = value.selected;
                     const unavail = !value.available;
+                    const exists = value.exists !== undefined ? value.exists : true;
+                    const linkTo = getOptionLink(value);
                     return (
-                      <Link key={value.name} to={value.to || '#'} preventScrollReset replace prefetch="intent" onClick={() => setSizeOpen(false)}
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 14px', fontSize: '13px', color: unavail ? '#bbb' : sel ? '#111' : '#444', backgroundColor: sel ? '#fffcf0' : '#fff', fontWeight: sel ? '700' : '400', textDecoration: 'none', borderBottom: '1px solid #f5f5f5', pointerEvents: unavail ? 'none' : 'auto' }}>
+                      <button
+                        key={value.name}
+                        type="button"
+                        disabled={!exists || unavail}
+                        onClick={() => {
+                          if (!sel && exists && !unavail) {
+                            navigate(linkTo, { replace: true, preventScrollReset: true });
+                          }
+                          setSizeOpen(false);
+                        }}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 14px', fontSize: '13px', color: unavail ? '#bbb' : sel ? '#111' : '#444', backgroundColor: sel ? '#fffcf0' : '#fff', fontWeight: sel ? '700' : '400', textDecoration: 'none', borderBottom: '1px solid #f5f5f5', cursor: (unavail || !exists) ? 'not-allowed' : 'pointer', width: '100%', border: 'none', borderBottomStyle: 'solid', borderBottomWidth: '1px', borderBottomColor: '#f5f5f5', textAlign: 'left' }}>
                         <span style={{ textDecoration: unavail ? 'line-through' : 'none' }}>{value.name}</span>
-                        {unavail && <span style={{ fontSize: '10px', color: '#bbb' }}>Sold out</span>}
-                        {sel && <span style={{ color: GOLD, fontSize: '12px' }}>✓</span>}
-                      </Link>
+                        <span>
+                          {unavail && <span style={{ fontSize: '10px', color: '#bbb' }}>Sold out</span>}
+                          {sel && !unavail && <span style={{ color: GOLD, fontSize: '12px' }}>✓</span>}
+                        </span>
+                      </button>
                     );
                   })}
                 </div>
@@ -105,22 +149,41 @@ export function ProductForm({ productOptions, selectedVariant }) {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
             {option.optionValues.map((value) => {
               const sel = value.selected;
+              const exists = value.exists !== undefined ? value.exists : true;
+              const linkTo = getOptionLink(value);
               return (
-                <Link key={value.name} to={value.to || '#'} preventScrollReset replace prefetch="intent"
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 16px', fontSize: '12px', borderRadius: '6px', border: sel ? `2px solid ${GOLD}` : '1px solid #ddd', backgroundColor: sel ? '#fffcf0' : '#fff', color: '#333', textDecoration: 'none', fontWeight: sel ? '700' : '400' }}>
+                <button
+                  key={value.name}
+                  type="button"
+                  disabled={!exists}
+                  onClick={() => {
+                    if (!sel && exists) {
+                      navigate(linkTo, { replace: true, preventScrollReset: true });
+                    }
+                  }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 16px', fontSize: '12px', borderRadius: '6px', border: sel ? '2px solid ' + GOLD : '1px solid #ddd', backgroundColor: sel ? '#fffcf0' : '#fff', color: '#333', textDecoration: 'none', fontWeight: sel ? '700' : '400', cursor: exists ? 'pointer' : 'not-allowed', opacity: exists ? 1 : 0.3 }}>
                   {value.name}
-                </Link>
+                </button>
               );
             })}
           </div>
         </div>
       ))}
 
-      <div style={{ display: 'flex', gap: '8px', marginTop: '20px', alignItems: 'stretch', width: '100%' }}>
+      <div style={{ display: 'flex', gap: '10px', marginTop: '24px', alignItems: 'stretch', width: '100%' }}>
         <AddToCartButton
           disabled={!selectedVariant?.availableForSale}
           lines={selectedVariant ? [{ merchandiseId: selectedVariant.id, quantity: 1 }] : []}
-          style={{ height: '54px', backgroundColor: selectedVariant?.availableForSale ? '#111' : '#ccc', color: '#fff', borderRadius: '8px', fontSize: '13px', fontWeight: '700', letterSpacing: '0.12em' }}
+          style={{
+            height: '56px',
+            backgroundColor: selectedVariant?.availableForSale ? '#111' : '#ccc',
+            color: '#fff',
+            borderRadius: '8px',
+            fontSize: '15px',
+            fontWeight: '700',
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+          }}
         >
           {selectedVariant?.availableForSale ? 'ADD TO BAG' : 'SOLD OUT'}
         </AddToCartButton>
