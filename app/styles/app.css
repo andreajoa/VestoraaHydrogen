@@ -727,27 +727,3 @@ button.reset:hover:not(:has(> *)) {
   color: #16a34a;
   font-size: 0.9rem;
 }
-
-.product-form button[type="submit"] {
-  width: 100%;
-  background: #000;
-  color: #fff;
-  border: none;
-  padding: 1rem;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: background 0.2s;
-}
-
-.product-form button[type="submit"]:hover {
-  background: #333;
-}
-
-.product-form button[type="submit"]:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
