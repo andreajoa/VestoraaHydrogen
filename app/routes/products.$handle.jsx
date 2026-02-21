@@ -81,7 +81,7 @@ export default function Product() {
   const getMeta = (key) => metafields.find(m => m?.key === key)?.value;
   
   // Buscar material de todos os campos possiveis
-  const materialInfo = getMeta('material') || getMeta('fabric') || getMeta('composition') || getMeta('materials') || extractMaterialFromDescription(product.description);
+  const materialInfo = getMeta('material') || getMeta('fabric') || getMeta('composition') || getMeta('materials') || (() => { const d = product.description || ''; const m = d.match(/(\d+%\s*[\w\s,]+(?:%[\w\s]+)*)/); return m ? m[0].trim() : null; })();
   const careInfo = getMeta('care_instructions') || getMeta('care') || null;
 
   const accordionItems = [
