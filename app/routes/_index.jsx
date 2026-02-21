@@ -43,7 +43,7 @@ function HeroBanner() {
   return (
     <div style={{ width: '100%', position: 'relative', overflow: 'hidden', height: '200px', backgroundColor: '#b8c4c2' }}>
       <img
-        src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=80"
+        src="https://cdn.shopify.com/s/files/1/0706/4456/4124/files/11_35353139-cd39-4dfe-a4d8-8859cc92f22d.png?v=1771712961"
         alt="Spend and Save"
         style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }}
       />
