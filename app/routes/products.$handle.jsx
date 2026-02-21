@@ -115,24 +115,33 @@ export default function Product() {
           {/* LEFT: Gallery */}
           <div style={{ display: 'flex', gap: '12px' }}>
             {/* Thumbnails */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '80px', flexShrink: 0, position: 'sticky', top: '96px', maxHeight: 'calc(100vh - 110px)', overflowY: 'auto', scrollbarWidth: 'none', alignSelf: 'flex-start' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100px', flexShrink: 0, position: 'sticky', top: '96px', maxHeight: 'calc(100vh - 110px)', overflowY: 'auto', scrollbarWidth: 'none', alignSelf: 'flex-start' }}>
               {displayImages.map((img, idx) => (
                 <button
                   key={img.id || idx}
                   onClick={() => setActiveImg(idx)}
                   style={{
-                    border: activeImg === idx ? '2px solid #111' : '2px solid transparent',
+                    border: 'none',
                     padding: 0,
                     cursor: 'pointer',
                     background: 'none',
                     outline: 'none',
+                    position: 'relative',
+                    display: 'block',
+                    flexShrink: 0,
                   }}
                 >
                   <img
                     src={img.url}
                     alt={img.altText || title}
-                    style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
+                    style={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
                   />
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    border: activeImg === idx ? '3px solid #111' : '1px solid #ddd',
+                    pointerEvents: 'none',
+                    transition: 'border 0.15s',
+                  }} />
                 </button>
               ))}
             </div>
