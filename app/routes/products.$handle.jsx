@@ -148,7 +148,8 @@ export default function Product() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '40px', alignItems: 'start' }}>
 
           {/* LEFT: Gallery */}
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+            <div style={{ display: 'flex', gap: '12px' }}>
             {/* Thumbnails */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100px', flexShrink: 0, position: 'sticky', top: '96px', maxHeight: 'calc(100vh - 110px)', overflowY: 'auto', scrollbarWidth: 'none', alignSelf: 'flex-start' }}>
               {displayImages.map((img, idx) => (
@@ -204,9 +205,9 @@ export default function Product() {
               </button>
             </div>
 
-            {/* WEAR IT WITH - abaixo da imagem, igual The Iconic */}
+            </div>
+            {/* WEAR IT WITH - abaixo da imagem+thumbnails */}
             <WearItWithStrip products={products.slice(0, 6)} />
-
           </div>
 
           {/* RIGHT: Product info panel */}
