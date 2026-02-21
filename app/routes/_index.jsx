@@ -88,8 +88,8 @@ function GenderCategories() {
 // ── Promo Wide Banner ────────────────────────────────────────────────────────
 function PromoWideBanner() {
   return (
-    <div style={{ maxWidth: '1340px', margin: '0 auto', padding: '0 40px', boxSizing: 'border-box' }}>
-      <div style={{ maxWidth: '1340px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '100px', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ padding: '0 40px', maxWidth: '1340px', margin: '0 auto', boxSizing: 'border-box' }}>
+      <div style={{ backgroundColor: '#1e3a6e', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '100px', padding: '20px 32px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ flex: 1 }}>
           <p style={{ fontSize: '22px', fontWeight: '800', color: '#fff', margin: '0 0 4px', lineHeight: 1.2 }}>
             Pay over time for orders over <span style={{ color: '#5bc8f5' }}>$35.00</span>
@@ -97,11 +97,8 @@ function PromoWideBanner() {
           <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.75)', margin: '0 0 6px' }}>with Shop Pay — flexible installments at checkout</p>
           <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>* Eligibility criteria apply. Learn more at checkout.</p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <div style={{ backgroundColor: '#5a31f4', borderRadius: '40px', padding: '12px 28px' }}>
-            <span style={{ fontSize: '18px', fontWeight: '900', color: '#fff', letterSpacing: '0.02em' }}>shop<span style={{ color: '#b2fcf4' }}>pay</span></span>
-          </div>
-          <div style={{ width: '200px', height: '100px', background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.15) 0%, transparent 70%)', borderRadius: '50%', position: 'absolute', right: '180px' }} />
+        <div style={{ backgroundColor: '#5a31f4', borderRadius: '40px', padding: '12px 28px', flexShrink: 0 }}>
+          <span style={{ fontSize: '18px', fontWeight: '900', color: '#fff', letterSpacing: '0.02em' }}>shop<span style={{ color: '#b2fcf4' }}>pay</span></span>
         </div>
       </div>
     </div>
