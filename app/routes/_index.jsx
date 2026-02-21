@@ -88,7 +88,7 @@ function GenderCategories() {
 // ── Promo Wide Banner ────────────────────────────────────────────────────────
 function PromoWideBanner() {
   return (
-    <div style={{ margin: '0 40px', backgroundColor: '#1e3a6e', borderRadius: '4px' }}>
+    <div style={{ maxWidth: '1340px', margin: '0 auto', padding: '0 40px', boxSizing: 'border-box' }}>
       <div style={{ maxWidth: '1340px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '100px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ flex: 1 }}>
           <p style={{ fontSize: '22px', fontWeight: '800', color: '#fff', margin: '0 0 4px', lineHeight: 1.2 }}>
