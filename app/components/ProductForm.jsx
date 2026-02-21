@@ -5,25 +5,43 @@ import { SizeGuideModal } from '~/components/Product/SizeGuideModal';
 
 const GOLD = '#C9A84C';
 
+function WishlistButton({ productHandle }) {
+  const [wished, setWished] = useState(false);
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('vestoraa_wishlist') || '[]');
+      setWished(stored.includes(productHandle));
+    } catch {}
+  }, [productHandle]);
+  const toggle = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('vestoraa_wishlist') || '[]');
+      const next = stored.includes(productHandle) ? stored.filter(id => id !== productHandle) : [...stored, productHandle];
+      localStorage.setItem('vestoraa_wishlist', JSON.stringify(next));
+      setWished(next.includes(productHandle));
+    } catch {}
+  };
+  return (
+    <button onClick={toggle} type="button" style={{ width: '54px', height: '54px', flexShrink: 0, border: wished ? `1.5px solid ${GOLD}` : '1px solid #ddd', borderRadius: '8px', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '20px', color: wished ? '#e33' : '#bbb', transition: 'all 0.2s' }} title={wished ? 'Remove from wishlist' : 'Add to wishlist'}>
+      {wished ? '\u2665' : '\u2661'}
+    </button>
+  );
+}
+
 export function ProductForm({ productOptions, selectedVariant }) {
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
-  const [selectedSize, setSelectedSize] = useState('');
   const [sizeOpen, setSizeOpen] = useState(false);
 
   if (!productOptions || productOptions.length === 0) return null;
 
   const colorOption = productOptions.find(o => ['Color','Colour','color','colour'].includes(o.name));
   const sizeOption = productOptions.find(o => ['Size','size'].includes(o.name));
-  const otherOptions = productOptions.filter(o =>
-    !['Color','Colour','color','colour','Size','size'].includes(o.name)
-  );
-
+  const otherOptions = productOptions.filter(o => !['Color','Colour','color','colour','Size','size'].includes(o.name));
   const selectedColorValue = colorOption?.optionValues?.find(v => v.selected);
   const selectedSizeValue = sizeOption?.optionValues?.find(v => v.selected);
 
   return (
     <div>
-      {/* COLOR */}
       {colorOption && (
         <div style={{ marginBottom: '18px' }}>
           <p style={{ fontSize: '12px', color: '#555', margin: '0 0 10px' }}>
@@ -36,34 +54,10 @@ export function ProductForm({ productOptions, selectedVariant }) {
               const img = value.swatch?.image?.previewImage?.url || value.firstSelectableVariant?.image?.url;
               const color = value.swatch?.color;
               return (
-                <Link
-                  key={value.name}
-                  to={value.to || '#'}
-                  preventScrollReset
-                  replace
-                  prefetch="intent"
-                  title={value.name}
-                  style={{
-                    display: 'block', width: '62px', height: '80px',
-                    borderRadius: '10px', overflow: 'hidden',
-                    position: 'relative', flexShrink: 0,
-                    textDecoration: 'none',
-                    opacity: unavail ? 0.35 : 1,
-                    outline: sel ? `2px solid ${GOLD}` : '1.5px solid #ddd',
-                    outlineOffset: sel ? '2px' : '0',
-                    transition: 'all 0.15s ease',
-                    cursor: unavail ? 'not-allowed' : 'pointer',
-                  }}
-                >
-                  {img
-                    ? <img src={img} alt={value.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
-                    : <div style={{ width: '100%', height: '100%', backgroundColor: color || '#eee' }} />
-                  }
-                  {unavail && (
-                    <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,255,255,0.5)' }}>
-                      <div style={{ position: 'absolute', top: '50%', left: '10%', right: '10%', height: '1px', background: '#999', transform: 'rotate(45deg)' }} />
-                    </div>
-                  )}
+                <Link key={value.name} to={value.to || '#'} preventScrollReset replace prefetch="intent" title={value.name}
+                  style={{ display: 'block', width: '62px', height: '80px', borderRadius: '10px', overflow: 'hidden', position: 'relative', flexShrink: 0, textDecoration: 'none', opacity: unavail ? 0.35 : 1, outline: sel ? `2px solid ${GOLD}` : '1.5px solid #ddd', outlineOffset: sel ? '2px' : '0', transition: 'all 0.15s ease' }}>
+                  {img ? <img src={img} alt={value.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} /> : <div style={{ width: '100%', height: '100%', backgroundColor: color || '#eee' }} />}
+                  {unavail && (<div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,255,255,0.5)' }}><div style={{ position: 'absolute', top: '50%', left: '10%', right: '10%', height: '1px', background: '#999', transform: 'rotate(45deg)' }} /></div>)}
                 </Link>
               );
             })}
@@ -71,89 +65,40 @@ export function ProductForm({ productOptions, selectedVariant }) {
         </div>
       )}
 
-      {/* SIZE DROPDOWN + SIZE GUIDE */}
       {sizeOption && (
         <div style={{ marginBottom: '16px' }}>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
-            {/* Dropdown */}
             <div style={{ flex: 1, position: 'relative' }}>
-              <button
-                onClick={() => setSizeOpen(o => !o)}
-                style={{
-                  width: '100%', height: '46px',
-                  border: '1px solid #ccc', borderRadius: '6px',
-                  backgroundColor: '#fff',
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '0 14px',
-                  fontSize: '13px', color: selectedSizeValue ? '#111' : '#888',
-                  cursor: 'pointer', fontWeight: '400',
-                }}
-              >
+              <button type="button" onClick={() => setSizeOpen(o => !o)}
+                style={{ width: '100%', height: '48px', border: '1px solid #ccc', borderRadius: '6px', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px', fontSize: '13px', color: selectedSizeValue ? '#111' : '#888', cursor: 'pointer' }}>
                 <span>{selectedSizeValue ? selectedSizeValue.name : 'Pick a size...'}</span>
-                <span style={{ fontSize: '11px', color: '#888', marginLeft: '8px' }}>▾</span>
+                <span style={{ fontSize: '11px', color: '#888' }}>\u25be</span>
               </button>
               {sizeOpen && (
-                <div style={{
-                  position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100,
-                  backgroundColor: '#fff', border: '1px solid #ccc', borderTop: 'none',
-                  borderRadius: '0 0 6px 6px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                  maxHeight: '220px', overflowY: 'auto',
-                }}>
+                <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 200, backgroundColor: '#fff', border: '1px solid #ccc', borderTop: 'none', borderRadius: '0 0 6px 6px', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', maxHeight: '240px', overflowY: 'auto' }}>
                   {sizeOption.optionValues.map((value) => {
                     const sel = value.selected;
                     const unavail = !value.available;
                     return (
-                      <Link
-                        key={value.name}
-                        to={value.to || '#'}
-                        preventScrollReset
-                        replace
-                        prefetch="intent"
-                        onClick={() => setSizeOpen(false)}
-                        style={{
-                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                          padding: '10px 14px',
-                          fontSize: '13px',
-                          color: unavail ? '#ccc' : sel ? '#111' : '#444',
-                          backgroundColor: sel ? '#fffcf0' : '#fff',
-                          fontWeight: sel ? '700' : '400',
-                          textDecoration: 'none',
-                          borderBottom: '1px solid #f0f0f0',
-                          cursor: unavail ? 'not-allowed' : 'pointer',
-                          pointerEvents: unavail ? 'none' : 'auto',
-                        }}
-                      >
+                      <Link key={value.name} to={value.to || '#'} preventScrollReset replace prefetch="intent" onClick={() => setSizeOpen(false)}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 14px', fontSize: '13px', color: unavail ? '#bbb' : sel ? '#111' : '#444', backgroundColor: sel ? '#fffcf0' : '#fff', fontWeight: sel ? '700' : '400', textDecoration: 'none', borderBottom: '1px solid #f5f5f5', pointerEvents: unavail ? 'none' : 'auto' }}>
                         <span style={{ textDecoration: unavail ? 'line-through' : 'none' }}>{value.name}</span>
                         {unavail && <span style={{ fontSize: '10px', color: '#bbb' }}>Sold out</span>}
-                        {sel && <span style={{ fontSize: '11px', color: GOLD }}>✓</span>}
+                        {sel && <span style={{ color: GOLD, fontSize: '12px' }}>\u2713</span>}
                       </Link>
                     );
                   })}
                 </div>
               )}
             </div>
-
-            {/* Size Guide Button */}
-            <button
-              onClick={() => setSizeGuideOpen(true)}
-              style={{
-                height: '46px', padding: '0 14px',
-                border: '1px solid #ccc', borderRadius: '6px',
-                backgroundColor: '#fff', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: '6px',
-                fontSize: '12px', fontWeight: '700', color: '#333',
-                whiteSpace: 'nowrap', letterSpacing: '0.05em',
-                flexShrink: 0,
-              }}
-            >
-              <span style={{ fontSize: '14px' }}>📐</span>
-              SIZE GUIDE
+            <button type="button" onClick={() => setSizeGuideOpen(true)}
+              style={{ height: '48px', padding: '0 14px', border: '1px solid #ccc', borderRadius: '6px', backgroundColor: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#333', whiteSpace: 'nowrap', flexShrink: 0 }}>
+              \ud83d\udcd0 SIZE GUIDE
             </button>
           </div>
         </div>
       )}
 
-      {/* OTHER OPTIONS */}
       {otherOptions.map((option) => (
         <div key={option.name} style={{ marginBottom: '14px' }}>
           <p style={{ fontSize: '12px', color: '#666', margin: '0 0 8px' }}>{option.name}</p>
@@ -162,8 +107,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
               const sel = value.selected;
               return (
                 <Link key={value.name} to={value.to || '#'} preventScrollReset replace prefetch="intent"
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 16px', fontSize: '12px', borderRadius: '6px', border: sel ? `2px solid ${GOLD}` : '1px solid #ddd', backgroundColor: sel ? '#fffcf0' : '#fff', color: '#333', textDecoration: 'none', fontWeight: sel ? '700' : '400', transition: 'all 0.15s' }}
-                >
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 16px', fontSize: '12px', borderRadius: '6px', border: sel ? `2px solid ${GOLD}` : '1px solid #ddd', backgroundColor: sel ? '#fffcf0' : '#fff', color: '#333', textDecoration: 'none', fontWeight: sel ? '700' : '400' }}>
                   {value.name}
                 </Link>
               );
@@ -172,26 +116,15 @@ export function ProductForm({ productOptions, selectedVariant }) {
         </div>
       ))}
 
-      {/* ADD TO BAG + WISHLIST */}
       <div style={{ display: 'flex', gap: '8px', marginTop: '20px', alignItems: 'stretch' }}>
         <AddToCartButton
           disabled={!selectedVariant?.availableForSale}
           lines={selectedVariant ? [{ merchandiseId: selectedVariant.id, quantity: 1 }] : []}
-          openCart
-          style={{
-            flex: 1, height: '52px',
-            backgroundColor: selectedVariant?.availableForSale ? '#111' : '#ccc',
-            color: '#fff',
-            border: 'none', borderRadius: '6px',
-            fontSize: '13px', fontWeight: '700', letterSpacing: '0.12em',
-            cursor: selectedVariant?.availableForSale ? 'pointer' : 'not-allowed',
-            transition: 'background-color 0.2s',
-          }}
+          style={{ height: '54px', backgroundColor: selectedVariant?.availableForSale ? '#111' : '#ccc', color: '#fff', borderRadius: '8px', fontSize: '13px', fontWeight: '700', letterSpacing: '0.12em' }}
         >
           {selectedVariant?.availableForSale ? 'ADD TO BAG' : 'SOLD OUT'}
         </AddToCartButton>
-
-        <WishlistButton productId={selectedVariant?.product?.handle || ''} />
+        <WishlistButton productHandle={selectedVariant?.product?.handle || ''} />
       </div>
 
       {!selectedVariant?.availableForSale && (
@@ -200,49 +133,5 @@ export function ProductForm({ productOptions, selectedVariant }) {
 
       <SizeGuideModal isOpen={sizeGuideOpen} onClose={() => setSizeGuideOpen(false)} />
     </div>
-  );
-}
-
-function WishlistButton({ productId }) {
-  const [wished, setWished] = useState(false);
-
-  useEffect(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem('vestoraa_wishlist') || '[]');
-      setWished(stored.includes(productId));
-    } catch {}
-  }, [productId]);
-
-  const toggle = () => {
-    try {
-      const stored = JSON.parse(localStorage.getItem('vestoraa_wishlist') || '[]');
-      let next;
-      if (stored.includes(productId)) {
-        next = stored.filter(id => id !== productId);
-      } else {
-        next = [...stored, productId];
-      }
-      localStorage.setItem('vestoraa_wishlist', JSON.stringify(next));
-      setWished(!stored.includes(productId));
-    } catch {}
-  };
-
-  return (
-    <button
-      onClick={toggle}
-      style={{
-        width: '52px', height: '52px', flexShrink: 0,
-        border: wished ? `1.5px solid #C9A84C` : '1px solid #ccc',
-        borderRadius: '6px',
-        backgroundColor: '#fff',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        cursor: 'pointer', fontSize: '20px',
-        color: wished ? '#e33' : '#bbb',
-        transition: 'all 0.2s',
-      }}
-      title={wished ? 'Remove from wishlist' : 'Add to wishlist'}
-    >
-      {wished ? '♥' : '♡'}
-    </button>
   );
 }

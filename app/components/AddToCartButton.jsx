@@ -11,19 +11,7 @@ export function AddToCartButton({analytics, children, disabled, lines, onClick, 
           <button
             type="submit"
             disabled={disabled ?? fetcher.state !== 'idle'}
-            style={{
-              flex: 1,
-              width: '100%',
-              height: '50px',
-              border: 'none',
-              borderRadius: '12px',
-              fontSize: '13px',
-              fontWeight: '700',
-              letterSpacing: '0.1em',
-              cursor: disabled ? 'not-allowed' : 'pointer',
-              transition: 'all 0.25s',
-              ...style,
-            }}
+            style={{ flex: 1, width: '100%', border: 'none', cursor: disabled ? 'not-allowed' : 'pointer', ...style }}
             onClick={(e) => {
               onClick?.(e);
               if (!disabled && fetcher.state === 'idle') {
