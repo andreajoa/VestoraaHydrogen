@@ -47,98 +47,7 @@ function formatLikes(n) {
   return String(n);
 }
 
-// ── Newsletter ────────────────────────────────────────────────────────────────
-function NewsletterSection() {
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState(null);
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!email) return;
-    setStatus('loading');
-    try {
-      const res = await fetch('/api/newsletter', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
-      setStatus(res.ok ? 'success' : 'error');
-      if (res.ok) setEmail('');
-    } catch { setStatus('success'); }
-  };
-  return (
-    <div style={{ backgroundColor: '#1a1a1a', borderBottom: '1px solid #333', padding: '48px 40px' }}>
-      <div style={{ maxWidth: '1340px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '24px' }}>
-        <div>
-          <h3 style={{ fontSize: '18px', fontWeight: '500', color: '#fff', margin: '0 0 6px' }}>Join the Vestoraa community</h3>
-          <p style={{ fontSize: '13px', color: '#aaa', margin: 0 }}>Be the first to know about new arrivals, exclusive offers and style inspiration.</p>
-        </div>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexShrink: 0 }}>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email address" required
-            style={{ padding: '12px 16px', fontSize: '13px', border: '1px solid #444', borderRight: 'none', backgroundColor: '#2a2a2a', color: '#fff', outline: 'none', width: '260px', borderRadius: '2px 0 0 2px' }} />
-          <button type="submit" disabled={status === 'loading'}
-            style={{ padding: '12px 20px', fontSize: '12px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', backgroundColor: status === 'success' ? '#2a9d5c' : '#fff', color: status === 'success' ? '#fff' : '#111', border: 'none', cursor: 'pointer', borderRadius: '0 2px 2px 0', whiteSpace: 'nowrap' }}>
-            {status === 'loading' ? '...' : status === 'success' ? '✓ Subscribed!' : 'Subscribe'}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
 
-// ── Footer (único, substitui o global nesta página) ───────────────────────────
-function PageFooter() {
-  const CARDS = [
-    { label: 'VISA', bg: '#fff', color: '#1a1f71', fontSize: '10px', fontWeight: '900' },
-    { label: 'MC', bg: '#fff', isMC: true },
-    { label: 'AMEX', bg: '#2557d6', color: '#fff', fontSize: '8px' },
-    { label: 'PayPal', bg: '#fff', color: '#003087', fontSize: '7px' },
-    { label: 'Apple Pay', bg: '#000', color: '#fff', fontSize: '6px' },
-    { label: 'Shop Pay', bg: '#5a31f4', color: '#fff', fontSize: '6px' },
-  ];
-  const COLS = [
-    { title: 'Legal', links: [{ label: 'Shipping Policy', href: '/policies/shipping-policy' }, { label: 'Privacy Policy', href: '/policies/privacy-policy' }, { label: 'Cookies Policy', href: '/policies/privacy-policy#cookies' }, { label: 'Terms & Conditions', href: '/policies/terms-of-service' }] },
-    { title: 'Support', links: [{ label: 'Shipping Policy', href: '/policies/shipping-policy' }, { label: 'FAQ', href: '/pages/faq' }, { label: 'Refund/Return Policy', href: '/policies/refund-policy' }] },
-    { title: 'Our Story', links: [{ label: 'About Us', href: '/pages/about-us' }, { label: 'Contact Us', href: '/pages/contact-us' }] },
-  ];
-  return (
-    <>
-      <NewsletterSection />
-      <footer style={{ backgroundColor: '#232323', padding: '48px 40px 24px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '40px', maxWidth: '1340px', margin: '0 auto 48px' }}>
-          {COLS.map(col => (
-            <div key={col.title}>
-              <h4 style={{ fontSize: '11px', fontWeight: '700', color: '#fff', marginBottom: '20px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{col.title}</h4>
-              {col.links.map(l => (
-                <div key={l.label} style={{ marginBottom: '12px' }}>
-                  <a href={l.href} style={{ fontSize: '13px', color: '#aaa', textDecoration: 'none' }}
-                    onMouseOver={e => e.target.style.color='#fff'} onMouseOut={e => e.target.style.color='#aaa'}>{l.label}</a>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-        <div style={{ maxWidth: '1340px', margin: '0 auto', borderTop: '1px solid #333', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <span style={{ fontSize: '12px', color: '#666' }}>© 2026 Vestoraa, Co.</span>
-            <a href="/policies/terms-of-service" style={{ fontSize: '12px', color: '#666', textDecoration: 'none' }}
-              onMouseOver={e => e.target.style.color='#aaa'} onMouseOut={e => e.target.style.color='#666'}>Terms and Policies</a>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            {CARDS.map(card => (
-              <div key={card.label} style={{ width: '40px', height: '26px', backgroundColor: card.bg, border: '1px solid #444', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', flexShrink: 0 }}>
-                {card.isMC ? (
-                  <>
-                    <div style={{ position: 'absolute', left: '6px', width: '14px', height: '14px', borderRadius: '50%', backgroundColor: '#eb001b', opacity: 0.95 }} />
-                    <div style={{ position: 'absolute', right: '6px', width: '14px', height: '14px', borderRadius: '50%', backgroundColor: '#f79e1b', opacity: 0.95 }} />
-                    <div style={{ position: 'absolute', left: '13px', width: '14px', height: '14px', borderRadius: '50%', backgroundColor: '#ff5f00', opacity: 0.7 }} />
-                  </>
-                ) : (
-                  <span style={{ fontSize: card.fontSize || '8px', fontWeight: card.fontWeight || '700', color: card.color, textAlign: 'center', lineHeight: 1, padding: '0 2px' }}>{card.label}</span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </footer>
-    </>
-  );
-}
 
 // ── Sidebar ───────────────────────────────────────────────────────────────────
 const COLOUR_MAP = { Black: '#111', White: '#f0f0f0', Beige: '#d4b896', Brown: '#8B5E3C', Red: '#c0392b', Pink: '#e91e8c', Blue: '#2980b9', Green: '#27ae60', Gold: '#c9a84c', Silver: '#aaa' };
@@ -190,7 +99,7 @@ function FilterSection({ section, activeFilters, onToggle }) {
 
 function Sidebar({ activeFilters, onToggle, onClearAll, totalActive }) {
   return (
-    <aside style={{ width: '200px', flexShrink: 0, paddingRight: '24px', borderRight: '1px solid #ebebeb', alignSelf: 'flex-start', position: 'sticky', top: '100px' }}>
+    <aside style={{ width: '240px', flexShrink: 0, paddingRight: '28px', borderRight: '1px solid #ddd', alignSelf: 'flex-start', position: 'sticky', top: '100px', backgroundColor: '#fff' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', paddingBottom: '12px', borderBottom: '1px solid #ebebeb' }}>
         <span style={{ fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#111' }}>
           Filter {totalActive > 0 && <span style={{ color: '#999' }}>({totalActive})</span>}
@@ -328,7 +237,7 @@ export default function Collection() {
       </div>
 
       {/* Sidebar + Grid */}
-      <div style={{ maxWidth: '1340px', margin: '0 auto', padding: '28px 40px', display: 'flex', gap: '36px', alignItems: 'flex-start', flex: 1, width: '100%', boxSizing: 'border-box' }}>
+      <div style={{ maxWidth: '1340px', margin: '0 auto', padding: '28px 40px', display: 'flex', gap: '48px', alignItems: 'flex-start', flex: 1, width: '100%', boxSizing: 'border-box' }}>
         <Sidebar activeFilters={activeFilters} onToggle={toggleFilter} onClearAll={clearAll} totalActive={totalActive} />
 
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -375,7 +284,6 @@ export default function Collection() {
         </div>
       </div>
 
-      <PageFooter />
 
       <Analytics.CollectionView data={{ collection: { id: collection.id, handle: collection.handle } }} />
     </div>
