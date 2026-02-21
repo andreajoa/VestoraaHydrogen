@@ -63,7 +63,20 @@ async function loadCriticalData({ context, params, request }) {
       variables: { productType: complementQuery },
     })
     .catch(() => null);
-  return { product, recommendedProducts };
+
+  // Similar items: mesmo tipo do produto atual
+  const currentType = product.productType || '';
+  const similarQuery = currentType
+    ? \`product_type:\${currentType} NOT id:\${product.id}\`
+    : 'NOT id:' + product.id;
+
+  const similarProducts = await context.storefront
+    .query(SIMILAR_PRODUCTS_QUERY, {
+      variables: { productType: similarQuery },
+    })
+    .catch(() => null);
+
+  return { product, recommendedProducts, similarProducts };
 }
 
 function loadDeferredData({ context, params }) {
@@ -71,7 +84,7 @@ function loadDeferredData({ context, params }) {
 }
 
 export default function Product() {
-  const { product, recommendedProducts } = useLoaderData();
+  const { product, recommendedProducts, similarProducts } = useLoaderData();
   const [activeImg, setActiveImg] = useState(0);
   const [detailsExpanded, setDetailsExpanded] = useState(false);
 
@@ -96,13 +109,18 @@ export default function Product() {
     : allImages;
 
   const mainImage = displayImages[activeImg] || displayImages[0];
-  // Pegar complementares, filtrar o produto atual, fallback para outros produtos
+  // Wear it with: complementares por tipo
   const currentHandle = product.handle;
   const complementary = (recommendedProducts?.complementary?.nodes || [])
     .filter(p => p.handle !== currentHandle);
   const fallback = (recommendedProducts?.fallback?.nodes || [])
     .filter(p => p.handle !== currentHandle);
   const products = complementary.length > 0 ? complementary : fallback;
+
+  // Similar items: mesmo tipo, excluindo produto atual
+  const similarItems = (similarProducts?.sameType?.nodes || [])
+    .filter(p => p.handle !== currentHandle)
+    .slice(0, 8);
 
   const metafields = product.metafields || [];
   const getMeta = (key) => metafields.find(m => m?.key === key)?.value;
@@ -342,7 +360,7 @@ export default function Product() {
         )}
 
         {/* SIMILAR ITEMS */}
-        <ProductCarousel title="Similar items" products={products.slice(0, 4)} />
+        <ProductCarousel title="Similar items" products={similarItems.length > 0 ? similarItems : fallback.slice(0, 8)} />
 
         {/* YOU MAY ALSO LIKE */}
         <ProductCarousel title="You may also like" products={products.slice(4, 8).length > 0 ? products.slice(4, 8) : products.slice(0, 4)} />
@@ -424,6 +442,25 @@ const PRODUCT_QUERY = `#graphql
   }
   ${PRODUCT_VARIANT_FRAGMENT}
 `;
+
+const SIMILAR_PRODUCTS_QUERY = `#graphql
+  query SimilarProducts(
+    $country: CountryCode
+    $language: LanguageCode
+    $productType: String
+    $excludeId: String
+  ) @inContext(country: $country, language: $language) {
+    sameType: products(first: 8, sortKey: UPDATED_AT, reverse: true, query: $productType) {
+      nodes {
+        id title handle vendor productType
+        priceRange { minVariantPrice { amount currencyCode } }
+        compareAtPriceRange { minVariantPrice { amount currencyCode } }
+        featuredImage { id url altText width height }
+        variants(first: 1) { nodes { id availableForSale } }
+      }
+    }
+  }
+\`;
 
 const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   query ProductPageRecommended(
