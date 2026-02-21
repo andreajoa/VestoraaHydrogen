@@ -15,6 +15,7 @@ import { ProductAccordion } from '~/components/Product/ProductAccordion';
 import { DeliveryEstimator } from '~/components/Product/DeliveryEstimator';
 import { ProductCarousel } from '~/components/Product/ProductCarousel';
 import { ReviewsSection } from '~/components/Product/ReviewsSection';
+import { WearItWithStrip } from '~/components/Product/WearItWithStrip';
 
 export const meta = ({ data }) => {
   return [
@@ -81,7 +82,20 @@ export default function Product() {
   const getMeta = (key) => metafields.find(m => m?.key === key)?.value;
   
   // Buscar material de todos os campos possiveis
-  const materialInfo = getMeta('material') || getMeta('fabric') || getMeta('composition') || getMeta('materials') || (() => { const d = product.description || ''; const m = d.match(/(\d+%\s*[\w\s,]+(?:%[\w\s]+)*)/); return m ? m[0].trim() : null; })();
+  const materialInfo = (() => {
+    // 1. Tentar metafields primeiro
+    const fromMeta = getMeta('material') || getMeta('fabric') || getMeta('composition') || getMeta('materials');
+    if (fromMeta) return fromMeta;
+    // 2. Tentar extrair da descricao - padrao: 95% Polyester, 5% Elastane
+    const desc = product.descriptionHtml || product.description || '';
+    const clean = desc.replace(/<[^>]+>/g, ' ');
+    const pct = clean.match(/(\d+%\s*[A-Za-z][A-Za-z\s]*(?:,\s*\d+%\s*[A-Za-z][A-Za-z\s]*)*)/);
+    if (pct) return pct[0].trim();
+    // 3. Tentar padrao "Material: ..." ou "Fabric: ..."
+    const label = clean.match(/(?:material|fabric|composition|content)[:\s]+([^.\n<]{3,60})/i);
+    if (label) return label[1].trim();
+    return null;
+  })();
   const careInfo = getMeta('care_instructions') || getMeta('care') || null;
 
   const accordionItems = [
@@ -92,7 +106,7 @@ export default function Product() {
     {
       title: 'Size & fit',
       content: 'This style fits true to size. Model wears size AU8/S.',
-      link: { text: 'VIEW SIZE GUIDE', onClick: () => setSizeGuideOpen(true) },
+      link: { text: 'VIEW SIZE GUIDE', onClick: () => {} },
     },
     {
       title: 'Care',
@@ -150,6 +164,7 @@ export default function Product() {
                   }} />
                 </button>
               ))}
+              <WearItWithStrip products={products.slice(0, 6)} />
             </div>
             {/* Main image */}
             <div style={{ flex: 1, position: 'relative', backgroundColor: '#f5f5f5' }}>
