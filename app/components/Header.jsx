@@ -16,14 +16,12 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
   const {shop, menu} = header;
   return (
     <div style={{ position: 'sticky', top: 0, zIndex: 100 }}>
-      {/* Top utility bar */}
       <div style={{ backgroundColor: '#1a1a1a', borderBottom: '1px solid #333', padding: '0 24px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', height: '34px' }}>
         {UTILITY_LINKS.map((item, i) => (
           <UtilityLink key={item.label} href={item.href} label={item.label} external={item.external} last={i === UTILITY_LINKS.length - 1} />
         ))}
       </div>
 
-      {/* Main nav bar */}
       <div style={{ backgroundColor: '#111', padding: '0 24px', display: 'flex', alignItems: 'center', height: '60px', gap: '20px' }}>
         <NavLink to='/' prefetch='intent' style={{ color: '#fff', textDecoration: 'none', fontSize: '20px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'Georgia, serif', whiteSpace: 'nowrap', flexShrink: 0 }}>
           {shop.name}
@@ -38,20 +36,14 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
               <NavLink key={item.id} to={url} prefetch='intent'
                 style={({ isActive }) => ({
                   color: isActive ? '#fff' : '#bbb',
-                  textDecoration: 'none',
-                  fontSize: '12px',
+                  textDecoration: 'none', fontSize: '12px',
                   fontWeight: isActive ? '700' : '400',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  padding: '0 10px',
-                  height: '60px',
-                  display: 'flex',
-                  alignItems: 'center',
+                  letterSpacing: '0.08em', textTransform: 'uppercase',
+                  padding: '0 10px', height: '60px',
+                  display: 'flex', alignItems: 'center',
                   borderBottom: isActive ? '2px solid #fff' : '2px solid transparent',
-                  whiteSpace: 'nowrap',
-                  transition: 'color 0.15s, border-color 0.15s',
-                })}
-              >
+                  whiteSpace: 'nowrap', transition: 'color 0.15s, border-color 0.15s',
+                })}>
                 {item.title}
               </NavLink>
             );
@@ -61,38 +53,26 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
         <SearchBar />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
-          {/* Account - links to Shopify customer account */}
           <Suspense fallback={
-            <NavLink to='/account/login' prefetch='intent' title='Account'
+            <NavLink to='/account/login' prefetch='intent' title='Sign In'
               style={{ color: '#bbb', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '38px', height: '38px', textDecoration: 'none' }}>
-              <AccountIcon />
+              <AccountIcon filled={false} />
             </NavLink>
           }>
-            <Await resolve={isLoggedIn} errorElement={
-              <NavLink to='/account/login' title='Account'
-                style={{ color: '#bbb', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '38px', height: '38px', textDecoration: 'none' }}>
-                <AccountIcon />
-              </NavLink>
-            }>
+            <Await resolve={isLoggedIn}>
               {(loggedIn) => (
-                <NavLink to={loggedIn ? '/account' : '/account/login'} prefetch='intent' title={loggedIn ? 'My Account' : 'Login'}
-                  style={({ isActive }) => ({
-                    color: isActive ? '#fff' : '#bbb',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    width: '38px', height: '38px', textDecoration: 'none', transition: 'color 0.15s',
-                  })}
+                <NavLink to={loggedIn ? '/account' : '/account/login'} prefetch='intent'
+                  title={loggedIn ? 'My Account' : 'Sign In'}
+                  style={{ color: '#bbb', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '38px', height: '38px', textDecoration: 'none', transition: 'color 0.15s' }}
                   onMouseEnter={e => e.currentTarget.style.color='#fff'}
-                  onMouseLeave={e => e.currentTarget.style.color='#bbb'}
-                >
-                  <AccountIcon filled={loggedIn} />
+                  onMouseLeave={e => e.currentTarget.style.color='#bbb'}>
+                  <AccountIcon filled={!!loggedIn} />
                 </NavLink>
               )}
             </Await>
           </Suspense>
 
-          {/* Wishlist - links to wishlist page */}
           <WishlistButton />
-
           <CartToggle cart={cart} />
         </div>
       </div>
@@ -105,7 +85,7 @@ function UtilityLink({ href, label, last, external }) {
   return (
     
       href={href}
-      target={external ? '_blank' : undefined}
+      target={external ? '_blank' : '_self'}
       rel={external ? 'noopener noreferrer' : undefined}
       style={{ color: hovered ? '#fff' : '#aaa', fontSize: '11px', textDecoration: 'none', padding: '0 10px', borderRight: last ? 'none' : '1px solid #444', whiteSpace: 'nowrap', lineHeight: 1, transition: 'color 0.15s' }}
       onMouseEnter={() => setHovered(true)}
@@ -123,8 +103,7 @@ function SearchBar() {
     <button onClick={() => open('search')}
       style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: hovered ? '#2a2a2a' : '#1e1e1e', border: '1px solid ' + (hovered ? '#666' : '#444'), borderRadius: '3px', padding: '0 12px', height: '34px', width: '200px', cursor: 'pointer', transition: 'all 0.15s', flexShrink: 0 }}
       onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+      onMouseLeave={() => setHovered(false)}>
       <svg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='#777' strokeWidth='2'>
         <circle cx='11' cy='11' r='8'/><path d='m21 21-4.35-4.35'/>
       </svg>
@@ -146,29 +125,22 @@ function WishlistButton() {
   const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
-    // Ler wishlist do sessionStorage
-    try {
-      const w = JSON.parse(sessionStorage.getItem('vestoraa_wishlist') || '[]');
-      setCount(w.length);
-    } catch {}
-
-    // Escutar eventos de update da wishlist
-    const handler = () => {
+    const update = () => {
       try {
         const w = JSON.parse(sessionStorage.getItem('vestoraa_wishlist') || '[]');
         setCount(w.length);
       } catch {}
     };
-    window.addEventListener('wishlist_updated', handler);
-    return () => window.removeEventListener('wishlist_updated', handler);
+    update();
+    window.addEventListener('wishlist_updated', update);
+    return () => window.removeEventListener('wishlist_updated', update);
   }, []);
 
   return (
     <NavLink to='/wishlist' prefetch='intent' title='Wishlist'
-      style={{ color: count > 0 ? '#ff6b6b' : (hovered ? '#fff' : '#bbb'), background: 'none', border: 'none', width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'color 0.15s', textDecoration: 'none', position: 'relative' }}
+      style={{ color: count > 0 ? '#ff6b6b' : (hovered ? '#fff' : '#bbb'), textDecoration: 'none', width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', transition: 'color 0.15s' }}
       onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+      onMouseLeave={() => setHovered(false)}>
       <svg width='20' height='20' viewBox='0 0 24 24' fill={count > 0 ? 'currentColor' : 'none'} stroke='currentColor' strokeWidth='1.5'>
         <path d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'/>
       </svg>
@@ -191,8 +163,7 @@ function CartBadge({count}) {
       title='Cart'
       style={{ color: hovered ? '#fff' : '#bbb', background: 'none', border: 'none', width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', transition: 'color 0.15s' }}
       onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+      onMouseLeave={() => setHovered(false)}>
       <svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.5'>
         <path d='M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z'/><line x1='3' y1='6' x2='21' y2='6'/><path d='M16 10a4 4 0 0 1-8 0'/>
       </svg>
@@ -230,8 +201,7 @@ export function HeaderMenu({ menu, primaryDomainUrl, viewport, publicStoreDomain
           ? new URL(item.url).pathname : item.url;
         return (
           <NavLink key={item.id} to={url} onClick={close} prefetch='intent'
-            style={{ padding: '12px 0', borderBottom: '1px solid #eee', color: '#111', textDecoration: 'none', fontSize: '14px' }}
-          >
+            style={{ padding: '12px 0', borderBottom: '1px solid #eee', color: '#111', textDecoration: 'none', fontSize: '14px' }}>
             {item.title}
           </NavLink>
         );
