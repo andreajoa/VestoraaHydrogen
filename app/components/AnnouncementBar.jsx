@@ -25,16 +25,16 @@ export function AnnouncementBar() {
     <div style={{
       backgroundColor: '#f0f0f0',
       borderBottom: '1px solid #e0e0e0',
-      padding: '10px 24px',
+      padding: '14px 24px',
       textAlign: 'center',
-      minHeight: '38px',
+      minHeight: '46px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
     }}>
       <p style={{
         margin: 0,
-        fontSize: '11px',
+        fontSize: '12px',
         fontWeight: '600',
         letterSpacing: '0.08em',
         color: '#222',

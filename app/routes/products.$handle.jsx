@@ -199,8 +199,22 @@ export default function Product() {
             </div>
 
             {/* Price */}
-            <div style={{ marginBottom: '16px' }}>
+            <div style={{ marginBottom: '8px' }}>
               <ProductPrice price={selectedVariant?.price} compareAtPrice={selectedVariant?.compareAtPrice} />
+            </div>
+
+            {/* ShopPay + Free Shipping */}
+            <div style={{ marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '11px', color: '#555' }}>Pay over time for orders over</span>
+                <span style={{ fontSize: '11px', fontWeight: '700', color: '#333' }}>$35.00 with</span>
+                <span style={{ fontSize: '11px', fontWeight: '800', color: '#5A31F4', letterSpacing: '-0.02em', background: '#F3EFFF', padding: '1px 6px', borderRadius: '4px' }}>shop<span style={{ fontWeight: '900' }}>Pay</span></span>
+                <a href='/policies/shipping-policy' style={{ fontSize: '11px', color: '#C9A84C', textDecoration: 'underline' }}>Learn more</a>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '13px' }}>🚚</span>
+                <span style={{ fontSize: '11px', fontWeight: '700', color: '#333', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Qualifies for Free Shipping</span>
+              </div>
             </div>
 
             {/* Product Form (Color + Size + Buttons) */}
