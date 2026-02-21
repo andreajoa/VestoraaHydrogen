@@ -53,10 +53,10 @@ function HeroBanner() {
         </div>
         <div style={{ textAlign: 'right' }}>
           <p style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 4px', textShadow: '0 1px 4px rgba(0,0,0,0.3)', lineHeight: 1.2 }}>
-            SPEND $80, <span style={{ fontStyle: 'italic' }}>SAVE 20%</span>
+            SPEND $80, <span style={{ fontStyle: 'italic' }}>SAVE 14%</span>
           </p>
           <p style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 8px', textShadow: '0 1px 4px rgba(0,0,0,0.3)', lineHeight: 1.2 }}>
-            SPEND $100, <span style={{ fontStyle: 'italic' }}>SAVE 30%</span><sup style={{ fontSize: '14px' }}>*</sup>
+            SPEND $100, <span style={{ fontStyle: 'italic' }}>SAVE 18%</span><sup style={{ fontSize: '14px' }}>*</sup>
           </p>
           <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.85)', margin: 0, textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
             *Ends midnight. Discount applied at checkout. Selected styles listed. T&Cs apply.
