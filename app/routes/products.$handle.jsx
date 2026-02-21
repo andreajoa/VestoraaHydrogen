@@ -104,7 +104,23 @@ export default function Product() {
   const accordionItems = [
     {
       title: 'Material',
-      content: (materialInfo && !materialInfo.includes('gid://') && !materialInfo.startsWith('[')) ? materialInfo : (() => { const d = product.descriptionHtml || ''; const c = d.replace(/<[^>]+>/g, ' '); const m = c.match(/(\d+%\s*[A-Za-z][A-Za-z\s]*(?:,\s*\d+%\s*[A-Za-z][A-Za-z\s]*)*)/); return m ? m[0].trim() : 'Please refer to the product label for material information.'; })(),
+      content: (() => {
+        // Se metafield tem valor real (nao gid reference)
+        if (materialInfo && !materialInfo.includes('gid://') && !materialInfo.startsWith('[')) return materialInfo;
+        // Tentar extrair da descricao HTML
+        const d = product.descriptionHtml || product.description || '';
+        const c = d.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+        // Padrao: 95% Polyester, 5% Elastane
+        const pct = c.match(/(\d+%\s*[A-Za-z][A-Za-z\s]*(?:,\s*\d+%\s*[A-Za-z][A-Za-z\s]*)*)/);
+        if (pct) return pct[0].trim();
+        // Padrao: Material: Cotton ou Fabric: Silk
+        const lbl = c.match(/(?:material|fabric|composition|content|made of|made from)[:\s]+([^.\n]{3,80})/i);
+        if (lbl) return lbl[1].trim();
+        // Padrao: mencao direta de tecido
+        const fab = c.match(/\b(cotton|polyester|silk|linen|wool|nylon|spandex|elastane|rayon|viscose|satin|chiffon|denim|jersey|crepe|velvet|suede|leather)[\w\s,]*\b/i);
+        if (fab) return fab[0].trim();
+        return 'Please refer to the product label for material information.';
+      })(),
     },
     {
       title: 'Size & fit',
@@ -260,6 +276,9 @@ export default function Product() {
           </div>
         </div>
 
+
+        {/* WEAR IT WITH */}
+        <WearItWithStrip products={products.slice(0, 6)} />
 
         {/* PRODUCT DETAILS - expandable */}
         {descriptionHtml && (

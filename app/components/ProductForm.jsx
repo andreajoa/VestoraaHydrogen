@@ -47,14 +47,8 @@ export function ProductForm({ productOptions, selectedVariant }) {
   const otherOptions = productOptions.filter(o => !['Color','Colour','color','colour','Size','size'].includes(o.name));
   const selectedColorValue = colorOption?.optionValues?.find(v => v.selected);
   const selectedSizeValue = sizeOption?.optionValues?.find(v => v.selected);
-  const [userSelectedSize, setUserSelectedSize] = useState(false);
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('Size') || params.get('size')) setUserSelectedSize(true);
-    }
-  }, []);
-  const displaySize = userSelectedSize ? selectedSizeValue : null;
+  const [userPickedSize, setUserPickedSize] = useState(false);
+  const displaySize = userPickedSize ? selectedSizeValue : null;
 
   return (
     <div>
