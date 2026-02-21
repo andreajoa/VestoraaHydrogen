@@ -4,12 +4,12 @@ import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
 import {useAside} from '~/components/Aside';
 
 const UTILITY_LINKS = [
-  { label: 'Contact & FAQs', href: '/pages/contact' },
-  { label: 'Delivery', href: '/policies/shipping-policy' },
+  { label: 'Contact', href: '/pages/contact-us' },
+  { label: 'FAQs', href: '/pages/faq' },
+  { label: 'Delivery', href: '/pages/delivery' },
   { label: 'Returns', href: '/policies/refund-policy' },
-  { label: 'Track Orders', href: '/pages/track-order' },
-  { label: 'Share Your Ideas', href: '/pages/share-your-ideas' },
-  { label: 'Gift Cards', href: '/pages/gift-cards' },
+  { label: 'Track Orders', href: 'https://www.vestoraa.com/apps/track123' },
+  { label: 'Gift Cards', href: '/collections/new-arrival' },
 ];
 
 export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
