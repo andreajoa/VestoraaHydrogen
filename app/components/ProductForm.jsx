@@ -46,7 +46,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
   const sizeOption = productOptions.find(o => ['Size','size'].includes(o.name));
   const otherOptions = productOptions.filter(o => !['Color','Colour','color','colour','Size','size'].includes(o.name));
   const selectedColorValue = colorOption?.optionValues?.find(v => v.selected);
-  const [userSelectedSize, setUserSelectedSize] = React.useState(false);
+  const [userSelectedSize, setUserSelectedSize] = useState(false);
   const selectedSizeValue = sizeOption?.optionValues?.find(v => v.selected);
   const displaySize = userSelectedSize ? selectedSizeValue : null;
 
