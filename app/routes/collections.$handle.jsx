@@ -244,7 +244,7 @@ export default function Collection() {
         </div>
       </div>
 
-      <div style={{ maxWidth: '1340px', margin: '0 auto', padding: '28px 40px', display: 'flex', flexDirection: 'row', gap: '40px', alignItems: 'flex-start', boxSizing: 'border-box' }}>
+      <div style={{ maxWidth: '1340px', margin: '0 auto', padding: '28px 40px', display: 'flex', flexDirection: 'row', gap: '40px', alignItems: 'flex-start', boxSizing: 'border-box', width: '100%' }}>
         <Sidebar activeFilters={activeFilters} onToggle={toggleFilter} onClearAll={clearAll} totalActive={totalActive} />
 
         <div style={{ flex: 1, minWidth: 0 }}>
