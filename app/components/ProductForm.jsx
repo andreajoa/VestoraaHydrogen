@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { AddToCartButton } from '~/components/AddToCartButton';
 import { useState, useEffect } from 'react';
 
@@ -7,11 +7,12 @@ const GOLD = '#C9A84C';
 function useIsDarkMode() {
   const [dark, setDark] = useState(false);
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     setDark(mq.matches);
-    const handler = (e) => setDark(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
+    const h = (e) => setDark(e.matches);
+    mq.addEventListener('change', h);
+    return () => mq.removeEventListener('change', h);
   }, []);
   return dark;
 }
@@ -19,7 +20,6 @@ function useIsDarkMode() {
 export function ProductForm({ productOptions, selectedVariant, onSizeGuideClick }) {
   const [wished, setWished] = useState(false);
   const isDark = useIsDarkMode();
-
   const btnBg = isDark ? '#ffffff' : '#111111';
   const btnText = isDark ? '#111111' : '#ffffff';
 
@@ -28,13 +28,14 @@ export function ProductForm({ productOptions, selectedVariant, onSizeGuideClick 
   return (
     <div>
       {productOptions.map((option) => {
+        const isColor = ['Color','Colour','color','colour'].includes(option.name);
+        const isSize = ['Size','size'].includes(option.name);
 
-        // ---- COLOUR OPTION ----
-        if (['Color','Colour','color','colour'].includes(option.name)) {
+        if (isColor) {
           const selectedValue = option.optionValues.find(v => v.selected);
           return (
             <div key={option.name} style={{ marginBottom: '18px' }}>
-              <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px', margin: '0 0 10px' }}>
+              <p style={{ fontSize: '12px', color: '#666', margin: '0 0 10px' }}>
                 Colour: <strong style={{ color: '#111', fontWeight: '600' }}>{selectedValue?.name || ''}</strong>
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
@@ -46,26 +47,22 @@ export function ProductForm({ productOptions, selectedVariant, onSizeGuideClick 
                   return (
                     <Link
                       key={value.name}
-                      to={value.to}
+                      to={value.to || '#'}
                       preventScrollReset
                       replace
                       prefetch='intent'
                       title={value.name}
                       style={{
-                        display: 'block',
-                        width: '62px',
-                        height: '80px',
-                        borderRadius: '12px',
-                        overflow: 'hidden',
-                        position: 'relative',
-                        flexShrink: 0,
+                        display: 'block', width: '62px', height: '80px',
+                        borderRadius: '12px', overflow: 'hidden',
+                        position: 'relative', flexShrink: 0,
                         textDecoration: 'none',
                         opacity: unavail ? 0.35 : 1,
-                        outline: sel ? ('3px solid ' + GOLD) : '2px solid transparent',
+                        outline: sel ? ('3px solid ' + GOLD) : '2px solid #e0e0e0',
                         outlineOffset: sel ? '3px' : '0',
-                        boxShadow: sel ? ('0 0 0 1px ' + GOLD) : '0 0 0 1px #ddd',
                         transform: sel ? 'scale(1.06)' : 'scale(1)',
                         transition: 'all 0.2s ease',
+                        cursor: 'pointer',
                       }}
                     >
                       {img
@@ -77,9 +74,7 @@ export function ProductForm({ productOptions, selectedVariant, onSizeGuideClick 
                           <div style={{ position: 'absolute', top: '50%', left: '10%', right: '10%', height: '1px', background: '#999', transform: 'rotate(45deg)' }} />
                         </div>
                       )}
-                      {sel && (
-                        <div style={{ position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)', width: '5px', height: '5px', borderRadius: '50%', backgroundColor: GOLD, boxShadow: '0 0 3px rgba(0,0,0,0.3)' }} />
-                      )}
+                      {sel && <div style={{ position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)', width: '5px', height: '5px', borderRadius: '50%', backgroundColor: GOLD }} />}
                     </Link>
                   );
                 })}
@@ -88,11 +83,10 @@ export function ProductForm({ productOptions, selectedVariant, onSizeGuideClick 
           );
         }
 
-        // ---- SIZE OPTION ----
-        if (['Size','size'].includes(option.name)) {
+        if (isSize) {
           return (
             <div key={option.name} style={{ marginBottom: '16px' }}>
-              <p style={{ fontSize: '12px', color: '#666', marginBottom: '8px', margin: '0 0 8px' }}>Size</p>
+              <p style={{ fontSize: '12px', color: '#666', margin: '0 0 8px' }}>Size</p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {option.optionValues.map((value) => {
                   const sel = value.selected;
@@ -100,31 +94,24 @@ export function ProductForm({ productOptions, selectedVariant, onSizeGuideClick 
                   return (
                     <Link
                       key={value.name}
-                      to={value.to}
+                      to={value.to || '#'}
                       preventScrollReset
                       replace
                       prefetch='intent'
                       title={value.name}
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        minWidth: '52px',
-                        height: '46px',
-                        padding: '0 14px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        minWidth: '52px', height: '46px', padding: '0 14px',
                         borderRadius: '12px',
                         border: sel ? ('3px solid ' + GOLD) : '1px solid #ddd',
                         backgroundColor: sel ? '#fffcf0' : '#fff',
                         color: unavail ? '#ccc' : sel ? '#111' : '#555',
-                        fontSize: '13px',
-                        fontWeight: sel ? '800' : '400',
-                        letterSpacing: sel ? '0.05em' : '0',
+                        fontSize: '13px', fontWeight: sel ? '800' : '400',
                         textDecoration: unavail ? 'line-through' : 'none',
                         cursor: unavail ? 'not-allowed' : 'pointer',
-                        boxShadow: sel ? ('0 2px 8px rgba(201,168,76,0.35)') : 'none',
+                        boxShadow: sel ? ('0 2px 8px rgba(201,168,76,0.4)') : 'none',
                         transform: sel ? 'scale(1.08)' : 'scale(1)',
                         transition: 'all 0.18s ease',
-                        textDecoration: 'none',
                       }}
                     >
                       {value.name}
@@ -136,15 +123,14 @@ export function ProductForm({ productOptions, selectedVariant, onSizeGuideClick 
           );
         }
 
-        // ---- OTHER OPTIONS ----
         return (
           <div key={option.name} style={{ marginBottom: '14px' }}>
-            <p style={{ fontSize: '12px', color: '#666', marginBottom: '8px', margin: '0 0 8px' }}>{option.name}</p>
+            <p style={{ fontSize: '12px', color: '#666', margin: '0 0 8px' }}>{option.name}</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               {option.optionValues.map((value) => {
                 const sel = value.selected;
                 return (
-                  <Link key={value.name} to={value.to} preventScrollReset replace prefetch='intent'
+                  <Link key={value.name} to={value.to || '#'} preventScrollReset replace prefetch='intent'
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 16px', fontSize: '12px', borderRadius: '12px', border: sel ? ('3px solid ' + GOLD) : '1px solid #ddd', backgroundColor: sel ? '#fffcf0' : '#fff', color: '#333', textDecoration: 'none', fontWeight: sel ? '700' : '400', transition: 'all 0.15s' }}
                   >
                     {value.name}
@@ -156,56 +142,33 @@ export function ProductForm({ productOptions, selectedVariant, onSizeGuideClick 
         );
       })}
 
-      {/* ADD TO BAG ROW */}
-      <div style={{ display: 'flex', gap: '8px', marginTop: '20px', alignItems: 'stretch' }}>
+      {/* ADD TO BAG + WISHLIST */}
+      <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
         <AddToCartButton
           disabled={!selectedVariant?.availableForSale}
           lines={selectedVariant ? [{ merchandiseId: selectedVariant.id, quantity: 1 }] : []}
+          openCart
           style={{
-            flex: 1,
-            height: '50px',
+            flex: 1, height: '50px',
             backgroundColor: selectedVariant?.availableForSale ? btnBg : '#ccc',
             color: selectedVariant?.availableForSale ? btnText : '#fff',
-            border: 'none',
-            borderRadius: '12px',
-            fontSize: '13px',
-            fontWeight: '700',
-            letterSpacing: '0.1em',
+            border: 'none', borderRadius: '12px',
+            fontSize: '13px', fontWeight: '700', letterSpacing: '0.1em',
             cursor: selectedVariant?.availableForSale ? 'pointer' : 'not-allowed',
-            transition: 'background-color 0.25s, color 0.25s',
+            transition: 'all 0.25s',
           }}
         >
           {selectedVariant?.availableForSale ? 'ADD TO BAG' : 'SOLD OUT'}
         </AddToCartButton>
-        <button
-          onClick={() => setWished(w => !w)}
-          aria-label='Save to wishlist'
-          style={{
-            width: '50px', height: '50px', flexShrink: 0,
-            border: wished ? ('1px solid ' + GOLD) : '1px solid #ddd',
-            borderRadius: '12px',
-            backgroundColor: wished ? '#fffcf0' : '#fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', fontSize: '20px',
-            color: wished ? '#e33' : '#bbb',
-            transition: 'all 0.2s',
-          }}
+        <button onClick={() => setWished(w => !w)}
+          style={{ width: '50px', height: '50px', flexShrink: 0, border: wished ? ('2px solid ' + GOLD) : '1px solid #ddd', borderRadius: '12px', backgroundColor: wished ? '#fffcf0' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '20px', color: wished ? '#e33' : '#bbb', transition: 'all 0.2s' }}
         >
           {wished ? '♥' : '♡'}
         </button>
       </div>
 
-      {/* APPLE PAY */}
       {selectedVariant?.availableForSale && (
-        <button style={{
-          width: '100%', height: '46px', marginTop: '8px',
-          backgroundColor: '#000', color: '#fff',
-          border: 'none', borderRadius: '12px',
-          fontSize: '15px', fontWeight: '500',
-          cursor: 'pointer',
-          fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-          letterSpacing: '0.02em',
-        }}>
+        <button style={{ width: '100%', height: '46px', marginTop: '8px', backgroundColor: '#000', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: '500', cursor: 'pointer', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>
            Pay
         </button>
       )}
