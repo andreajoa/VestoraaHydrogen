@@ -742,3 +742,23 @@ button.reset:hover:not(:has(> *)) {
   letter-spacing: 0.12em !important;
   cursor: pointer !important;
 }
+
+/* Force add to bag button full width */
+.add-to-bag-wrapper,
+.add-to-bag-wrapper form,
+.add-to-bag-wrapper button {
+  display: block !important;
+  width: 100% !important;
+  flex: 1 !important;
+}
+.add-to-bag-wrapper button {
+  height: 54px !important;
+  background-color: #111 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  cursor: pointer !important;
+}

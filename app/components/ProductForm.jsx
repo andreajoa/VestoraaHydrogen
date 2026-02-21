@@ -171,7 +171,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
       ))}
 
       <div style={{ display: 'flex', gap: '10px', marginTop: '24px', alignItems: 'stretch', width: '100%' }}>
-        <div style={{ flex: 1, minWidth: 0 }}><AddToCartButton
+        <div className="add-to-bag-wrapper" style={{ flex: 1, minWidth: 0 }}><AddToCartButton
           disabled={!selectedVariant?.availableForSale}
           lines={selectedVariant ? [{ merchandiseId: selectedVariant.id, quantity: 1 }] : []}
           style={{
