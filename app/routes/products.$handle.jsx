@@ -167,8 +167,6 @@ export default function Product() {
                   }} />
                 </button>
               ))}
-              {/* WEAR IT WITH strip */}
-              <WearItWithStrip products={products.slice(0, 6)} />
             </div>
             {/* Main image */}
             <div style={{ flex: 1, position: 'relative', backgroundColor: '#f5f5f5' }}>
@@ -262,8 +260,11 @@ export default function Product() {
           </div>
         </div>
 
-        {/* WEAR IT WITH - appears right after the 2-col section */}
-        <ProductCarousel title="Wear it with" products={products.slice(0, 4)} showMarketplaceNotice={true} />
+        {/* WEAR IT WITH - strip below gallery */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '40px' }}>
+          <WearItWithStrip products={products.slice(0, 6)} />
+          <div />
+        </div>
 
         {/* PRODUCT DETAILS - expandable */}
         {descriptionHtml && (
