@@ -43,7 +43,7 @@ async function loadCriticalData({ context, params, request }) {
   return { product };
 }
 
-function loadDeferredData({ context }) {
+function loadDeferredData({ context, params }) {
   const recommendedProducts = context.storefront
     .query(RECOMMENDED_PRODUCTS_QUERY)
     .catch((error) => { console.error(error); return null; });
@@ -79,10 +79,15 @@ export default function Product() {
   const mainImage = displayImages[activeImg] || displayImages[0];
   const products = recommendedProducts?.products?.nodes || [];
 
+  const metafields = product.metafields || [];
+  const getMeta = (key) => metafields.find(m => m?.key === key)?.value;
+  const materialInfo = getMeta('material') || null;
+  const careInfo = getMeta('care_instructions') || getMeta('care') || null;
+
   const accordionItems = [
     {
       title: 'Material',
-      content: 'Please refer to the product label for material information.',
+      content: materialInfo || 'Please refer to the product label for material information.',
     },
     {
       title: 'Size & fit',
@@ -91,7 +96,7 @@ export default function Product() {
     },
     {
       title: 'Care',
-      content: 'Cold Hand Wash, Warm Inside Out, Do Not Bleach or Soak, Do Not Tumble Dry, Warm Iron.',
+      content: careInfo || 'Cold Hand Wash, Warm Inside Out, Do Not Bleach or Soak. Do Not Tumble Dry. Warm Iron only.',
     },
   ];
 
@@ -352,6 +357,12 @@ const PRODUCT_QUERY = `#graphql
       adjacentVariants(selectedOptions: $selectedOptions) { ...ProductVariant }
       images(first: 10) { nodes { id url altText width height } }
       seo { description title }
+      metafields(identifiers: [
+        {namespace: "shopify", key: "material"}
+        {namespace: "custom", key: "material"}
+        {namespace: "shopify", key: "care_instructions"}
+        {namespace: "custom", key: "care"}
+      ]) { key namespace value }
     }
   }
   ${PRODUCT_VARIANT_FRAGMENT}

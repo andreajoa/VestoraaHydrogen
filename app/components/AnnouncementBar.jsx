@@ -27,7 +27,7 @@ export function AnnouncementBar() {
       borderBottom: '1px solid #e0e0e0',
       padding: '14px 24px',
       textAlign: 'center',
-      minHeight: '46px',
+      minHeight: '50px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -35,7 +35,7 @@ export function AnnouncementBar() {
       <p style={{
         margin: 0,
         fontSize: '12px',
-        fontWeight: '600',
+        fontWeight: '700',
         letterSpacing: '0.08em',
         color: '#222',
         opacity: visible ? 1 : 0,
