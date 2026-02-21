@@ -1,32 +1,30 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 import { AddToCartButton } from '~/components/AddToCartButton';
+import { useState } from 'react';
 
-export function ProductForm({ productOptions, selectedVariant }) {
-  const navigate = useNavigate();
+export function ProductForm({ productOptions, selectedVariant, onSizeGuideClick }) {
+  const [wished, setWished] = useState(false);
 
   return (
-    <div className="product-form">
+    <div>
       {productOptions.map((option) => {
-        if (option.name === 'Color' || option.name === 'Colour') {
+
+        // COLOR / COLOUR option — show as image thumbnails
+        if (option.name === 'Color' || option.name === 'Colour' || option.name === 'color' || option.name === 'colour') {
+          const selectedValue = option.optionValues.find(v => v.selected);
           return (
-            <div key={option.name} className="mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Colour</span>
-                {option.optionValues.find(v => v.selected) && (
-                  <span className="text-xs text-gray-500">
-                    {option.optionValues.find(v => v.selected)?.name}
-                  </span>
-                )}
+            <div key={option.name} style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '12px', color: '#333', marginBottom: '8px' }}>
+                <span style={{ fontWeight: '400' }}>Colour: </span>
+                <span style={{ color: '#666' }}>{selectedValue?.name || ''}</span>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {option.optionValues.map((value) => {
-                  const variant = value.firstSelectableVariant;
                   const isSelected = value.selected;
                   const isUnavailable = !value.available;
-                  const swatchImage = value.swatch?.image?.previewImage?.url || variant?.image?.url;
+                  const swatchImg = value.swatch?.image?.previewImage?.url
+                    || value.firstSelectableVariant?.image?.url;
                   const swatchColor = value.swatch?.color;
-                  
                   return (
                     <Link
                       key={value.name}
@@ -35,28 +33,34 @@ export function ProductForm({ productOptions, selectedVariant }) {
                       replace
                       title={value.name}
                       style={{
-                        outline: isSelected ? '2px solid #111' : '1px solid #ddd',
+                        display: 'block',
+                        width: '44px',
+                        height: '58px',
+                        flexShrink: 0,
+                        outline: isSelected ? '2px solid #333' : '1px solid #ddd',
                         outlineOffset: isSelected ? '2px' : '0',
                         opacity: isUnavailable ? 0.4 : 1,
+                        overflow: 'hidden',
+                        position: 'relative',
+                        textDecoration: 'none',
                       }}
-                      className="relative w-12 h-16 overflow-hidden flex-shrink-0 hover:opacity-80 transition-opacity"
                     >
-                      {swatchImage ? (
+                      {swatchImg ? (
                         <img
-                          src={swatchImage}
+                          src={swatchImg}
                           alt={value.name}
-                          className="w-full h-full object-cover object-top"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
                         />
                       ) : (
-                        <div
-                          className="w-full h-full"
-                          style={{ backgroundColor: swatchColor || '#ccc' }}
-                        />
+                        <div style={{ width: '100%', height: '100%', backgroundColor: swatchColor || '#ccc' }} />
                       )}
                       {isUnavailable && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="absolute inset-0 bg-white opacity-50" />
-                          <div className="absolute w-full h-px bg-gray-400 rotate-45" />
+                        <div style={{
+                          position: 'absolute', inset: 0,
+                          background: 'rgba(255,255,255,0.5)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}>
+                          <div style={{ width: '100%', height: '1px', backgroundColor: '#aaa', transform: 'rotate(45deg)' }} />
                         </div>
                       )}
                     </Link>
@@ -67,13 +71,12 @@ export function ProductForm({ productOptions, selectedVariant }) {
           );
         }
 
-        if (option.name === 'Size') {
+        // SIZE option — show as letter boxes
+        if (option.name === 'Size' || option.name === 'size') {
           return (
-            <div key={option.name} className="mb-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Size</span>
-              </div>
-              <div className="flex flex-wrap gap-1 mb-2">
+            <div key={option.name} style={{ marginBottom: '12px' }}>
+              <div style={{ fontSize: '12px', color: '#333', marginBottom: '8px', fontWeight: '400' }}>Size</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                 {option.optionValues.map((value) => {
                   const isSelected = value.selected;
                   const isUnavailable = !value.available;
@@ -83,18 +86,22 @@ export function ProductForm({ productOptions, selectedVariant }) {
                       to={value.to}
                       preventScrollReset
                       replace
+                      title={value.name}
                       style={{
-                        border: isSelected ? '2px solid #111' : '1px solid #ddd',
-                        color: isUnavailable ? '#bbb' : isSelected ? '#111' : '#444',
-                        textDecoration: isUnavailable ? 'line-through' : 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minWidth: '40px',
+                        height: '36px',
+                        padding: '0 8px',
+                        fontSize: '12px',
+                        fontWeight: isSelected ? '700' : '400',
+                        border: isSelected ? '2px solid #111' : '1px solid #ccc',
                         backgroundColor: isSelected ? '#111' : '#fff',
-                      }}
-                      className="min-w-[42px] h-9 flex items-center justify-center text-xs font-medium px-2 transition-all hover:border-gray-600"
-                      style={{
-                        border: isSelected ? '2px solid #111' : '1px solid #ddd',
-                        color: isUnavailable ? '#bbb' : isSelected ? '#fff' : '#444',
+                        color: isUnavailable ? '#bbb' : isSelected ? '#fff' : '#333',
                         textDecoration: isUnavailable ? 'line-through' : 'none',
-                        backgroundColor: isSelected ? '#111' : '#fff',
+                        cursor: isUnavailable ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.15s',
                       }}
                     >
                       {value.name}
@@ -106,10 +113,11 @@ export function ProductForm({ productOptions, selectedVariant }) {
           );
         }
 
+        // Other options
         return (
-          <div key={option.name} className="mb-4">
-            <div className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">{option.name}</div>
-            <div className="flex flex-wrap gap-1">
+          <div key={option.name} style={{ marginBottom: '14px' }}>
+            <div style={{ fontSize: '12px', color: '#333', marginBottom: '8px' }}>{option.name}</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
               {option.optionValues.map((value) => {
                 const isSelected = value.selected;
                 return (
@@ -119,11 +127,14 @@ export function ProductForm({ productOptions, selectedVariant }) {
                     preventScrollReset
                     replace
                     style={{
-                      border: isSelected ? '2px solid #111' : '1px solid #ddd',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      padding: '6px 12px', fontSize: '12px',
+                      border: isSelected ? '2px solid #111' : '1px solid #ccc',
                       backgroundColor: isSelected ? '#111' : '#fff',
-                      color: isSelected ? '#fff' : '#444',
+                      color: isSelected ? '#fff' : '#333',
+                      textDecoration: 'none',
+                      transition: 'all 0.15s',
                     }}
-                    className="px-3 h-9 flex items-center text-xs font-medium transition-all"
                   >
                     {value.name}
                   </Link>
@@ -134,53 +145,62 @@ export function ProductForm({ productOptions, selectedVariant }) {
         );
       })}
 
-      <div className="mt-4 space-y-2">
+      {/* ADD TO BAG + wishlist row */}
+      <div style={{ display: 'flex', gap: '8px', marginTop: '14px', alignItems: 'stretch' }}>
         <AddToCartButton
           disabled={!selectedVariant?.availableForSale}
           lines={selectedVariant ? [{ merchandiseId: selectedVariant.id, quantity: 1 }] : []}
           style={{
-            backgroundColor: selectedVariant?.availableForSale ? '#00a898' : '#ccc',
+            flex: 1,
+            backgroundColor: selectedVariant?.availableForSale ? '#00b5ad' : '#ccc',
             color: '#fff',
-            width: '100%',
-            padding: '14px',
+            border: 'none',
+            padding: '0 16px',
+            height: '46px',
             fontSize: '13px',
             fontWeight: '700',
-            letterSpacing: '0.08em',
-            border: 'none',
+            letterSpacing: '0.06em',
             cursor: selectedVariant?.availableForSale ? 'pointer' : 'not-allowed',
+            transition: 'background-color 0.2s',
           }}
         >
           {selectedVariant?.availableForSale ? 'ADD TO BAG' : 'SOLD OUT'}
         </AddToCartButton>
-
-        {selectedVariant?.availableForSale && (
-          <button
-            style={{
-              width: '100%',
-              padding: '12px',
-              backgroundColor: '#000',
-              color: '#fff',
-              fontSize: '13px',
-              fontWeight: '600',
-              letterSpacing: '0.05em',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-            }}
-          >
-            <svg viewBox="0 0 16 20" fill="currentColor" style={{ height: '16px' }}>
-              <path d="M13.18 10.36c-.02-2.06 1.69-3.06 1.77-3.11-1.95-2.85-4.97-3.24-6.03-3.28-2.56-.26-5.01 1.5-6.31 1.5-1.3 0-3.29-1.47-5.42-1.43C-4.93 4.11-7.26 5.54-8.5 7.75c-2.54 4.4-.65 10.89 1.8 14.46 1.2 1.75 2.63 3.71 4.5 3.64 1.82-.07 2.5-1.17 4.7-1.17 2.19 0 2.81 1.17 4.72 1.13 1.95-.03 3.18-1.76 4.37-3.52 1.38-2.01 1.95-3.96 1.98-4.06-.04-.02-3.8-1.46-3.84-5.81l.45-.06z"/>
-            </svg>
-            Pay
-          </button>
-        )}
+        <button
+          onClick={() => setWished(!wished)}
+          style={{
+            width: '46px', height: '46px', flexShrink: 0,
+            border: '1px solid #ccc', backgroundColor: '#fff',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', fontSize: '18px',
+            color: wished ? '#e00' : '#999',
+            transition: 'color 0.2s',
+          }}
+          title="Save to wishlist"
+        >
+          {wished ? '♥' : '♡'}
+        </button>
       </div>
 
+      {/* Apple Pay */}
+      {selectedVariant?.availableForSale && (
+        <button
+          style={{
+            width: '100%', height: '42px', marginTop: '8px',
+            backgroundColor: '#000', color: '#fff', border: 'none',
+            fontSize: '13px', fontWeight: '600', letterSpacing: '0.04em',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+          }}
+        >
+          <svg viewBox="0 0 24 10" fill="white" style={{ height: '14px' }}>
+            <text x="0" y="10" fontSize="10" fontFamily="-apple-system,BlinkMacSystemFont,sans-serif" fontWeight="500"> Pay</text>
+          </svg>
+          ⌘ Pay
+        </button>
+      )}
+
       {!selectedVariant?.availableForSale && (
-        <p style={{ color: '#999', fontSize: '12px', marginTop: '8px', textAlign: 'center' }}>
+        <p style={{ fontSize: '11px', color: '#999', textAlign: 'center', marginTop: '8px' }}>
           This item is currently sold out
         </p>
       )}
