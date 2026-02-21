@@ -83,7 +83,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
 function UtilityLink({ href, label, last, external }) {
   const [hovered, setHovered] = useState(false);
   return (
-    
+    <a
       href={href}
       target={external ? '_blank' : '_self'}
       rel={external ? 'noopener noreferrer' : undefined}
