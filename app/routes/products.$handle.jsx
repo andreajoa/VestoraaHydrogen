@@ -460,7 +460,7 @@ const SIMILAR_PRODUCTS_QUERY = `#graphql
       }
     }
   }
-\`;
+`;
 
 const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   query ProductPageRecommended(
