@@ -104,7 +104,7 @@ export default function Product() {
   const accordionItems = [
     {
       title: 'Material',
-      content: materialInfo || 'Please refer to the product label for material information.',
+      content: (materialInfo && !materialInfo.includes('gid://') && !materialInfo.startsWith('[')) ? materialInfo : (() => { const d = product.descriptionHtml || ''; const c = d.replace(/<[^>]+>/g, ' '); const m = c.match(/(\d+%\s*[A-Za-z][A-Za-z\s]*(?:,\s*\d+%\s*[A-Za-z][A-Za-z\s]*)*)/); return m ? m[0].trim() : 'Please refer to the product label for material information.'; })(),
     },
     {
       title: 'Size & fit',
@@ -260,11 +260,6 @@ export default function Product() {
           </div>
         </div>
 
-        {/* WEAR IT WITH - strip below gallery */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '40px' }}>
-          <WearItWithStrip products={products.slice(0, 6)} />
-          <div />
-        </div>
 
         {/* PRODUCT DETAILS - expandable */}
         {descriptionHtml && (
