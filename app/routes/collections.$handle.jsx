@@ -112,7 +112,7 @@ function FilterSection({ section, activeFilters, onToggle }) {
 
 function Sidebar({ activeFilters, onToggle, onClearAll, totalActive }) {
   return (
-    <aside style={{ width: '240px', minWidth: '240px', flexShrink: 0, alignSelf: 'flex-start', paddingRight: '24px', borderRight: '1px solid #e2e2e2' }}>
+    <div style={{ width: '240px', minWidth: '240px', flexShrink: 0, alignSelf: 'flex-start', paddingRight: '24px', borderRight: '1px solid #e2e2e2' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '10px' }}>
         <span style={{ fontSize: '15px', fontWeight: '600', color: '#111' }}>Filter</span>
         {totalActive > 0 && <button onClick={onClearAll} style={{ fontSize: '13px', color: '#555', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>Clear all</button>}
@@ -120,7 +120,7 @@ function Sidebar({ activeFilters, onToggle, onClearAll, totalActive }) {
       <div style={{ borderTop: '1px solid #e2e2e2' }}>
         {FILTER_SECTIONS.map(s => <FilterSection key={s.key} section={s} activeFilters={activeFilters} onToggle={onToggle} />)}
       </div>
-    </aside>
+    </div>
   );
 }
 
