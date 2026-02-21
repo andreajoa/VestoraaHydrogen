@@ -46,7 +46,7 @@ export function WearItWithStrip({ products }) {
       <div className="wear-it-grid" style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '8px',
+        gap: '6px',
       }}>
         {items.map((p) => {
           const img = p.featuredImage;
@@ -57,7 +57,7 @@ export function WearItWithStrip({ products }) {
             <div key={p.id} style={{ position: 'relative' }}>
               {/* Image */}
               <div style={{
-                position: 'relative', aspectRatio: '3/4',
+                position: 'relative', aspectRatio: '2/3',
                 backgroundColor: '#f5f5f5', borderRadius: '4px',
                 overflow: 'hidden', marginBottom: '6px',
               }}>
@@ -81,7 +81,7 @@ export function WearItWithStrip({ products }) {
                 <p style={{ fontSize: '10px', color: '#666', margin: '0 0 1px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {p.vendor || ''}
                 </p>
-                <p style={{ fontSize: '11px', color: '#333', margin: '0 0 3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3 }}>
+                <p style={{ fontSize: '10px', color: '#333', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3 }}>
                   {p.title}
                 </p>
                 <p style={{ fontSize: '12px', fontWeight: '700', color: '#111', margin: 0 }}>
