@@ -121,7 +121,7 @@ function FilterSection({ section, activeFilters, onToggle }) {
 
 function Sidebar({ activeFilters, onToggle, onClearAll, totalActive }) {
   return (
-    <aside style={{ width: '280px', minWidth: '280px', flexShrink: 0, alignSelf: 'flex-start', position: 'sticky', top: '80px', maxHeight: 'calc(100vh - 100px)', overflowY: 'auto', paddingRight: '8px' }}>
+    <aside style={{ width: '260px', minWidth: '260px', flexShrink: 0, alignSelf: 'flex-start' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '14px', borderBottom: '2px solid #111', marginBottom: '4px' }}>
         <span style={{ fontSize: '15px', fontWeight: '700', color: '#111' }}>Filter</span>
         {totalActive > 0 && <button onClick={onClearAll} style={{ fontSize: '12px', color: '#666', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>Clear all</button>}
