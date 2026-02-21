@@ -203,6 +203,8 @@ export default function Product() {
                 ♡
               </button>
             </div>
+            {/* WEAR IT WITH - abaixo da imagem principal, responsivo */}
+            <WearItWithStrip products={products.slice(0, 6)} />
           </div>
 
           {/* RIGHT: Product info panel */}
@@ -274,8 +276,6 @@ export default function Product() {
         </div>
 
 
-        {/* WEAR IT WITH */}
-        <WearItWithStrip products={products.slice(0, 6)} />
 
         {/* PRODUCT DETAILS - expandable */}
         {descriptionHtml && (
