@@ -41,22 +41,28 @@ function PromoBanner() {
 // ── Hero Banner ───────────────────────────────────────────────────────────────
 function HeroBanner() {
   return (
-    <div style={{ position: 'relative', width: '100%', height: '580px', backgroundColor: '#1a1a1a', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #1a1a1a 0%, #2d1f1f 40%, #1a1a2e 100%)', opacity: 0.95 }} />
-      <div style={{ position: 'relative', zIndex: 2, maxWidth: '1340px', margin: '0 auto', padding: '0 40px', width: '100%' }}>
-        <p style={{ fontSize: '12px', fontWeight: '700', letterSpacing: '0.2em', color: '#c9a84c', textTransform: 'uppercase', marginBottom: '16px' }}>New Season</p>
-        <h1 style={{ fontSize: '64px', fontWeight: '800', color: '#fff', lineHeight: 1.05, marginBottom: '24px', letterSpacing: '-0.02em', maxWidth: '600px' }}>
-          Define Your<br />Own Style
-        </h1>
-        <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)', marginBottom: '36px', maxWidth: '440px', lineHeight: 1.6 }}>
-          Discover the latest women's fashion. From everyday essentials to statement pieces.
-        </p>
-        <div style={{ display: 'flex', gap: '14px' }}>
-          <a href="/collections/new-arrival" style={{ padding: '14px 32px', backgroundColor: '#fff', color: '#111', fontSize: '13px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: '2px' }}>Shop Now</a>
-          <a href="/collections/dress" style={{ padding: '14px 32px', backgroundColor: 'transparent', color: '#fff', fontSize: '13px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.4)', borderRadius: '2px' }}>View Dresses</a>
+    <div style={{ width: '100%', position: 'relative', overflow: 'hidden', height: '200px', backgroundColor: '#b8c4c2' }}>
+      <img
+        src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=80"
+        alt="Spend and Save"
+        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }}
+      />
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 80px', backgroundColor: 'rgba(0,0,0,0.15)' }}>
+        <div>
+          <h2 style={{ fontSize: '36px', fontWeight: '800', color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase', margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>SPEND &amp; SAVE</h2>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <p style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 4px', textShadow: '0 1px 4px rgba(0,0,0,0.3)', lineHeight: 1.2 }}>
+            SPEND $80, <span style={{ fontStyle: 'italic' }}>SAVE 20%</span>
+          </p>
+          <p style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 8px', textShadow: '0 1px 4px rgba(0,0,0,0.3)', lineHeight: 1.2 }}>
+            SPEND $100, <span style={{ fontStyle: 'italic' }}>SAVE 30%</span><sup style={{ fontSize: '14px' }}>*</sup>
+          </p>
+          <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.85)', margin: 0, textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
+            *Ends midnight. Discount applied at checkout. Selected styles listed. T&Cs apply.
+          </p>
         </div>
       </div>
-      <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '45%', background: 'linear-gradient(to left, rgba(201,168,76,0.15), transparent)' }} />
     </div>
   );
 }
