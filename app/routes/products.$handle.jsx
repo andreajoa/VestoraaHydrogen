@@ -94,6 +94,9 @@ export default function Product() {
     // 3. Tentar padrao "Material: ..." ou "Fabric: ..."
     const label = clean.match(/(?:material|fabric|composition|content)[:\s]+([^.\n<]{3,60})/i);
     if (label) return label[1].trim();
+    // 4. Tentar tags do produto
+    const tags = (product.tags || []).filter(t => t.toLowerCase().includes('% ') || ['cotton','polyester','silk','linen','wool','nylon','spandex','elastane','rayon','viscose'].some(f => t.toLowerCase().includes(f)));
+    if (tags.length > 0) return tags.join(', ');
     return null;
   })();
   const careInfo = getMeta('care_instructions') || getMeta('care') || null;
@@ -164,6 +167,8 @@ export default function Product() {
                   }} />
                 </button>
               ))}
+              {/* WEAR IT WITH strip */}
+              <WearItWithStrip products={products.slice(0, 6)} />
             </div>
             {/* Main image */}
             <div style={{ flex: 1, position: 'relative', backgroundColor: '#f5f5f5' }}>
@@ -187,8 +192,6 @@ export default function Product() {
                 ♡
               </button>
             </div>
-            {/* WEAR IT WITH strip below main image */}
-            <WearItWithStrip products={products.slice(0, 6)} />
           </div>
 
           {/* RIGHT: Product info panel */}
@@ -347,7 +350,7 @@ const PRODUCT_QUERY = `#graphql
     $selectedOptions: [SelectedOptionInput!]!
   ) @inContext(country: $country, language: $language) {
     product(handle: $handle) {
-      id title vendor handle descriptionHtml description
+      id title vendor handle descriptionHtml description tags
       encodedVariantExistence encodedVariantAvailability
       options {
         name
