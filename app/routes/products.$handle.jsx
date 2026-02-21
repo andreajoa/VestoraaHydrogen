@@ -8,7 +8,6 @@ import {
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
 import {ProductPrice} from '~/components/ProductPrice';
-import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
@@ -17,10 +16,10 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
  */
 export const meta = ({data}) => {
   return [
-    {title: `Hydrogen | ${data?.product.title ?? ''}`},
+    {title: `Vestoraa | ${data?.product.title ?? ''}`},
     {
-      rel: 'canonical',
-      href: `/products/${data?.product.handle}`,
+      name: 'description',
+      content: data?.product.description ?? '',
     },
   ];
 };
@@ -29,112 +28,140 @@ export const meta = ({data}) => {
  * @param {Route.LoaderArgs} args
  */
 export async function loader(args) {
-  // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
-
   return {...deferredData, ...criticalData};
 }
 
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- * @param {Route.LoaderArgs}
- */
 async function loadCriticalData({context, params, request}) {
   const {handle} = params;
   const {storefront} = context;
 
   if (!handle) {
-    throw new Error('Expected product handle to be defined');
+    throw new Response('Expected product handle', {status: 404});
   }
+
+  const selectedOptions = getSelectedProductOptions(request);
 
   const [{product}] = await Promise.all([
     storefront.query(PRODUCT_QUERY, {
-      variables: {handle, selectedOptions: getSelectedProductOptions(request)},
+      variables: {
+        handle,
+        selectedOptions,
+      },
     }),
-    // Add other queries here, so that they are loaded in parallel
   ]);
 
   if (!product?.id) {
-    throw new Response(null, {status: 404});
+    throw new Response('Product not found', {status: 404});
   }
 
-  // The API handle might be localized, so redirect to the localized handle
   redirectIfHandleIsLocalized(request, {handle, data: product});
 
-  return {
-    product,
-  };
+  return {product};
 }
 
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- * @param {Route.LoaderArgs}
- */
-function loadDeferredData({context, params}) {
-  // Put any API calls that is not critical to be available on first page render
-  // For example: product reviews, product recommendations, social feeds.
+function loadDeferredData({context}) {
+  const recommendedProducts = context.storefront
+    .query(RECOMMENDED_PRODUCTS_QUERY)
+    .catch((error) => {
+      console.error(error);
+      return null;
+    });
 
-  return {};
+  return {recommendedProducts};
 }
 
 export default function Product() {
-  /** @type {LoaderReturnData} */
   const {product} = useLoaderData();
 
-  // Optimistically selects a variant with given available variant information
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
     getAdjacentAndFirstAvailableVariants(product),
   );
 
-  // Sets the search param to the selected variant without navigation
-  // only when no search params are set in the url
-  useSelectedOptionInUrlParam(selectedVariant.selectedOptions);
-
-  // Get the product options array
   const productOptions = getProductOptions({
     ...product,
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const {title, descriptionHtml} = product;
+  useSelectedOptionInUrlParam(productOptions);
+
+  const {title, vendor, descriptionHtml, images} = product;
+  const allImages = images?.nodes || [];
+  const mainImage = selectedVariant?.image || allImages[0];
 
   return (
-    <div className="product">
-      <ProductImage image={selectedVariant?.image} />
-      <div className="product-main">
-        <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <br />
-        <ProductForm
-          productOptions={productOptions}
-          selectedVariant={selectedVariant}
-        />
-        <br />
-        <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
+    <div className="product-page">
+      <div className="product">
+        {/* LEFT: Images */}
+        <div className="product-images">
+          <div className="product-thumbnails">
+            {allImages.map((img, idx) => (
+              <img
+                key={img.id || idx}
+                src={img.url}
+                alt={img.altText || `${title} thumbnail ${idx + 1}`}
+                className="product-thumbnail"
+                width={80}
+                height={100}
+              />
+            ))}
+          </div>
+          <div className="product-image-main">
+            {mainImage && (
+              <img
+                src={mainImage.url}
+                alt={mainImage.altText || title}
+                className="product-main-img"
+              />
+            )}
+          </div>
+        </div>
+
+        {/* RIGHT: Product Info */}
+        <div className="product-main">
+          {vendor && <p className="product-vendor">{vendor}</p>}
+          <h1>{title}</h1>
+          <ProductPrice
+            price={selectedVariant?.price}
+            compareAtPrice={selectedVariant?.compareAtPrice}
+          />
+          <br />
+
+          <ProductForm
+            productOptions={productOptions}
+            selectedVariant={selectedVariant}
+          />
+
+          <br />
+
+          {/* Delivery Estimator */}
+          <DeliveryEstimator />
+
+          <br />
+
+          {/* Description */}
+          {descriptionHtml && (
+            <div className="product-description">
+              <details>
+                <summary>
+                  <strong>Description</strong>
+                </summary>
+                <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
+              </details>
+            </div>
+          )}
+        </div>
       </div>
+
       <Analytics.ProductView
         data={{
           products: [
             {
               id: product.id,
               title: product.title,
-              price: selectedVariant?.price.amount || '0',
+              price: selectedVariant?.price?.amount || '0',
               vendor: product.vendor,
               variantId: selectedVariant?.id || '',
               variantTitle: selectedVariant?.title || '',
@@ -143,6 +170,37 @@ export default function Product() {
           ],
         }}
       />
+    </div>
+  );
+}
+
+function DeliveryEstimator() {
+  return (
+    <div className="delivery-estimator">
+      <h3>Delivery</h3>
+      <p className="delivery-sub">Check your delivery time</p>
+      <form
+        className="delivery-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          const input = e.target.elements.postcode;
+          if (input.value) {
+            const result = e.target.querySelector('.delivery-result');
+            if (result) result.textContent = 'Estimated delivery: 3-6 business days';
+          }
+        }}
+      >
+        <input
+          name="postcode"
+          type="text"
+          placeholder="Enter suburb / postcode"
+          className="delivery-input"
+        />
+        <button type="submit" className="delivery-btn">
+          GO!
+        </button>
+      </form>
+      <p className="delivery-result"></p>
     </div>
   );
 }
@@ -184,47 +242,6 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
   }
 `;
 
-const PRODUCT_FRAGMENT = `#graphql
-  fragment Product on Product {
-    id
-    title
-    vendor
-    handle
-    descriptionHtml
-    description
-    encodedVariantExistence
-    encodedVariantAvailability
-    options {
-      name
-      optionValues {
-        name
-        firstSelectableVariant {
-          ...ProductVariant
-        }
-        swatch {
-          color
-          image {
-            previewImage {
-              url
-            }
-          }
-        }
-      }
-    }
-    selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {
-      ...ProductVariant
-    }
-    adjacentVariants (selectedOptions: $selectedOptions) {
-      ...ProductVariant
-    }
-    seo {
-      description
-      title
-    }
-  }
-  ${PRODUCT_VARIANT_FRAGMENT}
-`;
-
 const PRODUCT_QUERY = `#graphql
   query Product(
     $country: CountryCode
@@ -233,10 +250,86 @@ const PRODUCT_QUERY = `#graphql
     $selectedOptions: [SelectedOptionInput!]!
   ) @inContext(country: $country, language: $language) {
     product(handle: $handle) {
-      ...Product
+      id
+      title
+      vendor
+      handle
+      descriptionHtml
+      description
+      encodedVariantExistence
+      encodedVariantAvailability
+      options {
+        name
+        optionValues {
+          name
+          firstSelectableVariant {
+            ...ProductVariant
+          }
+          swatch {
+            color
+            image {
+              previewImage {
+                url
+              }
+            }
+          }
+        }
+      }
+      selectedOrFirstAvailableVariant(
+        selectedOptions: $selectedOptions
+        ignoreUnknownOptions: true
+        caseInsensitiveMatch: true
+      ) {
+        ...ProductVariant
+      }
+      adjacentVariants(selectedOptions: $selectedOptions) {
+        ...ProductVariant
+      }
+      images(first: 10) {
+        nodes {
+          id
+          url
+          altText
+          width
+          height
+        }
+      }
+      seo {
+        description
+        title
+      }
     }
   }
-  ${PRODUCT_FRAGMENT}
+  ${PRODUCT_VARIANT_FRAGMENT}
+`;
+
+const RECOMMENDED_PRODUCTS_QUERY = `#graphql
+  query ProductPageRecommended(
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
+    products(first: 4, sortKey: UPDATED_AT, reverse: true) {
+      nodes {
+        id
+        title
+        handle
+        vendor
+        priceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        featuredImage {
+          id
+          url
+          altText
+          width
+          height
+        }
+      }
+    }
+  }
 `;
 
 /** @typedef {import('./+types/products.$handle').Route} Route */
