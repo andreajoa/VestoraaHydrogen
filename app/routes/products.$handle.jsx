@@ -34,11 +34,14 @@ async function loadCriticalData({ context, params, request }) {
   const { handle } = params;
   const { storefront } = context;
   if (!handle) throw new Response('Expected product handle', { status: 404 });
-  const selectedOptions = getSelectedProductOptions(request);
+  const selectedOptions = getSelectedProductOptions(request) || [];
   const [{ product }] = await Promise.all([
     storefront.query(PRODUCT_QUERY, { variables: { handle, selectedOptions } }),
   ]);
-  if (!product?.id) throw new Response('Product not found', { status: 404 });
+  if (!product?.id) {
+    console.error('Product not found for handle:', handle, 'selectedOptions:', selectedOptions);
+    throw new Response('Product not found', { status: 404 });
+  }
   redirectIfHandleIsLocalized(request, { handle, data: product });
   return { product };
 }
@@ -75,16 +78,16 @@ export default function Product() {
   const accordionItems = [
     {
       title: 'Material',
-      content: product.metafields?.find(m => m?.key === 'material')?.value || 'Please refer to the product label for material information.',
+      content: 'Please refer to the product label for material information.',
     },
     {
       title: 'Size & fit',
-      content: product.metafields?.find(m => m?.key === 'size_fit')?.value || 'This style fits true to size. Model wears size AU8/S.',
+      content: 'This style fits true to size. Model wears size AU8/S.',
       link: { text: 'VIEW SIZE GUIDE', onClick: () => setSizeGuideOpen(true) },
     },
     {
       title: 'Care',
-      content: product.metafields?.find(m => m?.key === 'care')?.value || 'Cold Hand Wash, Warm Inside Out, Do Not Bleach or Soak, Do Not Tumble Dry, Warm Iron.',
+      content: 'Cold Hand Wash, Warm Inside Out, Do Not Bleach or Soak, Do Not Tumble Dry, Warm Iron.',
     },
   ];
 
@@ -235,11 +238,7 @@ const PRODUCT_QUERY = `#graphql
       }
       adjacentVariants(selectedOptions: \$selectedOptions) { ...ProductVariant }
       images(first: 10) { nodes { id url altText width height } }
-      metafields(identifiers: [
-        { namespace: "product", key: "material" }
-        { namespace: "product", key: "size_fit" }
-        { namespace: "product", key: "care" }
-      ]) { key value }
+
       seo { description title }
     }
   }
