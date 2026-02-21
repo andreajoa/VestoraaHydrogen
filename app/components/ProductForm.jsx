@@ -143,7 +143,8 @@ export function ProductForm({ productOptions, selectedVariant, onSizeGuideClick 
       })}
 
       {/* ADD TO BAG + WISHLIST */}
-      <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
+      <div style={{ display: 'flex', gap: '8px', marginTop: '20px', alignItems: 'stretch' }}>
+        <div style={{ flex: 1, display: 'flex' }}>
         <AddToCartButton
           disabled={!selectedVariant?.availableForSale}
           lines={selectedVariant ? [{ merchandiseId: selectedVariant.id, quantity: 1 }] : []}
@@ -160,6 +161,7 @@ export function ProductForm({ productOptions, selectedVariant, onSizeGuideClick 
         >
           {selectedVariant?.availableForSale ? 'ADD TO BAG' : 'SOLD OUT'}
         </AddToCartButton>
+        </div>
         <button onClick={() => setWished(w => !w)}
           style={{ width: '50px', height: '50px', flexShrink: 0, border: wished ? ('2px solid ' + GOLD) : '1px solid #ddd', borderRadius: '12px', backgroundColor: wished ? '#fffcf0' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '20px', color: wished ? '#e33' : '#bbb', transition: 'all 0.2s' }}
         >
