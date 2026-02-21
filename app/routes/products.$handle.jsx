@@ -40,8 +40,28 @@ async function loadCriticalData({ context, params, request }) {
   ]);
   if (!product?.id) throw new Response('Product not found', { status: 404 });
   redirectIfHandleIsLocalized(request, { handle, data: product });
+  // Definir tipos complementares por tipo do produto atual
+  const productType = (product.productType || '').toLowerCase();
+  const isDress = /dress|skirt|top|bodysuit|jumpsuit/.test(productType) || 
+    (product.tags || []).some(t => /dress|skirt|top|bodysuit|jumpsuit/.test(t.toLowerCase()));
+  const isShoes = /shoe|heel|boot|sandal|sneaker/.test(productType);
+  const isAccessory = /bag|jewel|accessory|accessories|belt|hat|scarf/.test(productType);
+
+  let complementQuery = '';
+  if (isDress) {
+    complementQuery = 'product_type:accessories OR product_type:shoes OR product_type:bags OR product_type:jewellery OR product_type:jewelry';
+  } else if (isShoes) {
+    complementQuery = 'product_type:dress OR product_type:top OR product_type:skirt OR product_type:accessories';
+  } else if (isAccessory) {
+    complementQuery = 'product_type:dress OR product_type:top OR product_type:skirt OR product_type:shoes';
+  } else {
+    complementQuery = 'product_type:accessories OR product_type:shoes';
+  }
+
   const recommendedProducts = await context.storefront
-    .query(RECOMMENDED_PRODUCTS_QUERY)
+    .query(RECOMMENDED_PRODUCTS_QUERY, {
+      variables: { productType: complementQuery },
+    })
     .catch(() => null);
   return { product, recommendedProducts };
 }
@@ -76,7 +96,13 @@ export default function Product() {
     : allImages;
 
   const mainImage = displayImages[activeImg] || displayImages[0];
-  const products = recommendedProducts?.products?.nodes || [];
+  // Pegar complementares, filtrar o produto atual, fallback para outros produtos
+  const currentHandle = product.handle;
+  const complementary = (recommendedProducts?.complementary?.nodes || [])
+    .filter(p => p.handle !== currentHandle);
+  const fallback = (recommendedProducts?.fallback?.nodes || [])
+    .filter(p => p.handle !== currentHandle);
+  const products = complementary.length > 0 ? complementary : fallback;
 
   const metafields = product.metafields || [];
   const getMeta = (key) => metafields.find(m => m?.key === key)?.value;
@@ -403,16 +429,22 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   query ProductPageRecommended(
     $country: CountryCode
     $language: LanguageCode
+    $productType: String
   ) @inContext(country: $country, language: $language) {
-    products(first: 8, sortKey: UPDATED_AT, reverse: true) {
+    complementary: products(first: 8, sortKey: UPDATED_AT, reverse: true, query: $productType) {
       nodes {
-        id title handle vendor
+        id title handle vendor productType tags
         priceRange { minVariantPrice { amount currencyCode } }
-        compareAtPriceRange { minVariantPrice { amount currencyCode } }
         featuredImage { id url altText width height }
-        variants(first: 1) {
-          nodes { id availableForSale }
-        }
+        variants(first: 1) { nodes { id availableForSale } }
+      }
+    }
+    fallback: products(first: 8, sortKey: UPDATED_AT, reverse: true) {
+      nodes {
+        id title handle vendor productType tags
+        priceRange { minVariantPrice { amount currencyCode } }
+        featuredImage { id url altText width height }
+        variants(first: 1) { nodes { id availableForSale } }
       }
     }
   }
