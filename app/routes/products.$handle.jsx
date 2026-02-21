@@ -13,7 +13,6 @@ import { ProductForm } from '~/components/ProductForm';
 import { redirectIfHandleIsLocalized } from '~/lib/redirect';
 import { ProductAccordion } from '~/components/Product/ProductAccordion';
 import { DeliveryEstimator } from '~/components/Product/DeliveryEstimator';
-import { SizeGuideModal } from '~/components/Product/SizeGuideModal';
 import { ProductCarousel } from '~/components/Product/ProductCarousel';
 import { ReviewsSection } from '~/components/Product/ReviewsSection';
 
