@@ -38,10 +38,7 @@ async function loadCriticalData({ context, params, request }) {
   const [{ product }] = await Promise.all([
     storefront.query(PRODUCT_QUERY, { variables: { handle, selectedOptions } }),
   ]);
-  if (!product?.id) {
-    console.error('Product not found for handle:', handle, 'selectedOptions:', selectedOptions);
-    throw new Response('Product not found', { status: 404 });
-  }
+  if (!product?.id) throw new Response('Product not found', { status: 404 });
   redirectIfHandleIsLocalized(request, { handle, data: product });
   return { product };
 }
@@ -57,6 +54,7 @@ export default function Product() {
   const { product, recommendedProducts } = useLoaderData();
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [activeImg, setActiveImg] = useState(0);
+  const [detailsExpanded, setDetailsExpanded] = useState(false);
 
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
@@ -72,7 +70,13 @@ export default function Product() {
 
   const { title, vendor, descriptionHtml, images } = product;
   const allImages = images?.nodes || [];
-  const mainImage = selectedVariant?.image || allImages[activeImg] || allImages[0];
+  
+  const variantImage = selectedVariant?.image;
+  const displayImages = variantImage
+    ? [variantImage, ...allImages.filter(img => img.id !== variantImage.id)]
+    : allImages;
+
+  const mainImage = displayImages[activeImg] || displayImages[0];
   const products = recommendedProducts?.products?.nodes || [];
 
   const accordionItems = [
@@ -92,92 +96,177 @@ export default function Product() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-screen-xl mx-auto px-4 py-3">
-        <nav className="text-xs text-gray-500">
-          <a href="/" className="hover:underline">Home</a>
-          <span className="mx-1">/</span>
-          <a href="/collections/all" className="hover:underline">All Products</a>
-          <span className="mx-1">/</span>
-          <span className="text-gray-900">{title}</span>
+    <div style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
+      {/* Breadcrumb */}
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '10px 16px' }}>
+        <nav style={{ fontSize: '11px', color: '#666' }}>
+          <a href="/" style={{ color: '#666', textDecoration: 'none' }}>Home</a>
+          <span style={{ margin: '0 6px' }}>/</span>
+          <a href="/collections/all" style={{ color: '#666', textDecoration: 'none' }}>All Products</a>
+          <span style={{ margin: '0 6px' }}>/</span>
+          <span style={{ color: '#333' }}>{title}</span>
         </nav>
       </div>
 
-      <div className="max-w-screen-xl mx-auto px-4 pb-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 lg:gap-12">
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 16px 40px' }}>
+        {/* TWO COLUMN LAYOUT */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '40px', alignItems: 'start' }}>
 
-          <div className="flex gap-3">
-            <div className="hidden md:flex flex-col gap-2 w-[90px] flex-shrink-0">
-              {allImages.map((img, idx) => (
-                <button key={img.id || idx} onClick={() => setActiveImg(idx)}
-                  style={{ border: activeImg === idx ? '2px solid #111' : '2px solid transparent' }}
-                  className="transition-all">
-                  <img src={img.url} alt={img.altText || title} className="w-full aspect-[3/4] object-cover object-center" />
+          {/* LEFT: Gallery */}
+          <div style={{ display: 'flex', gap: '12px' }}>
+            {/* Thumbnails */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '80px', flexShrink: 0 }}>
+              {displayImages.map((img, idx) => (
+                <button
+                  key={img.id || idx}
+                  onClick={() => setActiveImg(idx)}
+                  style={{
+                    border: activeImg === idx ? '2px solid #111' : '2px solid transparent',
+                    padding: 0,
+                    cursor: 'pointer',
+                    background: 'none',
+                    outline: 'none',
+                  }}
+                >
+                  <img
+                    src={img.url}
+                    alt={img.altText || title}
+                    style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
+                  />
                 </button>
               ))}
             </div>
-            <div className="flex-1 relative bg-gray-50">
+            {/* Main image */}
+            <div style={{ flex: 1, position: 'relative', backgroundColor: '#f5f5f5' }}>
               {mainImage && (
-                <img src={mainImage.url} alt={mainImage.altText || title}
-                  className="w-full object-cover object-center" style={{ maxHeight: '700px' }} />
+                <img
+                  src={mainImage.url}
+                  alt={mainImage.altText || title}
+                  style={{ width: '100%', maxHeight: '720px', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
+                />
               )}
-              <button className="absolute top-4 right-4 w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 text-gray-400 hover:text-red-400 transition text-lg">
+              <button
+                style={{
+                  position: 'absolute', top: '12px', right: '12px',
+                  width: '36px', height: '36px', borderRadius: '50%',
+                  backgroundColor: '#fff', border: '1px solid #eee',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', fontSize: '16px', color: '#999',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+                }}
+              >
                 ♡
               </button>
             </div>
           </div>
 
-          <div className="lg:sticky lg:top-4 lg:self-start">
-            <div className="flex justify-between items-start mb-1">
+          {/* RIGHT: Product info panel */}
+          <div style={{ position: 'sticky', top: '16px' }}>
+            {/* Brand + Favourite */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
               <div>
-                {vendor && <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1">{vendor}</p>}
-                <h1 className="text-xl font-normal text-gray-900 leading-snug">{title}</h1>
+                {vendor && (
+                  <p style={{ fontSize: '11px', fontWeight: '700', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
+                    {vendor}
+                  </p>
+                )}
+                <h1 style={{ fontSize: '18px', fontWeight: '400', color: '#111', lineHeight: 1.3, margin: 0 }}>{title}</h1>
               </div>
-              <button className="text-xs border border-gray-300 px-3 py-1.5 text-gray-600 hover:bg-gray-50 whitespace-nowrap ml-4 flex-shrink-0">
+              <button style={{
+                fontSize: '11px', border: '1px solid #ccc', padding: '6px 10px',
+                color: '#555', backgroundColor: '#fff', cursor: 'pointer',
+                whiteSpace: 'nowrap', marginLeft: '12px', flexShrink: 0,
+              }}>
                 ♡ FAVOURITE BRAND
               </button>
             </div>
 
-            <div className="flex items-center gap-2 mt-2 mb-3">
-              <div className="flex text-yellow-400 text-sm">★★★★☆</div>
-              <span className="text-xs text-gray-500">(9)</span>
-              <a href="#reviews" className="text-xs text-gray-600 underline hover:text-gray-900 ml-1">Write a review</a>
+            {/* Stars */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '8px 0 12px' }}>
+              <div style={{ display: 'flex', color: '#f5a623', fontSize: '13px' }}>★★★★☆</div>
+              <span style={{ fontSize: '11px', color: '#888' }}>(9)</span>
+              <a href="#reviews" style={{ fontSize: '11px', color: '#555', marginLeft: '4px' }}>Write a review</a>
             </div>
 
-            <div className="mb-4">
+            {/* Price */}
+            <div style={{ marginBottom: '16px' }}>
               <ProductPrice price={selectedVariant?.price} compareAtPrice={selectedVariant?.compareAtPrice} />
             </div>
 
+            {/* Product Form (Color + Size + Buttons) */}
             <ProductForm productOptions={productOptions} selectedVariant={selectedVariant} />
 
-            <button onClick={() => setSizeGuideOpen(true)}
-              className="mt-3 text-xs underline text-gray-600 hover:text-gray-900">
+            {/* Size Guide */}
+            <button
+              onClick={() => setSizeGuideOpen(true)}
+              style={{ marginTop: '8px', fontSize: '11px', textDecoration: 'underline', color: '#555', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+            >
               View Size Guide
             </button>
 
+            {/* Accordion */}
             <ProductAccordion items={accordionItems} />
+
+            {/* Delivery */}
             <DeliveryEstimator />
 
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <p className="text-xs text-gray-600">
-                <span className="font-semibold">Returns</span> — Returns are free for 30 days unless marked.
+            {/* Returns */}
+            <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: '1px solid #eee' }}>
+              <p style={{ fontSize: '11px', color: '#555', marginBottom: '4px' }}>
+                <strong>Returns</strong> — Returns are free for 30 days unless marked.
               </p>
-              <a href="/policies/refund-policy" className="text-xs text-blue-600 hover:underline">Find out more about our return policy</a>
+              <a href="/policies/refund-policy" style={{ fontSize: '11px', color: '#0066cc' }}>
+                Find out more about our return policy
+              </a>
             </div>
           </div>
         </div>
 
+        {/* WEAR IT WITH - appears right after the 2-col section */}
         <ProductCarousel title="Wear it with" products={products.slice(0, 4)} showMarketplaceNotice={true} />
 
+        {/* PRODUCT DETAILS - expandable */}
         {descriptionHtml && (
-          <div className="mt-12 pt-10 border-t border-gray-200">
-            <h2 className="text-lg font-normal text-gray-900 mb-4">Product details</h2>
-            <div className="text-sm text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
+          <div style={{ marginTop: '48px', paddingTop: '40px', borderTop: '1px solid #eee' }}>
+            <h2 style={{ fontSize: '16px', fontWeight: '400', color: '#111', marginBottom: '14px' }}>Product details</h2>
+            <div
+              style={{
+                fontSize: '13px', color: '#555', lineHeight: 1.7,
+                maxHeight: detailsExpanded ? 'none' : '80px',
+                overflow: 'hidden',
+                position: 'relative',
+              }}
+              dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+            />
+            {!detailsExpanded && (
+              <div style={{ position: 'relative' }}>
+                <div style={{ background: 'linear-gradient(to bottom, transparent, #fff)', height: '40px', marginTop: '-40px', position: 'relative' }} />
+                <button
+                  onClick={() => setDetailsExpanded(true)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#555', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontWeight: '600' }}
+                >
+                  Read more ▾
+                </button>
+              </div>
+            )}
+            {detailsExpanded && (
+              <button
+                onClick={() => setDetailsExpanded(false)}
+                style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#555', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontWeight: '600' }}
+              >
+                Read less ▴
+              </button>
+            )}
           </div>
         )}
 
+        {/* SIMILAR ITEMS */}
         <ProductCarousel title="Similar items" products={products.slice(0, 4)} />
-        <ProductCarousel title="You may also like" products={products.slice(0, 4)} />
+
+        {/* YOU MAY ALSO LIKE */}
+        <ProductCarousel title="You may also like" products={products.slice(4, 8).length > 0 ? products.slice(4, 8) : products.slice(0, 4)} />
+
+        {/* REVIEWS */}
         <ReviewsSection productId={product.id} productTitle={title} />
       </div>
 
@@ -238,7 +327,6 @@ const PRODUCT_QUERY = `#graphql
       }
       adjacentVariants(selectedOptions: $selectedOptions) { ...ProductVariant }
       images(first: 10) { nodes { id url altText width height } }
-
       seo { description title }
     }
   }
