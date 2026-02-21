@@ -63,34 +63,56 @@ const FILTER_SECTIONS = [
 ];
 
 function FilterSection({ section, activeFilters, onToggle }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const active = activeFilters[section.key] || [];
+  const hasActive = active.length > 0;
   return (
-    <div style={{ borderBottom: '1px solid #ebebeb', paddingBottom: '14px', marginBottom: '14px' }}>
-      <button onClick={() => setOpen(o => !o)} style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', marginBottom: open ? '10px' : 0 }}>
-        <span style={{ fontSize: '11px', fontWeight: '700', color: '#111', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{section.title}</span>
-        <span style={{ fontSize: '10px', color: '#999' }}>{open ? '▲' : '▼'}</span>
+    <div style={{ borderBottom: '1px solid #e8e8e8' }}>
+      <button onClick={() => setOpen(o => !o)}
+        style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer', padding: '14px 0', textAlign: 'left' }}>
+        <span style={{ fontSize: '13px', fontWeight: hasActive ? '700' : '400', color: '#111' }}>
+          {section.title}{hasActive ? ' (' + active.length + ')' : ''}
+        </span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', flexShrink: 0 }}>
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
       </button>
       {open && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: section.isColour ? '8px' : section.isSize ? '5px' : '2px' }}>
-          {section.options.map(opt => {
-            const isActive = active.includes(opt);
-            if (section.isColour) return (
-              <button key={opt} onClick={() => onToggle(section.key, opt)} title={opt}
-                style={{ width: '22px', height: '22px', borderRadius: '50%', backgroundColor: COLOUR_MAP[opt] || '#ccc', border: isActive ? '2px solid #111' : '2px solid transparent', outline: isActive ? '2px solid #111' : '1px solid #ddd', outlineOffset: '2px', cursor: 'pointer', padding: 0 }} />
-            );
-            if (section.isSize) return (
-              <button key={opt} onClick={() => onToggle(section.key, opt)}
-                style={{ padding: '4px 8px', fontSize: '11px', fontWeight: '600', border: isActive ? '1px solid #111' : '1px solid #ddd', backgroundColor: isActive ? '#111' : '#fff', color: isActive ? '#fff' : '#555', cursor: 'pointer', borderRadius: '2px' }}>{opt}</button>
-            );
-            return (
-              <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: '7px', cursor: 'pointer', width: '100%', padding: '3px 0' }}>
-                <input type="checkbox" checked={isActive} onChange={() => onToggle(section.key, opt)}
-                  style={{ width: '13px', height: '13px', accentColor: '#111', cursor: 'pointer', flexShrink: 0 }} />
-                <span style={{ fontSize: '13px', color: '#444' }}>{opt}</span>
-              </label>
-            );
-          })}
+        <div style={{ paddingBottom: '14px' }}>
+          {section.isColour ? (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {section.options.map(opt => {
+                const isActive = active.includes(opt);
+                return (
+                  <button key={opt} onClick={() => onToggle(section.key, opt)} title={opt}
+                    style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: COLOUR_MAP[opt] || '#ccc', border: 'none', outline: isActive ? '2px solid #111' : '2px solid transparent', outlineOffset: '2px', cursor: 'pointer', padding: 0, boxShadow: '0 0 0 1px #ddd' }} />
+                );
+              })}
+            </div>
+          ) : section.isSize ? (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+              {section.options.map(opt => {
+                const isActive = active.includes(opt);
+                return (
+                  <button key={opt} onClick={() => onToggle(section.key, opt)}
+                    style={{ minWidth: '40px', padding: '6px 10px', fontSize: '12px', fontWeight: '500', border: isActive ? '1.5px solid #111' : '1px solid #ddd', backgroundColor: isActive ? '#111' : '#fff', color: isActive ? '#fff' : '#444', cursor: 'pointer', borderRadius: '3px', transition: 'all 0.15s' }}>{opt}</button>
+                );
+              })}
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {section.options.map(opt => {
+                const isActive = active.includes(opt);
+                return (
+                  <label key={opt} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '7px 0', borderBottom: '1px solid #f5f5f5' }}>
+                    <span style={{ fontSize: '13px', color: isActive ? '#111' : '#555', fontWeight: isActive ? '600' : '400' }}>{opt}</span>
+                    <input type="checkbox" checked={isActive} onChange={() => onToggle(section.key, opt)}
+                      style={{ width: '14px', height: '14px', accentColor: '#111', cursor: 'pointer', flexShrink: 0 }} />
+                  </label>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -99,17 +121,16 @@ function FilterSection({ section, activeFilters, onToggle }) {
 
 function Sidebar({ activeFilters, onToggle, onClearAll, totalActive }) {
   return (
-    <aside style={{ width: '260px', minWidth: '260px', flexShrink: 0, paddingRight: '32px', borderRight: '1px solid #e8e8e8', alignSelf: 'flex-start', position: 'sticky', top: '80px', maxHeight: 'calc(100vh - 100px)', overflowY: 'auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', paddingBottom: '12px', borderBottom: '1px solid #ebebeb' }}>
-        <span style={{ fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#111' }}>
-          Filter {totalActive > 0 && <span style={{ color: '#999' }}>({totalActive})</span>}
-        </span>
-        {totalActive > 0 && <button onClick={onClearAll} style={{ fontSize: '11px', color: '#888', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>Clear all</button>}
+    <aside style={{ width: '280px', minWidth: '280px', flexShrink: 0, alignSelf: 'flex-start', position: 'sticky', top: '80px', maxHeight: 'calc(100vh - 100px)', overflowY: 'auto', paddingRight: '8px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '14px', borderBottom: '2px solid #111', marginBottom: '4px' }}>
+        <span style={{ fontSize: '15px', fontWeight: '700', color: '#111' }}>Filter</span>
+        {totalActive > 0 && <button onClick={onClearAll} style={{ fontSize: '12px', color: '#666', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>Clear all</button>}
       </div>
       {FILTER_SECTIONS.map(s => <FilterSection key={s.key} section={s} activeFilters={activeFilters} onToggle={onToggle} />)}
     </aside>
   );
 }
+
 
 // ── Sort Bar ──────────────────────────────────────────────────────────────────
 function SortBar({ total, sort, onSort }) {
