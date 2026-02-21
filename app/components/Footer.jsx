@@ -170,8 +170,8 @@ function FooterContent() {
           <div>
             <h4 style={{ fontSize: '11px', fontWeight: '700', color: '#fff', marginBottom: '20px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Our story</h4>
             {[
-              { label: 'About Us', href: '/pages/about' },
-              { label: 'Contact Us', href: '/pages/contact' },
+              { label: 'About Us', href: '/pages/about-us' },
+              { label: 'Contact Us', href: '/pages/contact-us' },
             ].map(link => (
               <div key={link.label} style={{ marginBottom: '12px' }}>
                 <a href={link.href} style={{ fontSize: '13px', color: '#aaa', textDecoration: 'none', lineHeight: 1.5, transition: 'color 0.2s' }}
