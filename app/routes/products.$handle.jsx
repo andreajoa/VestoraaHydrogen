@@ -134,13 +134,14 @@ export default function Product() {
                   <img
                     src={img.url}
                     alt={img.altText || title}
-                    style={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
+                    style={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover', objectPosition: 'top', display: 'block', borderRadius: '10px' }}
                   />
                   <div style={{
                     position: 'absolute', inset: 0,
-                    border: activeImg === idx ? '3px solid #111' : '1px solid #ddd',
+                    border: activeImg === idx ? '3px solid #C9A84C' : '1px solid #ddd',
+                    borderRadius: '12px',
                     pointerEvents: 'none',
-                    transition: 'border 0.15s',
+                    transition: 'border 0.2s',
                   }} />
                 </button>
               ))}
