@@ -34,28 +34,32 @@ export function WearItWithStrip({ products }) {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: '6px',
+      }}>
         {items.map((p) => {
           const img = p.featuredImage;
           const price = parseFloat(p.priceRange?.minVariantPrice?.amount || 0);
           const currency = p.priceRange?.minVariantPrice?.currencyCode || 'AUD';
           const symbol = currency === 'AUD' ? 'A$' : currency === 'GBP' ? '£' : currency === 'EUR' ? '€' : '$';
           return (
-            <div key={p.id}>
+            <div key={p.id} style={{ minWidth: 0 }}>
               <a href={'/products/' + p.handle} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                 <div style={{
+                  position: 'relative',
                   width: '100%',
-                  height: '140px',
+                  paddingBottom: '133%',
                   backgroundColor: '#f5f5f5',
                   borderRadius: '4px',
                   overflow: 'hidden',
                   marginBottom: '5px',
-                  position: 'relative',
                 }}>
                   {img
                     ? <img src={img.url} alt={img.altText || p.title}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
-                    : <div style={{ width: '100%', height: '100%', backgroundColor: '#eee' }} />
+                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+                    : <div style={{ position: 'absolute', inset: 0, backgroundColor: '#eee' }} />
                   }
                   <button onClick={e => e.preventDefault()} style={{
                     position: 'absolute', top: '4px', right: '4px',
@@ -63,6 +67,7 @@ export function WearItWithStrip({ products }) {
                     backgroundColor: 'rgba(255,255,255,0.92)', border: '1px solid #ddd',
                     cursor: 'pointer', display: 'flex', alignItems: 'center',
                     justifyContent: 'center', fontSize: '10px', color: '#555',
+                    zIndex: 1,
                   }}>♡</button>
                 </div>
                 <p style={{ fontSize: '8px', color: '#888', margin: '0 0 1px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.vendor || ''}</p>
