@@ -1,178 +1,279 @@
 import {Await, useLoaderData, Link} from 'react-router';
-import {Suspense} from 'react';
-import {Image} from '@shopify/hydrogen';
-import {ProductItem} from '~/components/ProductItem';
+import {Suspense, useState} from 'react';
 
-/**
- * @type {Route.MetaFunction}
- */
 export const meta = () => {
-  return [{title: 'Hydrogen | Home'}];
+  return [{title: 'Vestoraa | Women\'s Fashion Online'}];
 };
 
-/**
- * @param {Route.LoaderArgs} args
- */
 export async function loader(args) {
-  // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
-
   return {...deferredData, ...criticalData};
 }
 
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- * @param {Route.LoaderArgs}
- */
 async function loadCriticalData({context}) {
   const [{collections}] = await Promise.all([
-    context.storefront.query(FEATURED_COLLECTION_QUERY),
-    // Add other queries here, so that they are loaded in parallel
+    context.storefront.query(COLLECTIONS_QUERY),
   ]);
-
-  return {
-    featuredCollection: collections.nodes[0],
-  };
+  return { collections: collections.nodes };
 }
 
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- * @param {Route.LoaderArgs}
- */
 function loadDeferredData({context}) {
   const recommendedProducts = context.storefront
     .query(RECOMMENDED_PRODUCTS_QUERY)
-    .catch((error) => {
-      // Log query errors, but don't throw them so the page can still render
-      console.error(error);
-      return null;
-    });
-
-  return {
-    recommendedProducts,
-  };
+    .catch(() => null);
+  const newArrivals = context.storefront
+    .query(NEW_ARRIVALS_QUERY)
+    .catch(() => null);
+  return { recommendedProducts, newArrivals };
 }
 
-export default function Homepage() {
-  /** @type {LoaderReturnData} */
-  const data = useLoaderData();
+// ── Promo Banner ──────────────────────────────────────────────────────────────
+function PromoBanner() {
   return (
-    <div className="home">
-      <FeaturedCollection collection={data.featuredCollection} />
-      <RecommendedProducts products={data.recommendedProducts} />
+    <div style={{ backgroundColor: '#111', color: '#fff', textAlign: 'center', padding: '10px', fontSize: '13px', letterSpacing: '0.05em' }}>
+      <span>FREE SHIPPING ON ORDERS OVER $100 — </span>
+      <a href="/collections/new-arrival" style={{ color: '#fff', fontWeight: '700', textDecoration: 'underline' }}>SHOP NEW ARRIVALS</a>
     </div>
   );
 }
 
-/**
- * @param {{
- *   collection: FeaturedCollectionFragment;
- * }}
- */
-function FeaturedCollection({collection}) {
-  if (!collection) return null;
-  const image = collection?.image;
+// ── Hero Banner ───────────────────────────────────────────────────────────────
+function HeroBanner() {
   return (
-    <Link
-      className="featured-collection"
-      to={`/collections/${collection.handle}`}
-    >
-      {image && (
-        <div className="featured-collection-image">
-          <Image data={image} sizes="100vw" />
+    <div style={{ position: 'relative', width: '100%', height: '580px', backgroundColor: '#1a1a1a', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #1a1a1a 0%, #2d1f1f 40%, #1a1a2e 100%)', opacity: 0.95 }} />
+      <div style={{ position: 'relative', zIndex: 2, maxWidth: '1340px', margin: '0 auto', padding: '0 40px', width: '100%' }}>
+        <p style={{ fontSize: '12px', fontWeight: '700', letterSpacing: '0.2em', color: '#c9a84c', textTransform: 'uppercase', marginBottom: '16px' }}>New Season</p>
+        <h1 style={{ fontSize: '64px', fontWeight: '800', color: '#fff', lineHeight: 1.05, marginBottom: '24px', letterSpacing: '-0.02em', maxWidth: '600px' }}>
+          Define Your<br />Own Style
+        </h1>
+        <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)', marginBottom: '36px', maxWidth: '440px', lineHeight: 1.6 }}>
+          Discover the latest women's fashion. From everyday essentials to statement pieces.
+        </p>
+        <div style={{ display: 'flex', gap: '14px' }}>
+          <a href="/collections/new-arrival" style={{ padding: '14px 32px', backgroundColor: '#fff', color: '#111', fontSize: '13px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: '2px' }}>Shop Now</a>
+          <a href="/collections/dress" style={{ padding: '14px 32px', backgroundColor: 'transparent', color: '#fff', fontSize: '13px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.4)', borderRadius: '2px' }}>View Dresses</a>
         </div>
-      )}
-      <h1>{collection.title}</h1>
-    </Link>
+      </div>
+      <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '45%', background: 'linear-gradient(to left, rgba(201,168,76,0.15), transparent)' }} />
+    </div>
   );
 }
 
-/**
- * @param {{
- *   products: Promise<RecommendedProductsQuery | null>;
- * }}
- */
-function RecommendedProducts({products}) {
+// ── Shop by Category ──────────────────────────────────────────────────────────
+const CATEGORIES = [
+  { label: 'Dresses', handle: 'dress', emoji: '👗' },
+  { label: 'Tops', handle: 'tops-blouses', emoji: '👚' },
+  { label: 'Jackets', handle: 'jackets', emoji: '🧥' },
+  { label: 'Jumpsuits', handle: 'jumpsuit', emoji: '👘' },
+  { label: 'Sweater', handle: 'sweater', emoji: '🧶' },
+  { label: 'New Arrival', handle: 'new-arrival', emoji: '✨' },
+];
+
+function ShopByCategory({collections}) {
   return (
-    <div className="recommended-products">
-      <h2>Recommended Products</h2>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Await resolve={products}>
-          {(response) => (
-            <div className="recommended-products-grid">
-              {response
-                ? response.products.nodes.map((product) => (
-                    <ProductItem key={product.id} product={product} />
-                  ))
-                : null}
+    <div style={{ padding: '56px 40px', maxWidth: '1340px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '28px' }}>
+        <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#111', letterSpacing: '-0.01em' }}>Shop by Category</h2>
+        <a href="/collections" style={{ fontSize: '13px', color: '#666', textDecoration: 'none', borderBottom: '1px solid #ccc' }}>View all</a>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '12px' }}>
+        {CATEGORIES.map(cat => {
+          const col = collections?.find(c => c.handle === cat.handle);
+          return (
+            <a key={cat.handle} href={`/collections/${cat.handle}`} style={{ textDecoration: 'none', display: 'block' }}>
+              <div style={{ aspectRatio: '3/4', backgroundColor: '#f5f5f5', borderRadius: '4px', overflow: 'hidden', position: 'relative', marginBottom: '10px' }}>
+                {col?.image ? (
+                  <img src={col.image.url} alt={cat.label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>{cat.emoji}</div>
+                )}
+              </div>
+              <p style={{ fontSize: '13px', fontWeight: '600', color: '#111', textAlign: 'center', margin: 0 }}>{cat.label}</p>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── Promo Cards ───────────────────────────────────────────────────────────────
+function PromoCards() {
+  const cards = [
+    { title: 'New Arrivals', subtitle: 'Fresh styles every week', cta: 'Shop Now', href: '/collections/new-arrival', bg: '#1a1a2e', color: '#fff' },
+    { title: 'Dresses', subtitle: 'From mini to maxi', cta: 'Explore', href: '/collections/dress', bg: '#2d1f1f', color: '#fff' },
+    { title: 'Sale', subtitle: 'Up to 50% off', cta: 'Shop Sale', href: '/collections/all', bg: '#c9a84c', color: '#111' },
+  ];
+  return (
+    <div style={{ backgroundColor: '#f8f8f8', padding: '56px 40px' }}>
+      <div style={{ maxWidth: '1340px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px' }}>
+        {cards.map(card => (
+          <a key={card.title} href={card.href} style={{ textDecoration: 'none', display: 'block', backgroundColor: card.bg, padding: '40px 32px', borderRadius: '4px', position: 'relative', overflow: 'hidden', minHeight: '200px' }}>
+            <p style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', color: card.color, opacity: 0.7, marginBottom: '10px' }}>Vestoraa</p>
+            <h3 style={{ fontSize: '28px', fontWeight: '800', color: card.color, marginBottom: '8px', letterSpacing: '-0.01em' }}>{card.title}</h3>
+            <p style={{ fontSize: '14px', color: card.color, opacity: 0.8, marginBottom: '24px' }}>{card.subtitle}</p>
+            <span style={{ fontSize: '12px', fontWeight: '700', letterSpacing: '0.1em', textTransform: 'uppercase', color: card.color, borderBottom: `1px solid ${card.color}`, paddingBottom: '2px' }}>{card.cta} →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Product Card ──────────────────────────────────────────────────────────────
+function HomeProductCard({product}) {
+  const [hovered, setHovered] = useState(false);
+  const price = product.priceRange?.minVariantPrice;
+  const fmtPrice = (p) => {
+    if (!p) return '';
+    const sym = p.currencyCode === 'AUD' ? 'A$' : '$';
+    return sym + parseFloat(p.amount).toFixed(2);
+  };
+  return (
+    <a href={`/products/${product.handle}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+      <div style={{ aspectRatio: '3/4', backgroundColor: '#f5f5f5', overflow: 'hidden', borderRadius: '4px', marginBottom: '12px' }}>
+        {product.featuredImage && (
+          <img src={product.featuredImage.url} alt={product.title}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', transform: hovered ? 'scale(1.05)' : 'scale(1)', transition: 'transform 0.4s ease' }} />
+        )}
+      </div>
+      <p style={{ fontSize: '13px', color: '#111', fontWeight: '500', margin: '0 0 4px', lineHeight: 1.4 }}>{product.title}</p>
+      <p style={{ fontSize: '14px', color: '#111', fontWeight: '600', margin: 0 }}>{fmtPrice(price)}</p>
+    </a>
+  );
+}
+
+// ── New Arrivals Section ──────────────────────────────────────────────────────
+function NewArrivalsSection({newArrivals}) {
+  return (
+    <div style={{ padding: '56px 40px', maxWidth: '1340px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '28px' }}>
+        <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#111', letterSpacing: '-0.01em' }}>New Arrivals</h2>
+        <a href="/collections/new-arrival" style={{ fontSize: '13px', color: '#666', textDecoration: 'none', borderBottom: '1px solid #ccc' }}>View all</a>
+      </div>
+      <Suspense fallback={<div style={{ height: '400px', backgroundColor: '#f5f5f5', borderRadius: '4px' }} />}>
+        <Await resolve={newArrivals}>
+          {(data) => (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px 12px' }}>
+              {data?.products?.nodes?.slice(0, 5).map(product => (
+                <HomeProductCard key={product.id} product={product} />
+              ))}
             </div>
           )}
         </Await>
       </Suspense>
-      <br />
     </div>
   );
 }
 
-const FEATURED_COLLECTION_QUERY = `#graphql
-  fragment FeaturedCollection on Collection {
-    id
-    title
-    image {
-      id
-      url
-      altText
-      width
-      height
-    }
-    handle
-  }
-  query FeaturedCollection($country: CountryCode, $language: LanguageCode)
+// ── Recommended Products ──────────────────────────────────────────────────────
+function RecommendedSection({recommendedProducts}) {
+  return (
+    <div style={{ backgroundColor: '#f8f8f8', padding: '56px 40px' }}>
+      <div style={{ maxWidth: '1340px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '28px' }}>
+          <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#111', letterSpacing: '-0.01em' }}>This Week\'s Top Sellers</h2>
+          <a href="/collections/all" style={{ fontSize: '13px', color: '#666', textDecoration: 'none', borderBottom: '1px solid #ccc' }}>View all</a>
+        </div>
+        <Suspense fallback={<div style={{ height: '400px', backgroundColor: '#eee', borderRadius: '4px' }} />}>
+          <Await resolve={recommendedProducts}>
+            {(data) => (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px 12px' }}>
+                {data?.products?.nodes?.slice(0, 8).map(product => (
+                  <HomeProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
+          </Await>
+        </Suspense>
+      </div>
+    </div>
+  );
+}
+
+// ── USP Strip ─────────────────────────────────────────────────────────────────
+function USPStrip() {
+  const usps = [
+    { icon: '🚚', title: 'Free Shipping', sub: 'On orders over $100' },
+    { icon: '↩️', title: 'Easy Returns', sub: '30-day return policy' },
+    { icon: '🔒', title: 'Secure Payment', sub: 'Your data is safe' },
+    { icon: '💬', title: '24/7 Support', sub: 'We\'re here to help' },
+  ];
+  return (
+    <div style={{ borderTop: '1px solid #e8e8e8', borderBottom: '1px solid #e8e8e8', padding: '28px 40px' }}>
+      <div style={{ maxWidth: '1340px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '20px' }}>
+        {usps.map(u => (
+          <div key={u.title} style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <span style={{ fontSize: '28px' }}>{u.icon}</span>
+            <div>
+              <p style={{ fontSize: '13px', fontWeight: '700', color: '#111', margin: '0 0 2px' }}>{u.title}</p>
+              <p style={{ fontSize: '12px', color: '#777', margin: 0 }}>{u.sub}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+export default function Homepage() {
+  const data = useLoaderData();
+  return (
+    <div style={{ fontFamily: 'inherit', backgroundColor: '#fff' }}>
+      <PromoBanner />
+      <HeroBanner />
+      <USPStrip />
+      <ShopByCategory collections={data.collections} />
+      <PromoCards />
+      <NewArrivalsSection newArrivals={data.newArrivals} />
+      <RecommendedSection recommendedProducts={data.recommendedProducts} />
+    </div>
+  );
+}
+
+const COLLECTIONS_QUERY = `#graphql
+  query HomepageCollections($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    collections(first: 1, sortKey: UPDATED_AT, reverse: true) {
+    collections(first: 20) {
       nodes {
-        ...FeaturedCollection
+        id handle title
+        image { url altText }
       }
     }
   }
 `;
 
 const RECOMMENDED_PRODUCTS_QUERY = `#graphql
-  fragment RecommendedProduct on Product {
-    id
-    title
-    handle
-    priceRange {
-      minVariantPrice {
-        amount
-        currencyCode
-      }
-    }
-    featuredImage {
-      id
-      url
-      altText
-      width
-      height
+  fragment HomeProduct on Product {
+    id title handle
+    priceRange { minVariantPrice { amount currencyCode } }
+    featuredImage { id url altText width height }
+  }
+  query RecommendedProducts($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    products(first: 8, sortKey: BEST_SELLING) {
+      nodes { ...HomeProduct }
     }
   }
-  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
+`;
+
+const NEW_ARRIVALS_QUERY = `#graphql
+  fragment NewArrivalProduct on Product {
+    id title handle
+    priceRange { minVariantPrice { amount currencyCode } }
+    featuredImage { id url altText width height }
+  }
+  query NewArrivals($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 4, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...RecommendedProduct
-      }
+    products(first: 5, sortKey: CREATED_AT, reverse: true) {
+      nodes { ...NewArrivalProduct }
     }
   }
 `;
 
 /** @typedef {import('./+types/_index').Route} Route */
-/** @typedef {import('storefrontapi.generated').FeaturedCollectionFragment} FeaturedCollectionFragment */
-/** @typedef {import('storefrontapi.generated').RecommendedProductsQuery} RecommendedProductsQuery */
 /** @typedef {import('@shopify/remix-oxygen').SerializeFrom<typeof loader>} LoaderReturnData */
