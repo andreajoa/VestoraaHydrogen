@@ -79,7 +79,9 @@ export default function Product() {
 
   const metafields = product.metafields || [];
   const getMeta = (key) => metafields.find(m => m?.key === key)?.value;
-  const materialInfo = getMeta('material') || null;
+  
+  // Buscar material de todos os campos possiveis
+  const materialInfo = getMeta('material') || getMeta('fabric') || getMeta('composition') || getMeta('materials') || extractMaterialFromDescription(product.description);
   const careInfo = getMeta('care_instructions') || getMeta('care') || null;
 
   const accordionItems = [
@@ -348,8 +350,15 @@ const PRODUCT_QUERY = `#graphql
       metafields(identifiers: [
         {namespace: "shopify", key: "material"}
         {namespace: "custom", key: "material"}
+        {namespace: "descriptors", key: "material"}
+        {namespace: "global", key: "material"}
         {namespace: "shopify", key: "care_instructions"}
+        {namespace: "custom", key: "care_instructions"}
         {namespace: "custom", key: "care"}
+        {namespace: "shopify", key: "fabric"}
+        {namespace: "custom", key: "fabric"}
+        {namespace: "custom", key: "composition"}
+        {namespace: "custom", key: "materials"}
       ]) { key namespace value }
     }
   }
