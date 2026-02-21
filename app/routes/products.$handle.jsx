@@ -67,8 +67,8 @@ async function loadCriticalData({ context, params, request }) {
   // Similar items: mesmo tipo do produto atual
   const currentType = product.productType || '';
   const similarQuery = currentType
-    ? \`product_type:\${currentType} NOT id:\${product.id}\`
-    : 'NOT id:' + product.id;
+    ? ("product_type:" + currentType)
+    : "";
 
   const similarProducts = await context.storefront
     .query(SIMILAR_PRODUCTS_QUERY, {
