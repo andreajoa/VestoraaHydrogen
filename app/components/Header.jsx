@@ -7,9 +7,9 @@ const UTILITY_LINKS = [
   { label: 'Contact & FAQs', href: '/pages/contact' },
   { label: 'Delivery', href: '/policies/shipping-policy' },
   { label: 'Returns', href: '/policies/refund-policy' },
-  { label: 'Track Orders', href: '/pages/track-orders' },
-  { label: 'Share Your Ideas', href: '/pages/feedback' },
-  { label: 'Gift Cards', href: '/products/gift-card' },
+  { label: 'Track Orders', href: '/pages/track-order' },
+  { label: 'Share Your Ideas', href: '/pages/share-your-ideas' },
+  { label: 'Gift Cards', href: '/pages/gift-cards' },
 ];
 
 export function Header({header, isLoggedIn, cart, publicStoreDomain}) {

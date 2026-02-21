@@ -115,7 +115,7 @@ export default function Product() {
           {/* LEFT: Gallery */}
           <div style={{ display: 'flex', gap: '12px' }}>
             {/* Thumbnails */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '80px', flexShrink: 0 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '80px', flexShrink: 0, position: 'sticky', top: '96px', maxHeight: 'calc(100vh - 110px)', overflowY: 'auto', scrollbarWidth: 'none', alignSelf: 'flex-start' }}>
               {displayImages.map((img, idx) => (
                 <button
                   key={img.id || idx}
