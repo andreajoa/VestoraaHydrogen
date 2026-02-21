@@ -67,47 +67,49 @@ function FilterSection({ section, activeFilters, onToggle }) {
   const active = activeFilters[section.key] || [];
   const hasActive = active.length > 0;
   return (
-    <div style={{ borderBottom: '1px solid #e8e8e8' }}>
-      <button onClick={() => setOpen(o => !o)}
-        style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer', padding: '14px 0', textAlign: 'left' }}>
-        <span style={{ fontSize: '13px', fontWeight: hasActive ? '700' : '400', color: '#111' }}>
-          {section.title}{hasActive ? ' (' + active.length + ')' : ''}
+    <div style={{ borderBottom: '1px solid #e2e2e2' }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer', padding: '13px 0', textAlign: 'left' }}
+      >
+        <span style={{ fontSize: '14px', fontWeight: hasActive ? '600' : '400', color: '#111', fontFamily: 'inherit' }}>
+          {section.title}
         </span>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', flexShrink: 0 }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2" style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', flexShrink: 0 }}>
           <polyline points="6 9 12 15 18 9" />
         </svg>
       </button>
       {open && (
-        <div style={{ paddingBottom: '14px' }}>
+        <div style={{ paddingBottom: '12px' }}>
           {section.isColour ? (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', paddingTop: '4px' }}>
               {section.options.map(opt => {
                 const isActive = active.includes(opt);
                 return (
                   <button key={opt} onClick={() => onToggle(section.key, opt)} title={opt}
-                    style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: COLOUR_MAP[opt] || '#ccc', border: 'none', outline: isActive ? '2px solid #111' : '2px solid transparent', outlineOffset: '2px', cursor: 'pointer', padding: 0, boxShadow: '0 0 0 1px #ddd' }} />
+                    style={{ width: '26px', height: '26px', borderRadius: '50%', backgroundColor: COLOUR_MAP[opt] || '#ccc', border: 'none', outline: isActive ? '2.5px solid #111' : '1.5px solid #ccc', outlineOffset: '2px', cursor: 'pointer', padding: 0 }} />
                 );
               })}
             </div>
           ) : section.isSize ? (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', paddingTop: '4px' }}>
               {section.options.map(opt => {
                 const isActive = active.includes(opt);
                 return (
                   <button key={opt} onClick={() => onToggle(section.key, opt)}
-                    style={{ minWidth: '40px', padding: '6px 10px', fontSize: '12px', fontWeight: '500', border: isActive ? '1.5px solid #111' : '1px solid #ddd', backgroundColor: isActive ? '#111' : '#fff', color: isActive ? '#fff' : '#444', cursor: 'pointer', borderRadius: '3px', transition: 'all 0.15s' }}>{opt}</button>
+                    style={{ minWidth: '44px', padding: '7px 10px', fontSize: '12px', fontWeight: '500', border: isActive ? '2px solid #111' : '1px solid #ccc', backgroundColor: isActive ? '#111' : '#fff', color: isActive ? '#fff' : '#333', cursor: 'pointer', borderRadius: '3px' }}>{opt}</button>
                 );
               })}
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', paddingTop: '2px' }}>
               {section.options.map(opt => {
                 const isActive = active.includes(opt);
                 return (
-                  <label key={opt} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '7px 0', borderBottom: '1px solid #f5f5f5' }}>
+                  <label key={opt} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', padding: '7px 0' }}>
                     <span style={{ fontSize: '13px', color: isActive ? '#111' : '#555', fontWeight: isActive ? '600' : '400' }}>{opt}</span>
                     <input type="checkbox" checked={isActive} onChange={() => onToggle(section.key, opt)}
-                      style={{ width: '14px', height: '14px', accentColor: '#111', cursor: 'pointer', flexShrink: 0 }} />
+                      style={{ width: '15px', height: '15px', accentColor: '#111', cursor: 'pointer', flexShrink: 0 }} />
                   </label>
                 );
               })}
@@ -121,12 +123,16 @@ function FilterSection({ section, activeFilters, onToggle }) {
 
 function Sidebar({ activeFilters, onToggle, onClearAll, totalActive }) {
   return (
-    <aside style={{ width: '260px', minWidth: '260px', flexShrink: 0, alignSelf: 'flex-start', borderRight: '1px solid #e8e8e8', paddingRight: '32px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '12px', marginBottom: '0' }}>
-        <span style={{ fontSize: '14px', fontWeight: '600', color: '#111' }}>Filter</span>
-        {totalActive > 0 && <button onClick={onClearAll} style={{ fontSize: '12px', color: '#666', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>Clear all</button>}
+    <aside style={{ width: '240px', minWidth: '240px', flexShrink: 0, alignSelf: 'flex-start', paddingRight: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '10px' }}>
+        <span style={{ fontSize: '15px', fontWeight: '600', color: '#111', fontFamily: 'inherit' }}>Filter</span>
+        {totalActive > 0 && (
+          <button onClick={onClearAll} style={{ fontSize: '13px', color: '#555', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>Clear all</button>
+        )}
       </div>
-      {FILTER_SECTIONS.map(s => <FilterSection key={s.key} section={s} activeFilters={activeFilters} onToggle={onToggle} />)}
+      <div style={{ borderTop: '1px solid #e2e2e2' }}>
+        {FILTER_SECTIONS.map(s => <FilterSection key={s.key} section={s} activeFilters={activeFilters} onToggle={onToggle} />)}
+      </div>
     </aside>
   );
 }
