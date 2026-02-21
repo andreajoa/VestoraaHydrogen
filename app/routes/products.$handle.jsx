@@ -204,6 +204,9 @@ export default function Product() {
               </button>
             </div>
 
+            {/* WEAR IT WITH - abaixo da imagem, igual The Iconic */}
+            <WearItWithStrip products={products.slice(0, 6)} />
+
           </div>
 
           {/* RIGHT: Product info panel */}
@@ -275,34 +278,6 @@ export default function Product() {
         </div>
 
 
-
-        {/* WEAR IT WITH - secao full width abaixo do grid */}
-        {products.length > 0 && (
-          <div style={{ marginTop: '48px', paddingTop: '32px', borderTop: '1px solid #eee' }}>
-            <p style={{ fontSize: '12px', fontWeight: '700', color: '#333', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '20px' }}>Wear it with</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '16px' }}>
-              {products.slice(0, 6).map((p) => {
-                const img = p.featuredImage;
-                const price = parseFloat(p.priceRange?.minVariantPrice?.amount || 0);
-                const variantId = p.variants?.nodes?.[0]?.id;
-                return (
-                  <div key={p.id} style={{ position: 'relative' }}>
-                    <a href={'/products/' + p.handle} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
-                      <div style={{ position: 'relative', aspectRatio: '2/3', backgroundColor: '#f5f5f5', borderRadius: '8px', overflow: 'hidden', marginBottom: '8px' }}>
-                        {img && <img src={img.url} alt={img.altText || p.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />}
-                      </div>
-                      <p style={{ fontSize: '11px', color: '#555', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.title}</p>
-                      <p style={{ fontSize: '12px', fontWeight: '700', color: '#111', margin: 0 }}>\${price.toFixed(2)}</p>
-                    </a>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* WEAR IT WITH */}
-        <WearItWithStrip products={products.slice(0, 6)} />
 
         {/* PRODUCT DETAILS - expandable */}
         {descriptionHtml && (
