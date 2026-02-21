@@ -1,183 +1,248 @@
-import { Link, useNavigate, useLocation } from 'react-router';
+import { Link } from 'react-router';
 import { AddToCartButton } from '~/components/AddToCartButton';
 import { useState, useEffect } from 'react';
+import { SizeGuideModal } from '~/components/Product/SizeGuideModal';
 
 const GOLD = '#C9A84C';
 
-function useIsDarkMode() {
-  const [dark, setDark] = useState(false);
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    setDark(mq.matches);
-    const h = (e) => setDark(e.matches);
-    mq.addEventListener('change', h);
-    return () => mq.removeEventListener('change', h);
-  }, []);
-  return dark;
-}
-
-export function ProductForm({ productOptions, selectedVariant, onSizeGuideClick }) {
-  const [wished, setWished] = useState(false);
-  const isDark = useIsDarkMode();
-  const btnBg = isDark ? '#ffffff' : '#111111';
-  const btnText = isDark ? '#111111' : '#ffffff';
+export function ProductForm({ productOptions, selectedVariant }) {
+  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
+  const [selectedSize, setSelectedSize] = useState('');
+  const [sizeOpen, setSizeOpen] = useState(false);
 
   if (!productOptions || productOptions.length === 0) return null;
 
+  const colorOption = productOptions.find(o => ['Color','Colour','color','colour'].includes(o.name));
+  const sizeOption = productOptions.find(o => ['Size','size'].includes(o.name));
+  const otherOptions = productOptions.filter(o =>
+    !['Color','Colour','color','colour','Size','size'].includes(o.name)
+  );
+
+  const selectedColorValue = colorOption?.optionValues?.find(v => v.selected);
+  const selectedSizeValue = sizeOption?.optionValues?.find(v => v.selected);
+
   return (
     <div>
-      {productOptions.map((option) => {
-        const isColor = ['Color','Colour','color','colour'].includes(option.name);
-        const isSize = ['Size','size'].includes(option.name);
-
-        if (isColor) {
-          const selectedValue = option.optionValues.find(v => v.selected);
-          return (
-            <div key={option.name} style={{ marginBottom: '18px' }}>
-              <p style={{ fontSize: '12px', color: '#666', margin: '0 0 10px' }}>
-                Colour: <strong style={{ color: '#111', fontWeight: '600' }}>{selectedValue?.name || ''}</strong>
-              </p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                {option.optionValues.map((value) => {
-                  const sel = value.selected;
-                  const unavail = !value.available;
-                  const img = value.swatch?.image?.previewImage?.url || value.firstSelectableVariant?.image?.url;
-                  const color = value.swatch?.color;
-                  return (
-                    <Link
-                      key={value.name}
-                      to={value.to || '#'}
-                      preventScrollReset
-                      replace
-                      prefetch='intent'
-                      title={value.name}
-                      style={{
-                        display: 'block', width: '62px', height: '80px',
-                        borderRadius: '12px', overflow: 'hidden',
-                        position: 'relative', flexShrink: 0,
-                        textDecoration: 'none',
-                        opacity: unavail ? 0.35 : 1,
-                        outline: sel ? ('3px solid ' + GOLD) : '2px solid #e0e0e0',
-                        outlineOffset: sel ? '3px' : '0',
-                        transform: sel ? 'scale(1.06)' : 'scale(1)',
-                        transition: 'all 0.2s ease',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {img
-                        ? <img src={img} alt={value.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
-                        : <div style={{ width: '100%', height: '100%', backgroundColor: color || '#eee' }} />
-                      }
-                      {unavail && (
-                        <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,255,255,0.5)' }}>
-                          <div style={{ position: 'absolute', top: '50%', left: '10%', right: '10%', height: '1px', background: '#999', transform: 'rotate(45deg)' }} />
-                        </div>
-                      )}
-                      {sel && <div style={{ position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)', width: '5px', height: '5px', borderRadius: '50%', backgroundColor: GOLD }} />}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        }
-
-        if (isSize) {
-          return (
-            <div key={option.name} style={{ marginBottom: '16px' }}>
-              <p style={{ fontSize: '12px', color: '#666', margin: '0 0 8px' }}>Size</p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {option.optionValues.map((value) => {
-                  const sel = value.selected;
-                  const unavail = !value.available;
-                  return (
-                    <Link
-                      key={value.name}
-                      to={value.to || '#'}
-                      preventScrollReset
-                      replace
-                      prefetch='intent'
-                      title={value.name}
-                      style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        minWidth: '52px', height: '46px', padding: '0 14px',
-                        borderRadius: '12px',
-                        border: sel ? ('3px solid ' + GOLD) : '1px solid #ddd',
-                        backgroundColor: sel ? '#fffcf0' : '#fff',
-                        color: unavail ? '#ccc' : sel ? '#111' : '#555',
-                        fontSize: '13px', fontWeight: sel ? '800' : '400',
-                        textDecoration: unavail ? 'line-through' : 'none',
-                        cursor: unavail ? 'not-allowed' : 'pointer',
-                        boxShadow: sel ? ('0 2px 8px rgba(201,168,76,0.4)') : 'none',
-                        transform: sel ? 'scale(1.08)' : 'scale(1)',
-                        transition: 'all 0.18s ease',
-                      }}
-                    >
-                      {value.name}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        }
-
-        return (
-          <div key={option.name} style={{ marginBottom: '14px' }}>
-            <p style={{ fontSize: '12px', color: '#666', margin: '0 0 8px' }}>{option.name}</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-              {option.optionValues.map((value) => {
-                const sel = value.selected;
-                return (
-                  <Link key={value.name} to={value.to || '#'} preventScrollReset replace prefetch='intent'
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 16px', fontSize: '12px', borderRadius: '12px', border: sel ? ('3px solid ' + GOLD) : '1px solid #ddd', backgroundColor: sel ? '#fffcf0' : '#fff', color: '#333', textDecoration: 'none', fontWeight: sel ? '700' : '400', transition: 'all 0.15s' }}
-                  >
-                    {value.name}
-                  </Link>
-                );
-              })}
-            </div>
+      {/* COLOR */}
+      {colorOption && (
+        <div style={{ marginBottom: '18px' }}>
+          <p style={{ fontSize: '12px', color: '#555', margin: '0 0 10px' }}>
+            Colour: <strong style={{ color: '#111', fontWeight: '700' }}>{selectedColorValue?.name || ''}</strong>
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+            {colorOption.optionValues.map((value) => {
+              const sel = value.selected;
+              const unavail = !value.available;
+              const img = value.swatch?.image?.previewImage?.url || value.firstSelectableVariant?.image?.url;
+              const color = value.swatch?.color;
+              return (
+                <Link
+                  key={value.name}
+                  to={value.to || '#'}
+                  preventScrollReset
+                  replace
+                  prefetch="intent"
+                  title={value.name}
+                  style={{
+                    display: 'block', width: '62px', height: '80px',
+                    borderRadius: '10px', overflow: 'hidden',
+                    position: 'relative', flexShrink: 0,
+                    textDecoration: 'none',
+                    opacity: unavail ? 0.35 : 1,
+                    outline: sel ? `2px solid ${GOLD}` : '1.5px solid #ddd',
+                    outlineOffset: sel ? '2px' : '0',
+                    transition: 'all 0.15s ease',
+                    cursor: unavail ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {img
+                    ? <img src={img} alt={value.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+                    : <div style={{ width: '100%', height: '100%', backgroundColor: color || '#eee' }} />
+                  }
+                  {unavail && (
+                    <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,255,255,0.5)' }}>
+                      <div style={{ position: 'absolute', top: '50%', left: '10%', right: '10%', height: '1px', background: '#999', transform: 'rotate(45deg)' }} />
+                    </div>
+                  )}
+                </Link>
+              );
+            })}
           </div>
-        );
-      })}
+        </div>
+      )}
+
+      {/* SIZE DROPDOWN + SIZE GUIDE */}
+      {sizeOption && (
+        <div style={{ marginBottom: '16px' }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
+            {/* Dropdown */}
+            <div style={{ flex: 1, position: 'relative' }}>
+              <button
+                onClick={() => setSizeOpen(o => !o)}
+                style={{
+                  width: '100%', height: '46px',
+                  border: '1px solid #ccc', borderRadius: '6px',
+                  backgroundColor: '#fff',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '0 14px',
+                  fontSize: '13px', color: selectedSizeValue ? '#111' : '#888',
+                  cursor: 'pointer', fontWeight: '400',
+                }}
+              >
+                <span>{selectedSizeValue ? selectedSizeValue.name : 'Pick a size...'}</span>
+                <span style={{ fontSize: '11px', color: '#888', marginLeft: '8px' }}>▾</span>
+              </button>
+              {sizeOpen && (
+                <div style={{
+                  position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100,
+                  backgroundColor: '#fff', border: '1px solid #ccc', borderTop: 'none',
+                  borderRadius: '0 0 6px 6px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  maxHeight: '220px', overflowY: 'auto',
+                }}>
+                  {sizeOption.optionValues.map((value) => {
+                    const sel = value.selected;
+                    const unavail = !value.available;
+                    return (
+                      <Link
+                        key={value.name}
+                        to={value.to || '#'}
+                        preventScrollReset
+                        replace
+                        prefetch="intent"
+                        onClick={() => setSizeOpen(false)}
+                        style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                          padding: '10px 14px',
+                          fontSize: '13px',
+                          color: unavail ? '#ccc' : sel ? '#111' : '#444',
+                          backgroundColor: sel ? '#fffcf0' : '#fff',
+                          fontWeight: sel ? '700' : '400',
+                          textDecoration: 'none',
+                          borderBottom: '1px solid #f0f0f0',
+                          cursor: unavail ? 'not-allowed' : 'pointer',
+                          pointerEvents: unavail ? 'none' : 'auto',
+                        }}
+                      >
+                        <span style={{ textDecoration: unavail ? 'line-through' : 'none' }}>{value.name}</span>
+                        {unavail && <span style={{ fontSize: '10px', color: '#bbb' }}>Sold out</span>}
+                        {sel && <span style={{ fontSize: '11px', color: GOLD }}>✓</span>}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Size Guide Button */}
+            <button
+              onClick={() => setSizeGuideOpen(true)}
+              style={{
+                height: '46px', padding: '0 14px',
+                border: '1px solid #ccc', borderRadius: '6px',
+                backgroundColor: '#fff', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: '6px',
+                fontSize: '12px', fontWeight: '700', color: '#333',
+                whiteSpace: 'nowrap', letterSpacing: '0.05em',
+                flexShrink: 0,
+              }}
+            >
+              <span style={{ fontSize: '14px' }}>📐</span>
+              SIZE GUIDE
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* OTHER OPTIONS */}
+      {otherOptions.map((option) => (
+        <div key={option.name} style={{ marginBottom: '14px' }}>
+          <p style={{ fontSize: '12px', color: '#666', margin: '0 0 8px' }}>{option.name}</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {option.optionValues.map((value) => {
+              const sel = value.selected;
+              return (
+                <Link key={value.name} to={value.to || '#'} preventScrollReset replace prefetch="intent"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 16px', fontSize: '12px', borderRadius: '6px', border: sel ? `2px solid ${GOLD}` : '1px solid #ddd', backgroundColor: sel ? '#fffcf0' : '#fff', color: '#333', textDecoration: 'none', fontWeight: sel ? '700' : '400', transition: 'all 0.15s' }}
+                >
+                  {value.name}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ))}
 
       {/* ADD TO BAG + WISHLIST */}
       <div style={{ display: 'flex', gap: '8px', marginTop: '20px', alignItems: 'stretch' }}>
-        <div style={{ flex: 1, display: 'flex' }}>
         <AddToCartButton
           disabled={!selectedVariant?.availableForSale}
           lines={selectedVariant ? [{ merchandiseId: selectedVariant.id, quantity: 1 }] : []}
           openCart
           style={{
-            flex: 1, height: '50px',
-            backgroundColor: selectedVariant?.availableForSale ? btnBg : '#ccc',
-            color: selectedVariant?.availableForSale ? btnText : '#fff',
-            border: 'none', borderRadius: '12px',
-            fontSize: '13px', fontWeight: '700', letterSpacing: '0.1em',
+            flex: 1, height: '52px',
+            backgroundColor: selectedVariant?.availableForSale ? '#111' : '#ccc',
+            color: '#fff',
+            border: 'none', borderRadius: '6px',
+            fontSize: '13px', fontWeight: '700', letterSpacing: '0.12em',
             cursor: selectedVariant?.availableForSale ? 'pointer' : 'not-allowed',
-            transition: 'all 0.25s',
+            transition: 'background-color 0.2s',
           }}
         >
           {selectedVariant?.availableForSale ? 'ADD TO BAG' : 'SOLD OUT'}
         </AddToCartButton>
-        </div>
-        <button onClick={() => setWished(w => !w)}
-          style={{ width: '50px', height: '50px', flexShrink: 0, border: wished ? ('2px solid ' + GOLD) : '1px solid #ddd', borderRadius: '12px', backgroundColor: wished ? '#fffcf0' : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '20px', color: wished ? '#e33' : '#bbb', transition: 'all 0.2s' }}
-        >
-          {wished ? '♥' : '♡'}
-        </button>
-      </div>
 
-      {selectedVariant?.availableForSale && (
-        <button style={{ width: '100%', height: '46px', marginTop: '8px', backgroundColor: '#000', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: '500', cursor: 'pointer', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>
-           Pay
-        </button>
-      )}
+        <WishlistButton productId={selectedVariant?.product?.handle || ''} />
+      </div>
 
       {!selectedVariant?.availableForSale && (
         <p style={{ fontSize: '11px', color: '#999', textAlign: 'center', marginTop: '10px' }}>Currently unavailable</p>
       )}
+
+      <SizeGuideModal isOpen={sizeGuideOpen} onClose={() => setSizeGuideOpen(false)} />
     </div>
+  );
+}
+
+function WishlistButton({ productId }) {
+  const [wished, setWished] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('vestoraa_wishlist') || '[]');
+      setWished(stored.includes(productId));
+    } catch {}
+  }, [productId]);
+
+  const toggle = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('vestoraa_wishlist') || '[]');
+      let next;
+      if (stored.includes(productId)) {
+        next = stored.filter(id => id !== productId);
+      } else {
+        next = [...stored, productId];
+      }
+      localStorage.setItem('vestoraa_wishlist', JSON.stringify(next));
+      setWished(!stored.includes(productId));
+    } catch {}
+  };
+
+  return (
+    <button
+      onClick={toggle}
+      style={{
+        width: '52px', height: '52px', flexShrink: 0,
+        border: wished ? `1.5px solid #C9A84C` : '1px solid #ccc',
+        borderRadius: '6px',
+        backgroundColor: '#fff',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        cursor: 'pointer', fontSize: '20px',
+        color: wished ? '#e33' : '#bbb',
+        transition: 'all 0.2s',
+      }}
+      title={wished ? 'Remove from wishlist' : 'Add to wishlist'}
+    >
+      {wished ? '♥' : '♡'}
+    </button>
   );
 }

@@ -52,7 +52,6 @@ function loadDeferredData({ context, params }) {
 
 export default function Product() {
   const { product, recommendedProducts } = useLoaderData();
-  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [activeImg, setActiveImg] = useState(0);
   const [detailsExpanded, setDetailsExpanded] = useState(false);
 
@@ -225,14 +224,6 @@ export default function Product() {
             {/* Product Form (Color + Size + Buttons) */}
             <ProductForm productOptions={productOptions} selectedVariant={selectedVariant} />
 
-            {/* Size Guide */}
-            <button
-              onClick={() => setSizeGuideOpen(true)}
-              style={{ marginTop: '8px', fontSize: '11px', textDecoration: 'underline', color: '#555', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-            >
-              View Size Guide
-            </button>
-
             {/* Accordion */}
             <ProductAccordion items={accordionItems} />
 
@@ -312,8 +303,6 @@ export default function Product() {
           }],
         }}
       />
-
-      <SizeGuideModal isOpen={sizeGuideOpen} onClose={() => setSizeGuideOpen(false)} />
     </div>
   );
 }
