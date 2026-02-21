@@ -1,4 +1,4 @@
-import {Suspense, useState} from 'react';
+import {Suspense, useState, useEffect} from 'react';
 import {Await, NavLink, useAsyncValue} from 'react-router';
 import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
 import {useAside} from '~/components/Aside';
@@ -8,7 +8,7 @@ const UTILITY_LINKS = [
   { label: 'FAQs', href: '/pages/faq' },
   { label: 'Delivery', href: '/pages/delivery' },
   { label: 'Returns', href: '/policies/refund-policy' },
-  { label: 'Track Orders', href: 'https://www.vestoraa.com/apps/track123' },
+  { label: 'Track Orders', href: 'https://www.vestoraa.com/apps/track123', external: true },
   { label: 'Gift Cards', href: '/collections/new-arrival' },
 ];
 
@@ -16,13 +16,14 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
   const {shop, menu} = header;
   return (
     <div style={{ position: 'sticky', top: 0, zIndex: 100 }}>
-
+      {/* Top utility bar */}
       <div style={{ backgroundColor: '#1a1a1a', borderBottom: '1px solid #333', padding: '0 24px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', height: '34px' }}>
         {UTILITY_LINKS.map((item, i) => (
-          <UtilityLink key={item.label} href={item.href} label={item.label} last={i === UTILITY_LINKS.length - 1} />
+          <UtilityLink key={item.label} href={item.href} label={item.label} external={item.external} last={i === UTILITY_LINKS.length - 1} />
         ))}
       </div>
 
+      {/* Main nav bar */}
       <div style={{ backgroundColor: '#111', padding: '0 24px', display: 'flex', alignItems: 'center', height: '60px', gap: '20px' }}>
         <NavLink to='/' prefetch='intent' style={{ color: '#fff', textDecoration: 'none', fontSize: '20px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'Georgia, serif', whiteSpace: 'nowrap', flexShrink: 0 }}>
           {shop.name}
@@ -60,14 +61,38 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
         <SearchBar />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
-          <NavLink to='/account' prefetch='intent' title='Account'
-            style={{ color: '#bbb', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '38px', height: '38px', textDecoration: 'none', transition: 'color 0.15s' }}
-            onMouseEnter={e => e.currentTarget.style.color='#fff'}
-            onMouseLeave={e => e.currentTarget.style.color='#bbb'}
-          >
-            <AccountIcon />
-          </NavLink>
+          {/* Account - links to Shopify customer account */}
+          <Suspense fallback={
+            <NavLink to='/account/login' prefetch='intent' title='Account'
+              style={{ color: '#bbb', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '38px', height: '38px', textDecoration: 'none' }}>
+              <AccountIcon />
+            </NavLink>
+          }>
+            <Await resolve={isLoggedIn} errorElement={
+              <NavLink to='/account/login' title='Account'
+                style={{ color: '#bbb', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '38px', height: '38px', textDecoration: 'none' }}>
+                <AccountIcon />
+              </NavLink>
+            }>
+              {(loggedIn) => (
+                <NavLink to={loggedIn ? '/account' : '/account/login'} prefetch='intent' title={loggedIn ? 'My Account' : 'Login'}
+                  style={({ isActive }) => ({
+                    color: isActive ? '#fff' : '#bbb',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    width: '38px', height: '38px', textDecoration: 'none', transition: 'color 0.15s',
+                  })}
+                  onMouseEnter={e => e.currentTarget.style.color='#fff'}
+                  onMouseLeave={e => e.currentTarget.style.color='#bbb'}
+                >
+                  <AccountIcon filled={loggedIn} />
+                </NavLink>
+              )}
+            </Await>
+          </Suspense>
+
+          {/* Wishlist - links to wishlist page */}
           <WishlistButton />
+
           <CartToggle cart={cart} />
         </div>
       </div>
@@ -75,10 +100,13 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
   );
 }
 
-function UtilityLink({ href, label, last }) {
+function UtilityLink({ href, label, last, external }) {
   const [hovered, setHovered] = useState(false);
   return (
-    <a href={href}
+    
+      href={href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener noreferrer' : undefined}
       style={{ color: hovered ? '#fff' : '#aaa', fontSize: '11px', textDecoration: 'none', padding: '0 10px', borderRight: last ? 'none' : '1px solid #444', whiteSpace: 'nowrap', lineHeight: 1, transition: 'color 0.15s' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -105,26 +133,51 @@ function SearchBar() {
   );
 }
 
-function AccountIcon() {
+function AccountIcon({ filled }) {
   return (
-    <svg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.5'>
+    <svg width='20' height='20' viewBox='0 0 24 24' fill={filled ? 'currentColor' : 'none'} stroke='currentColor' strokeWidth='1.5'>
       <path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/>
     </svg>
   );
 }
 
 function WishlistButton() {
-  const [wished, setWished] = useState(false);
+  const [count, setCount] = useState(0);
+  const [hovered, setHovered] = useState(false);
+
+  useEffect(() => {
+    // Ler wishlist do sessionStorage
+    try {
+      const w = JSON.parse(sessionStorage.getItem('vestoraa_wishlist') || '[]');
+      setCount(w.length);
+    } catch {}
+
+    // Escutar eventos de update da wishlist
+    const handler = () => {
+      try {
+        const w = JSON.parse(sessionStorage.getItem('vestoraa_wishlist') || '[]');
+        setCount(w.length);
+      } catch {}
+    };
+    window.addEventListener('wishlist_updated', handler);
+    return () => window.removeEventListener('wishlist_updated', handler);
+  }, []);
+
   return (
-    <button onClick={() => setWished(w => !w)} title='Wishlist'
-      style={{ color: wished ? '#ff6b6b' : '#bbb', background: 'none', border: 'none', width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'color 0.15s' }}
-      onMouseEnter={e => { if (!wished) e.currentTarget.style.color='#fff'; }}
-      onMouseLeave={e => { if (!wished) e.currentTarget.style.color='#bbb'; }}
+    <NavLink to='/wishlist' prefetch='intent' title='Wishlist'
+      style={{ color: count > 0 ? '#ff6b6b' : (hovered ? '#fff' : '#bbb'), background: 'none', border: 'none', width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'color 0.15s', textDecoration: 'none', position: 'relative' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      <svg width='20' height='20' viewBox='0 0 24 24' fill={wished ? 'currentColor' : 'none'} stroke='currentColor' strokeWidth='1.5'>
+      <svg width='20' height='20' viewBox='0 0 24 24' fill={count > 0 ? 'currentColor' : 'none'} stroke='currentColor' strokeWidth='1.5'>
         <path d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'/>
       </svg>
-    </button>
+      {count > 0 && (
+        <span style={{ position: 'absolute', top: '2px', right: '2px', backgroundColor: '#ff6b6b', color: '#fff', borderRadius: '50%', width: '15px', height: '15px', fontSize: '9px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {count > 9 ? '9+' : count}
+        </span>
+      )}
+    </NavLink>
   );
 }
 
