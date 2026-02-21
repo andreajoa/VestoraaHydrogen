@@ -1,130 +1,153 @@
 import {Suspense} from 'react';
 import {Await, NavLink} from 'react-router';
 
-/**
- * @param {FooterProps}
- */
 export function Footer({footer: footerPromise, header, publicStoreDomain}) {
   return (
     <Suspense>
       <Await resolve={footerPromise}>
-        {(footer) => (
-          <footer className="footer">
-            {footer?.menu && header.shop.primaryDomain?.url && (
-              <FooterMenu
-                menu={footer.menu}
-                primaryDomainUrl={header.shop.primaryDomain.url}
-                publicStoreDomain={publicStoreDomain}
-              />
-            )}
-          </footer>
-        )}
+        {() => <FooterContent />}
       </Await>
     </Suspense>
   );
 }
 
-/**
- * @param {{
- *   menu: FooterQuery['menu'];
- *   primaryDomainUrl: FooterProps['header']['shop']['primaryDomain']['url'];
- *   publicStoreDomain: string;
- * }}
- */
-function FooterMenu({menu, primaryDomainUrl, publicStoreDomain}) {
+function FooterContent() {
   return (
-    <nav className="footer-menu" role="navigation">
-      {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
-        if (!item.url) return null;
-        // if the url is internal, we strip the domain
-        const url =
-          item.url.includes('myshopify.com') ||
-          item.url.includes(publicStoreDomain) ||
-          item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
-            : item.url;
-        const isExternal = !url.startsWith('/');
-        return isExternal ? (
-          <a href={url} key={item.id} rel="noopener noreferrer" target="_blank">
-            {item.title}
-          </a>
-        ) : (
-          <NavLink
-            end
-            key={item.id}
-            prefetch="intent"
-            style={activeLinkStyle}
-            to={url}
-          >
-            {item.title}
-          </NavLink>
-        );
-      })}
-    </nav>
+    <footer style={{
+      backgroundColor: '#f5f0e8',
+      padding: '48px 40px 24px',
+      marginTop: '64px',
+      fontFamily: 'inherit',
+    }}>
+      {/* Main columns */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '40px',
+        maxWidth: '1200px',
+        margin: '0 auto 48px',
+      }}>
+        {/* Legal */}
+        <div>
+          <h4 style={{ fontSize: '13px', fontWeight: '600', color: '#111', marginBottom: '20px', letterSpacing: '0.05em' }}>Legal</h4>
+          {[
+            { label: 'Shipping Policy', href: '/policies/shipping-policy' },
+            { label: 'Privacy Policy', href: '/policies/privacy-policy' },
+            { label: 'Cookies Policy', href: '/policies/privacy-policy#cookies' },
+            { label: 'Terms & Conditions', href: '/policies/terms-of-service' },
+          ].map(link => (
+            <div key={link.label} style={{ marginBottom: '14px' }}>
+              <a href={link.href} style={{ fontSize: '13px', color: '#444', textDecoration: 'none', lineHeight: 1.5 }}
+                onMouseOver={e => e.target.style.color='#111'}
+                onMouseOut={e => e.target.style.color='#444'}>
+                {link.label}
+              </a>
+            </div>
+          ))}
+        </div>
+
+        {/* Support */}
+        <div>
+          <h4 style={{ fontSize: '13px', fontWeight: '600', color: '#111', marginBottom: '20px', letterSpacing: '0.05em' }}>Support</h4>
+          {[
+            { label: 'Shipping Policy', href: '/policies/shipping-policy' },
+            { label: 'FAQ', href: '/pages/faq' },
+            { label: 'Refund/Return Policy', href: '/policies/refund-policy' },
+          ].map(link => (
+            <div key={link.label} style={{ marginBottom: '14px' }}>
+              <a href={link.href} style={{ fontSize: '13px', color: '#444', textDecoration: 'none', lineHeight: 1.5 }}
+                onMouseOver={e => e.target.style.color='#111'}
+                onMouseOut={e => e.target.style.color='#444'}>
+                {link.label}
+              </a>
+            </div>
+          ))}
+        </div>
+
+        {/* Our story */}
+        <div>
+          <h4 style={{ fontSize: '13px', fontWeight: '600', color: '#111', marginBottom: '20px', letterSpacing: '0.05em' }}>Our story</h4>
+          {[
+            { label: 'About US', href: '/pages/about' },
+            { label: 'Contact Us', href: '/pages/contact' },
+          ].map(link => (
+            <div key={link.label} style={{ marginBottom: '14px' }}>
+              <a href={link.href} style={{ fontSize: '13px', color: '#444', textDecoration: 'none', lineHeight: 1.5 }}
+                onMouseOver={e => e.target.style.color='#111'}
+                onMouseOut={e => e.target.style.color='#444'}>
+                {link.label}
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom bar */}
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        borderTop: '1px solid #ddd',
+        paddingTop: '20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '12px',
+      }}>
+        {/* Copyright + Terms */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '12px', color: '#666' }}>© 2026 Vestoraa, Co.</span>
+          <a href="/policies/terms-of-service" style={{ fontSize: '12px', color: '#666', textDecoration: 'none' }}>Terms and Policies</a>
+        </div>
+
+        {/* Payment icons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Visa */}
+          <svg width="38" height="24" viewBox="0 0 38 24" style={{ border: '1px solid #ddd', borderRadius: '4px', background: '#fff' }}>
+            <text x="50%" y="16" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#1a1f71" fontFamily="Arial">VISA</text>
+          </svg>
+          {/* Mastercard */}
+          <svg width="38" height="24" viewBox="0 0 38 24" style={{ border: '1px solid #ddd', borderRadius: '4px', background: '#fff' }}>
+            <circle cx="14" cy="12" r="8" fill="#eb001b" opacity="0.9"/>
+            <circle cx="24" cy="12" r="8" fill="#f79e1b" opacity="0.9"/>
+            <path d="M19 6.8a8 8 0 0 1 0 10.4A8 8 0 0 1 19 6.8z" fill="#ff5f00"/>
+          </svg>
+          {/* Amex */}
+          <svg width="38" height="24" viewBox="0 0 38 24" style={{ border: '1px solid #ddd', borderRadius: '4px', background: '#2557d6' }}>
+            <text x="50%" y="16" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#fff" fontFamily="Arial">AMEX</text>
+          </svg>
+          {/* PayPal */}
+          <svg width="38" height="24" viewBox="0 0 38 24" style={{ border: '1px solid #ddd', borderRadius: '4px', background: '#fff' }}>
+            <text x="50%" y="16" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#003087" fontFamily="Arial">PayPal</text>
+          </svg>
+          {/* Apple Pay */}
+          <svg width="38" height="24" viewBox="0 0 38 24" style={{ border: '1px solid #ddd', borderRadius: '4px', background: '#000' }}>
+            <text x="50%" y="16" textAnchor="middle" fontSize="7" fontWeight="bold" fill="#fff" fontFamily="Arial">Apple Pay</text>
+          </svg>
+          {/* Shop Pay */}
+          <svg width="38" height="24" viewBox="0 0 38 24" style={{ border: '1px solid #ddd', borderRadius: '4px', background: '#5a31f4' }}>
+            <text x="50%" y="16" textAnchor="middle" fontSize="7" fontWeight="bold" fill="#fff" fontFamily="Arial">Shop Pay</text>
+          </svg>
+        </div>
+      </div>
+
+      {/* Mobile responsive */}
+      <style>{`
+        @media (max-width: 768px) {
+          footer > div:first-child {
+            grid-template-columns: 1fr 1fr !important;
+          }
+        }
+        @media (max-width: 480px) {
+          footer > div:first-child {
+            grid-template-columns: 1fr !important;
+          }
+          footer > div:last-child {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+          }
+        }
+      `}</style>
+    </footer>
   );
 }
-
-const FALLBACK_FOOTER_MENU = {
-  id: 'gid://shopify/Menu/199655620664',
-  items: [
-    {
-      id: 'gid://shopify/MenuItem/461633060920',
-      resourceId: 'gid://shopify/ShopPolicy/23358046264',
-      tags: [],
-      title: 'Privacy Policy',
-      type: 'SHOP_POLICY',
-      url: '/policies/privacy-policy',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461633093688',
-      resourceId: 'gid://shopify/ShopPolicy/23358013496',
-      tags: [],
-      title: 'Refund Policy',
-      type: 'SHOP_POLICY',
-      url: '/policies/refund-policy',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461633126456',
-      resourceId: 'gid://shopify/ShopPolicy/23358111800',
-      tags: [],
-      title: 'Shipping Policy',
-      type: 'SHOP_POLICY',
-      url: '/policies/shipping-policy',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461633159224',
-      resourceId: 'gid://shopify/ShopPolicy/23358079032',
-      tags: [],
-      title: 'Terms of Service',
-      type: 'SHOP_POLICY',
-      url: '/policies/terms-of-service',
-      items: [],
-    },
-  ],
-};
-
-/**
- * @param {{
- *   isActive: boolean;
- *   isPending: boolean;
- * }}
- */
-function activeLinkStyle({isActive, isPending}) {
-  return {
-    fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'grey' : 'white',
-  };
-}
-
-/**
- * @typedef {Object} FooterProps
- * @property {Promise<FooterQuery|null>} footer
- * @property {HeaderQuery} header
- * @property {string} publicStoreDomain
- */
-
-/** @typedef {import('storefrontapi.generated').FooterQuery} FooterQuery */
-/** @typedef {import('storefrontapi.generated').HeaderQuery} HeaderQuery */
