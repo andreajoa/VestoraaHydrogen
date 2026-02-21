@@ -353,6 +353,9 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
         priceRange { minVariantPrice { amount currencyCode } }
         compareAtPriceRange { minVariantPrice { amount currencyCode } }
         featuredImage { id url altText width height }
+        variants(first: 1) {
+          nodes { id availableForSale }
+        }
       }
     }
   }
