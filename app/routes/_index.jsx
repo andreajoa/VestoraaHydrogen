@@ -79,9 +79,31 @@ function GenderCategories() {
       {cats.map(cat => (
         <a key={cat.label} href={cat.href} style={{ flex: 1, position: "relative", overflow: "hidden", textDecoration: "none", display: "block", aspectRatio: "3/4" }}>
           <img src={cat.img} alt={cat.label} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-          <span style={{ position: "absolute", bottom: "28px", left: "24px", fontSize: "22px", fontWeight: "800", letterSpacing: "0.25em", color: "#f5d800", textTransform: "uppercase", fontStyle: "italic", textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>{cat.label}</span>
         </a>
       ))}
+    </div>
+  );
+}
+
+// ── Promo Wide Banner ────────────────────────────────────────────────────────
+function PromoWideBanner() {
+  return (
+    <div style={{ margin: '0', backgroundColor: '#1e3a6e', padding: '0 40px' }}>
+      <div style={{ maxWidth: '1340px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '100px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ flex: 1 }}>
+          <p style={{ fontSize: '22px', fontWeight: '800', color: '#fff', margin: '0 0 4px', lineHeight: 1.2 }}>
+            WIN 1 of 10 x <span style={{ color: '#5bc8f5' }}>$1000 Vestoraa Gift Cards</span>
+          </p>
+          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.75)', margin: '0 0 6px' }}>with AfterPay — shop now, pay later</p>
+          <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>* Eligibility criteria, terms & exclusions apply. See full terms on AfterPay website.</p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+          <div style={{ backgroundColor: '#b2fcf4', borderRadius: '40px', padding: '12px 28px' }}>
+            <span style={{ fontSize: '18px', fontWeight: '900', color: '#111', letterSpacing: '0.02em' }}>AfterPay</span>
+          </div>
+          <div style={{ width: '200px', height: '100px', background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.15) 0%, transparent 70%)', borderRadius: '50%', position: 'absolute', right: '180px' }} />
+        </div>
+      </div>
     </div>
   );
 }
@@ -253,6 +275,7 @@ export default function Homepage() {
       <HeroBanner />
       <USPStrip />
       <GenderCategories />
+      <PromoWideBanner />
       <ShopByCategory collections={data.collections} />
       <PromoCards />
       <NewArrivalsSection newArrivals={data.newArrivals} />
