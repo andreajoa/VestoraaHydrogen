@@ -54,14 +54,14 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
           <Suspense fallback={
-            <NavLink to='/account/login' prefetch='intent' title='Sign In'
+            <NavLink to='https://account.vestoraa.com/account/authorize' prefetch='intent' title='Sign In'
               style={{ color: '#bbb', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '38px', height: '38px', textDecoration: 'none' }}>
               <AccountIcon filled={false} />
             </NavLink>
           }>
             <Await resolve={isLoggedIn}>
               {(loggedIn) => (
-                <NavLink to={loggedIn ? '/account' : '/account/login'} prefetch='intent'
+                <NavLink to={loggedIn ? '/account' : 'https://account.vestoraa.com/account/authorize'} prefetch='intent'
                   title={loggedIn ? 'My Account' : 'Sign In'}
                   style={{ color: '#bbb', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '38px', height: '38px', textDecoration: 'none', transition: 'color 0.15s' }}
                   onMouseEnter={e => e.currentTarget.style.color='#fff'}
