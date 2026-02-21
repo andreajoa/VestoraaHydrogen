@@ -104,7 +104,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
             <div style={{ flex: 1, position: 'relative' }}>
               <button type="button" onClick={() => setSizeOpen(o => !o)}
                 style={{ width: '100%', height: '48px', border: '1px solid #ccc', borderRadius: '6px', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px', fontSize: '13px', color: selectedSizeValue ? '#111' : '#888', cursor: 'pointer' }}>
-                <span style={{ color: userSelectedSize && selectedSizeValue ? '#111' : '#888' }}>{userSelectedSize && selectedSizeValue ? selectedSizeValue.name : 'Pick a size'}</span>
+                <span style={{ color: userPickedSize && selectedSizeValue ? '#111' : '#888' }}>{userPickedSize && selectedSizeValue ? selectedSizeValue.name : 'Pick a size'}</span>
                 <span style={{ fontSize: '11px', color: '#888' }}>▾</span>
               </button>
               {sizeOpen && (
