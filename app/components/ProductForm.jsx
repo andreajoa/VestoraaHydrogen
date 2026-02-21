@@ -23,7 +23,7 @@ function WishlistButton({ productHandle }) {
   };
   return (
     <button onClick={toggle} type="button" style={{ width: '54px', height: '54px', flexShrink: 0, border: wished ? `1.5px solid ${GOLD}` : '1px solid #ddd', borderRadius: '8px', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '20px', color: wished ? '#e33' : '#bbb', transition: 'all 0.2s' }} title={wished ? 'Remove from wishlist' : 'Add to wishlist'}>
-      {wished ? '\u2665' : '\u2661'}
+      {wished ? '♥' : '♡'}
     </button>
   );
 }
@@ -72,7 +72,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
               <button type="button" onClick={() => setSizeOpen(o => !o)}
                 style={{ width: '100%', height: '48px', border: '1px solid #ccc', borderRadius: '6px', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px', fontSize: '13px', color: selectedSizeValue ? '#111' : '#888', cursor: 'pointer' }}>
                 <span>{selectedSizeValue ? selectedSizeValue.name : 'Pick a size...'}</span>
-                <span style={{ fontSize: '11px', color: '#888' }}>\u25be</span>
+                <span style={{ fontSize: '11px', color: '#888' }}>▾</span>
               </button>
               {sizeOpen && (
                 <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 200, backgroundColor: '#fff', border: '1px solid #ccc', borderTop: 'none', borderRadius: '0 0 6px 6px', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', maxHeight: '240px', overflowY: 'auto' }}>
@@ -84,7 +84,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
                         style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '11px 14px', fontSize: '13px', color: unavail ? '#bbb' : sel ? '#111' : '#444', backgroundColor: sel ? '#fffcf0' : '#fff', fontWeight: sel ? '700' : '400', textDecoration: 'none', borderBottom: '1px solid #f5f5f5', pointerEvents: unavail ? 'none' : 'auto' }}>
                         <span style={{ textDecoration: unavail ? 'line-through' : 'none' }}>{value.name}</span>
                         {unavail && <span style={{ fontSize: '10px', color: '#bbb' }}>Sold out</span>}
-                        {sel && <span style={{ color: GOLD, fontSize: '12px' }}>\u2713</span>}
+                        {sel && <span style={{ color: GOLD, fontSize: '12px' }}>✓</span>}
                       </Link>
                     );
                   })}
@@ -93,7 +93,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
             </div>
             <button type="button" onClick={() => setSizeGuideOpen(true)}
               style={{ height: '48px', padding: '0 14px', border: '1px solid #ccc', borderRadius: '6px', backgroundColor: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#333', whiteSpace: 'nowrap', flexShrink: 0 }}>
-              \ud83d\udcd0 SIZE GUIDE
+              📐 SIZE GUIDE
             </button>
           </div>
         </div>
@@ -116,7 +116,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
         </div>
       ))}
 
-      <div style={{ display: 'flex', gap: '8px', marginTop: '20px', alignItems: 'stretch' }}>
+      <div style={{ display: 'flex', gap: '8px', marginTop: '20px', alignItems: 'stretch', width: '100%' }}>
         <AddToCartButton
           disabled={!selectedVariant?.availableForSale}
           lines={selectedVariant ? [{ merchandiseId: selectedVariant.id, quantity: 1 }] : []}

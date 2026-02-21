@@ -4,7 +4,7 @@ import {useAside} from '~/components/Aside';
 export function AddToCartButton({analytics, children, disabled, lines, onClick, style}) {
   const {open} = useAside();
   return (
-    <CartForm route="/cart" inputs={{lines}} action={CartForm.ACTIONS.LinesAdd}>
+    <CartForm route="/cart" inputs={{lines}} action={CartForm.ACTIONS.LinesAdd} style={{ flex: 1, display: 'flex', minWidth: 0 }}>
       {(fetcher) => (
         <>
           <input name="analytics" type="hidden" value={JSON.stringify(analytics)} />
