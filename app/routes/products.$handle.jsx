@@ -301,6 +301,9 @@ export default function Product() {
           </div>
         )}
 
+        {/* WEAR IT WITH */}
+        <WearItWithStrip products={products.slice(0, 6)} />
+
         {/* PRODUCT DETAILS - expandable */}
         {descriptionHtml && (
           <div style={{ marginTop: '48px', paddingTop: '40px', borderTop: '1px solid #eee' }}>
