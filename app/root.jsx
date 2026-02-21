@@ -1,3 +1,4 @@
+import { AnnouncementBar } from '~/components/AnnouncementBar';
 import {Analytics, getShopAnalytics, useNonce} from '@shopify/hydrogen';
 import {
   Outlet,
