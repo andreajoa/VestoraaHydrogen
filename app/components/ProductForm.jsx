@@ -171,7 +171,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
       ))}
 
       <div style={{ display: 'flex', gap: '10px', marginTop: '24px', alignItems: 'stretch', width: '100%' }}>
-        <AddToCartButton
+        <div style={{ flex: 1, minWidth: 0 }}><AddToCartButton
           disabled={!selectedVariant?.availableForSale}
           lines={selectedVariant ? [{ merchandiseId: selectedVariant.id, quantity: 1 }] : []}
           style={{
@@ -186,7 +186,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
           }}
         >
           {selectedVariant?.availableForSale ? 'ADD TO BAG' : 'SOLD OUT'}
-        </AddToCartButton>
+        </AddToCartButton></div>
         <WishlistButton productHandle={selectedVariant?.product?.handle || ''} />
       </div>
 
