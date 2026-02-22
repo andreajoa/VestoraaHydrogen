@@ -248,8 +248,8 @@ function USPStrip() {
     { icon: '💬', title: '24/7 Support', sub: 'We\'re here to help' },
   ];
   return (
-    <div style={{ borderTop: '1px solid #e8e8e8', borderBottom: '1px solid #e8e8e8', padding: '28px 40px' }}>
-      <div style={{ maxWidth: '1340px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '20px' }}>
+    <div style={{ borderTop: '1px solid #e8e8e8', borderBottom: '1px solid #e8e8e8' }}>
+      <div style={{ maxWidth: '1340px', margin: '0 auto', padding: '28px 40px', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '20px', boxSizing: 'border-box' }}>
         {usps.map(u => (
           <div key={u.title} style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <span style={{ fontSize: '28px' }}>{u.icon}</span>
