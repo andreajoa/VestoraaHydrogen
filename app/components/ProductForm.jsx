@@ -139,7 +139,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
               )}
             </div>
             <button type="button" onClick={() => setSizeGuideOpen(true)}
-              style={{ height: '48px', padding: '0 14px', border: '1px solid #ccc', borderRadius: '6px', backgroundColor: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: '700', color: '#333', whiteSpace: 'nowrap', flexShrink: 0 }}>
+              style={{ height: '48px', padding: '0 10px', border: '1px solid #ccc', borderRadius: '6px', backgroundColor: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: '700', color: '#333', whiteSpace: 'nowrap', flexShrink: 0 }}>
               📐 SIZE GUIDE
             </button>
           </div>
@@ -173,7 +173,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
         </div>
       ))}
 
-      <div style={{ display: 'flex', gap: '10px', marginTop: '24px', alignItems: 'stretch', width: '100%' }}>
+      <div style={{ display: 'flex', gap: '8px', marginTop: '24px', alignItems: 'stretch', width: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
         <div className="add-to-bag-wrapper" style={{ flex: 1, minWidth: 0 }}><AddToCartButton
           disabled={!selectedVariant?.availableForSale}
           lines={selectedVariant ? [{ merchandiseId: selectedVariant.id, quantity: 1 }] : []}

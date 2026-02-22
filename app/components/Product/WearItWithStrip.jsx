@@ -30,7 +30,7 @@ export function WearItWithStrip({ products }) {
           })}
         </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', overflow: 'hidden' }}>
         {items.map((p) => {
           const img = p.featuredImage;
           const price = parseFloat(p.priceRange?.minVariantPrice?.amount || 0);
@@ -45,7 +45,7 @@ export function WearItWithStrip({ products }) {
                     : <div style={{ position: 'absolute', inset: 0, backgroundColor: '#eee' }} />
                   }
                 </div>
-                <p style={{ fontSize: '10px', color: '#555', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3 }}>{p.title}</p>
+                <p style={{ fontSize: '10px', color: '#555', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3, maxWidth: '100%' }}>{p.title}</p>
                 <p style={{ fontSize: '12px', fontWeight: '700', color: '#111', margin: 0 }}>{symbol}{price.toFixed(2)}</p>
               </a>
             </div>
