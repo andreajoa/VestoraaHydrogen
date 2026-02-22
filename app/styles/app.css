@@ -763,73 +763,65 @@ button.reset:hover:not(:has(> *)) {
   cursor: pointer !important;
 }
 
-
 /* ══════════════════════════════════════════════════════════════════════════
-   MOBILE RESPONSIVE — VERSÃO DEFINITIVA
+   RESPONSIVE — DEFINITIVO (não duplicar)
    ══════════════════════════════════════════════════════════════════════════ */
 
-/* Prevenir scroll horizontal global */
 html, body { overflow-x: hidden !important; max-width: 100vw !important; }
 
-/* ── Header ──────────────────────────────────────────────────────────────── */
+/* ── DESKTOP (≥769px) ───────────────────────────────────────────────────── */
 @media (min-width: 769px) {
-  .utility-bar  { display: flex !important; }
-  .desktop-nav  { display: flex !important; }
-  .hamburger-btn{ display: none !important; }
-  .mobile-menu  { display: none !important; }
-}
-@media (max-width: 768px) {
-  .utility-bar  { display: none !important; }
-  .desktop-nav  { display: none !important; }
-  .hamburger-btn{ display: flex !important; }
+  .utility-bar   { display: flex !important; }
+  .desktop-nav   { display: flex !important; }
+  .hamburger-btn { display: none !important; }
+  .mobile-menu   { display: none !important; }
+  .gallery-mobile  { display: none !important; }
+  .gallery-desktop { display: flex !important; }
 }
 
-/* ── Gallery toggle ──────────────────────────────────────────────────────── */
-@media (min-width: 769px) {
-  .gallery-mobile { display: none !important; }
-  .gallery-desktop{ display: flex !important; }
-}
+/* ── MOBILE (≤768px) ────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .gallery-desktop{ display: none !important; }
-  .gallery-mobile { display: flex !important; }
-}
 
-/* ── PRODUTO — Layout mobile ─────────────────────────────────────────────── */
-@media (max-width: 768px) {
-  /* Grid → coluna única */
+  /* Header */
+  .utility-bar   { display: none !important; }
+  .desktop-nav   { display: none !important; }
+  .hamburger-btn { display: flex !important; }
+
+  /* Gallery */
+  .gallery-desktop { display: none !important; }
+  .gallery-mobile  { display: flex !important; }
+
+  /* ── Produto ── */
   .product-layout {
     grid-template-columns: 1fr !important;
     gap: 0 !important;
+    padding: 0 !important;
   }
-  /* Panel info sem sticky */
   .product-info-panel {
     position: static !important;
-    padding: 16px !important;
+    padding: 16px 16px 24px !important;
   }
-  /* Título menor */
   .product-info-panel h1 {
     font-size: 15px !important;
     line-height: 1.4 !important;
+    font-weight: 500 !important;
   }
-}
+  .product-breadcrumb {
+    padding: 8px 16px !important;
+  }
 
-/* ── HOMEPAGE — Seções ───────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-  /* Padding geral das seções */
+  /* ── Homepage seções ── */
   .section-pad { padding: 28px 16px !important; }
   .section-bg  { padding: 28px 16px !important; }
   .section-bg > div { padding: 0 !important; }
 
-  /* Hero banner — horizontal compacto */
   .hero-banner-inner {
     padding: 0 16px !important;
     justify-content: space-between !important;
-    align-items: center !important;
   }
   .hero-banner-inner h2 { font-size: 16px !important; }
   .hero-banner-inner p  { font-size: 13px !important; margin-bottom: 2px !important; }
 
-  /* Gender cats — scroll horizontal */
   .gender-cats {
     overflow-x: auto !important;
     overflow-y: hidden !important;
@@ -840,120 +832,40 @@ html, body { overflow-x: hidden !important; max-width: 100vw !important; }
     scrollbar-width: none !important;
   }
   .gender-cats::-webkit-scrollbar { display: none !important; }
-  .gender-cats > a {
-    min-width: 90px !important;
-    flex: 0 0 auto !important;
-  }
+  .gender-cats > a { min-width: 90px !important; flex: 0 0 auto !important; }
 
-  /* ShopPay banner */
   .shoppay-banner { padding: 0 16px !important; }
 
-  /* Shop by Category */
   .category-grid {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 8px !important;
   }
 
-  /* New Arrivals / Top Sellers — 2 colunas */
-  .featured-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px 8px !important;
-  }
+  .featured-grid,
   .editorial-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px 8px !important;
   }
-  .featured-grid p, .editorial-grid p { font-size: 11px !important; }
+  .featured-grid p,
+  .editorial-grid p { font-size: 11px !important; }
 
-  /* Promo cards — coluna única */
-  .promo-cards {
-    grid-template-columns: 1fr !important;
-    gap: 10px !important;
-  }
+  .promo-cards { grid-template-columns: 1fr !important; gap: 10px !important; }
   .promo-cards > a { min-height: 140px !important; padding: 24px 20px !important; }
   .promo-cards h3  { font-size: 20px !important; }
 
-  /* USP strip — 2 colunas */
   .usp-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     padding: 20px 16px !important;
     gap: 12px !important;
   }
 
-  /* Collection sidebar — ocultar */
+  /* ── Collection ── */
   .collection-sidebar { display: none !important; }
-
-  /* Collection grid — 2 colunas */
   .collection-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px 8px !important;
   }
 
-  /* Cart aside full width */
+  /* ── Cart ── */
   .cart-aside { width: 100vw !important; }
-}
-
-/* ── PRODUTO MOBILE DEFINITIVO ───────────────────────────────────────────── */
-@media (max-width: 768px) {
-  /* Layout: 1 coluna, sem padding lateral no grid pai */
-  .product-layout {
-    grid-template-columns: 1fr !important;
-    gap: 0 !important;
-    padding: 0 !important;
-  }
-
-  /* Gallery ocupa 100% da largura */
-  .gallery-mobile {
-    width: 100% !important;
-  }
-
-  /* Info panel com padding lateral */
-  .product-info-panel {
-    position: static !important;
-    padding: 16px !important;
-  }
-
-  /* Título do produto */
-  .product-info-panel h1 {
-    font-size: 15px !important;
-    font-weight: 500 !important;
-    line-height: 1.4 !important;
-  }
-
-  /* Cor swatch menor no mobile */
-  .product-info-panel [style*="width: '62px'"] {
-    width: 48px !important;
-    height: 62px !important;
-  }
-
-  /* Add to bag full width */
-  .add-to-bag-wrapper {
-    flex: 1 !important;
-  }
-
-  /* Breadcrumb padding */
-  .product-breadcrumb {
-    padding: 8px 16px !important;
-  }
-
-  /* Wear it with section */
-  .wear-it-with {
-    padding: 16px !important;
-  }
-
-  /* Reviews section */
-  .reviews-section {
-    padding: 16px !important;
-  }
-
-  /* Similar items grid — 2 cols */
-  .similar-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px 8px !important;
-  }
-
-  /* Thumbnails horizontais sem overflow */
-  .gallery-mobile > div:last-child {
-    padding: 4px 8px !important;
-  }
 }
