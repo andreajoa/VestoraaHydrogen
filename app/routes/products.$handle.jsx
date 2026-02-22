@@ -199,13 +199,13 @@ export default function Product() {
 
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 16px 40px' }}>
         {/* TWO COLUMN LAYOUT */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '40px', alignItems: 'start' }}>
+        <div className="product-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '40px', alignItems: 'start' }}>
 
           {/* LEFT: Gallery */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
             <div style={{ display: 'flex', gap: '12px' }}>
             {/* Thumbnails */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100px', flexShrink: 0, position: 'sticky', top: '96px', maxHeight: 'calc(100vh - 110px)', overflowY: 'auto', scrollbarWidth: 'none', alignSelf: 'flex-start' }}>
+            <div className="product-thumbs" style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100px', flexShrink: 0, position: 'sticky', top: '96px', maxHeight: 'calc(100vh - 110px)', overflowY: 'auto', scrollbarWidth: 'none', alignSelf: 'flex-start' }}>
               {displayImages.map((img, idx) => (
                 <button
                   key={img.id || idx}
@@ -265,7 +265,7 @@ export default function Product() {
           </div>
 
           {/* RIGHT: Product info panel */}
-          <div style={{ position: 'sticky', top: '16px' }}>
+          <div className="product-info-panel" style={{ position: 'sticky', top: '16px' }}>
             {/* Brand + Favourite */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
               <div>

@@ -112,7 +112,7 @@ function FilterSection({ section, activeFilters, onToggle }) {
 
 function Sidebar({ activeFilters, onToggle, onClearAll, totalActive }) {
   return (
-    <div style={{ width: '240px', minWidth: '240px', flexShrink: 0, alignSelf: 'flex-start', paddingRight: '24px', borderRight: '1px solid #e2e2e2' }}>
+    <div className="collection-sidebar" style={{ width: '240px', minWidth: '240px', flexShrink: 0, alignSelf: 'flex-start', paddingRight: '24px', borderRight: '1px solid #e2e2e2' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '10px' }}>
         <span style={{ fontSize: '15px', fontWeight: '600', color: '#111' }}>Filter</span>
         {totalActive > 0 && <button onClick={onClearAll} style={{ fontSize: '13px', color: '#555', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>Clear all</button>}
@@ -263,7 +263,7 @@ export default function Collection() {
             </div>
           )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '20px 14px' }}>
+          <div className="collection-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '20px 14px' }}>
             {paginated.map((product, i) => (
               <ProductCard key={product.id} product={product} loading={i < 8 ? 'eager' : 'lazy'} />
             ))}

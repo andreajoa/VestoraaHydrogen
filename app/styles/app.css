@@ -762,3 +762,107 @@ button.reset:hover:not(:has(> *)) {
   letter-spacing: 0.12em !important;
   cursor: pointer !important;
 }
+
+/* ── MOBILE RESPONSIVE ──────────────────────────────────────────────────── */
+
+/* Product page: stack columns on mobile */
+@media (max-width: 768px) {
+  /* Product page two-column → single column */
+  .product-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Hide thumbnails sidebar on mobile */
+  .product-thumbs {
+    display: none !important;
+  }
+
+  /* Product right panel: unstick */
+  .product-info-panel {
+    position: static !important;
+  }
+
+  /* Homepage: price categories 3 cols → 1 col scroll */
+  .gender-cats {
+    padding: 16px !important;
+    gap: 10px !important;
+  }
+
+  /* Homepage: featured grid repeat(5) → repeat(2) */
+  .featured-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Homepage: editorial grid repeat(4) → repeat(2) */
+  .editorial-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Homepage: shop by category repeat(6) → repeat(3) */
+  .category-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  /* Homepage: promo cards repeat(3) → repeat(1) */
+  .promo-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Homepage: hero banner padding */
+  .hero-banner-text {
+    padding: 0 20px !important;
+  }
+
+  /* Homepage: ShopPay banner */
+  .shoppay-banner {
+    margin: 0 16px !important;
+    padding: 16px !important;
+  }
+
+  /* USP strip: 2 cols on mobile */
+  .usp-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  /* Collection page: hide sidebar */
+  .collection-sidebar {
+    display: none !important;
+  }
+
+  /* Collection page: product grid 4 col → 2 col */
+  .collection-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* All products page */
+  .all-products-sidebar {
+    display: none !important;
+  }
+
+  /* Cart drawer full width */
+  .cart-aside {
+    width: 100vw !important;
+  }
+
+  /* General section padding */
+  .section-padding {
+    padding: 32px 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Even smaller phones */
+  .featured-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .gender-cats a {
+    aspect-ratio: 2/3 !important;
+  }
+}

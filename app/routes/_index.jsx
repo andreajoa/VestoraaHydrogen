@@ -76,7 +76,7 @@ function GenderCategories() {
     { label: 'UNDER $300', href: '/collections/under-300', img: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/under_300.avif?v=1771724555' },
   ];
   return (
-    <div style={{ display: "flex", gap: "6px", padding: "24px 40px", maxWidth: "1340px", margin: "0 auto", boxSizing: "border-box" }}>
+    <div className="gender-cats" style={{ display: "flex", gap: "6px", padding: "24px 40px", maxWidth: "1340px", margin: "0 auto", boxSizing: "border-box" }}>
       {cats.map(cat => (
         <a key={cat.label} href={cat.href} style={{ flex: 1, position: "relative", overflow: "hidden", textDecoration: "none", display: "block", aspectRatio: "3/4" }}>
           <img src={cat.img} alt={cat.label} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
@@ -89,7 +89,7 @@ function GenderCategories() {
 // ── Promo Wide Banner ────────────────────────────────────────────────────────
 function PromoWideBanner() {
   return (
-    <div style={{ padding: '0 40px', maxWidth: '1340px', margin: '0 auto', boxSizing: 'border-box' }}>
+    <div className="shoppay-banner" style={{ padding: '0 40px', maxWidth: '1340px', margin: '0 auto', boxSizing: 'border-box' }}>
       <div style={{ backgroundColor: '#1e3a6e', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '100px', padding: '20px 32px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ flex: 1 }}>
           <p style={{ fontSize: '22px', fontWeight: '800', color: '#fff', margin: '0 0 4px', lineHeight: 1.2 }}>
@@ -123,7 +123,7 @@ function ShopByCategory({collections}) {
         <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#111', letterSpacing: '-0.01em' }}>Shop by Category</h2>
         <a href="/collections" style={{ fontSize: '13px', color: '#666', textDecoration: 'none', borderBottom: '1px solid #ccc' }}>View all</a>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '12px' }}>
+      <div className="category-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '12px' }}>
         {CATEGORIES.map(cat => {
           const col = collections?.find(c => c.handle === cat.handle);
           return (
@@ -153,7 +153,7 @@ function PromoCards() {
   ];
   return (
     <div style={{ backgroundColor: '#f8f8f8', padding: '56px 40px' }}>
-      <div style={{ maxWidth: '1340px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px' }}>
+      <div className="promo-cards" style={{ maxWidth: '1340px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px' }}>
         {cards.map(card => (
           <a key={card.title} href={card.href} style={{ textDecoration: 'none', display: 'block', backgroundColor: card.bg, padding: '40px 32px', borderRadius: '4px', position: 'relative', overflow: 'hidden', minHeight: '200px' }}>
             <p style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', color: card.color, opacity: 0.7, marginBottom: '10px' }}>Vestoraa</p>
@@ -202,7 +202,7 @@ function NewArrivalsSection({newArrivals}) {
       <Suspense fallback={<div style={{ height: '400px', backgroundColor: '#f5f5f5', borderRadius: '4px' }} />}>
         <Await resolve={newArrivals}>
           {(data) => (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px 12px' }}>
+            <div className="featured-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px 12px' }}>
               {data?.products?.nodes?.slice(0, 5).map(product => (
                 <HomeProductCard key={product.id} product={product} />
               ))}
@@ -226,7 +226,7 @@ function RecommendedSection({recommendedProducts}) {
         <Suspense fallback={<div style={{ height: '400px', backgroundColor: '#eee', borderRadius: '4px' }} />}>
           <Await resolve={recommendedProducts}>
             {(data) => (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px 12px' }}>
+              <div className="editorial-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px 12px' }}>
                 {data?.products?.nodes?.slice(0, 8).map(product => (
                   <HomeProductCard key={product.id} product={product} />
                 ))}
@@ -249,7 +249,7 @@ function USPStrip() {
   ];
   return (
     <div style={{ borderTop: '1px solid #e8e8e8', borderBottom: '1px solid #e8e8e8' }}>
-      <div style={{ maxWidth: '1340px', margin: '0 auto', padding: '28px 40px', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '20px', boxSizing: 'border-box' }}>
+      <div className="usp-grid" style={{ maxWidth: '1340px', margin: '0 auto', padding: '28px 40px', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '20px', boxSizing: 'border-box' }}>
         {usps.map(u => (
           <div key={u.title} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' }}>
             <span style={{ fontSize: '28px' }}>{u.icon}</span>
