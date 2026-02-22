@@ -271,14 +271,14 @@ export default function Product() {
                     {vendor}
                   </p>
                 )}
-                <h1 style={{ fontSize: '18px', fontWeight: '400', color: '#111', lineHeight: 1.3, margin: 0 }}>{title}</h1>
+                <h1 style={{ fontSize: '18px', fontWeight: '400', color: '#111', lineHeight: 1.4, margin: 0, wordBreak: 'break-word' }}>{title}</h1>
               </div>
               <button style={{
-                fontSize: '11px', border: '1px solid #ccc', padding: '6px 10px',
-                color: '#555', backgroundColor: '#fff', cursor: 'pointer',
-                whiteSpace: 'nowrap', marginLeft: '12px', flexShrink: 0,
-              }}>
-                ♡ FAVOURITE BRAND
+                fontSize: '18px', border: 'none', background: 'none',
+                color: '#ccc', cursor: 'pointer', flexShrink: 0,
+                marginLeft: '8px', padding: '4px',
+              }} title="Favourite Brand">
+                ♡
               </button>
             </div>
 

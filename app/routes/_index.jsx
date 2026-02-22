@@ -41,26 +41,26 @@ function PromoBanner() {
 // ── Hero Banner ───────────────────────────────────────────────────────────────
 function HeroBanner() {
   return (
-    <div style={{ width: '100%', position: 'relative', overflow: 'hidden', height: '200px', backgroundColor: '#b8c4c2' }}>
+    <div className="hero-banner-wrap" style={{ width: '100%', position: 'relative', overflow: 'hidden', height: '200px', backgroundColor: '#b8c4c2' }}>
       <img src='https://cdn.shopify.com/s/files/1/0706/4456/4124/files/banner.avif?v=1771725046' alt='Spend and Save' style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
       <img
         src="https://cdn.shopify.com/s/files/1/0706/4456/4124/files/11_35353139-cd39-4dfe-a4d8-8859cc92f22d.png?v=1771712961"
         alt="Spend and Save"
-        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }}
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }}
       />
-      <div className="hero-banner-inner" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 80px', backgroundColor: 'rgba(0,0,0,0.15)' }}>
-        <div>
-          <h2 style={{ fontSize: '36px', fontWeight: '800', color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase', margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>SPEND &amp; SAVE</h2>
+      <div className="hero-banner-inner" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px', backgroundColor: 'rgba(0,0,0,0.2)' }}>
+        <div style={{ flexShrink: 0 }}>
+          <h2 className="hero-title" style={{ fontSize: '36px', fontWeight: '800', color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase', margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>SPEND &amp; SAVE</h2>
         </div>
-        <div style={{ textAlign: 'right' }}>
-          <p style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 4px', textShadow: '0 1px 4px rgba(0,0,0,0.3)', lineHeight: 1.2 }}>
+        <div className="hero-right" style={{ textAlign: 'right', flexShrink: 0 }}>
+          <p className="hero-price" style={{ fontSize: '22px', fontWeight: '800', color: '#fff', margin: '0 0 2px', textShadow: '0 1px 4px rgba(0,0,0,0.3)', lineHeight: 1.2 }}>
             SPEND $80, <span style={{ fontStyle: 'italic' }}>SAVE 14%</span>
           </p>
-          <p style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 8px', textShadow: '0 1px 4px rgba(0,0,0,0.3)', lineHeight: 1.2 }}>
-            SPEND $100, <span style={{ fontStyle: 'italic' }}>SAVE 18%</span><sup style={{ fontSize: '14px' }}>*</sup>
+          <p className="hero-price" style={{ fontSize: '22px', fontWeight: '800', color: '#fff', margin: '0 0 6px', textShadow: '0 1px 4px rgba(0,0,0,0.3)', lineHeight: 1.2 }}>
+            SPEND $100, <span style={{ fontStyle: 'italic' }}>SAVE 18%</span><sup style={{ fontSize: '12px' }}>*</sup>
           </p>
-          <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.85)', margin: 0, textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
-            *Ends midnight. Discount applied at checkout. Selected styles listed. T&Cs apply.
+          <p className="hero-fine" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.85)', margin: 0, textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
+            *Ends midnight. Discount applied at checkout. T&Cs apply.
           </p>
         </div>
       </div>

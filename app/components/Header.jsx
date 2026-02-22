@@ -140,7 +140,7 @@ function SearchBar() {
   const [hovered, setHovered] = useState(false);
   return (
     <button onClick={() => open('search')}
-      style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: hovered ? '#2a2a2a' : '#1e1e1e', border: '1px solid ' + (hovered ? '#666' : '#444'), borderRadius: '3px', padding: '0 12px', height: '34px', width: '200px', cursor: 'pointer', transition: 'all 0.15s', flexShrink: 0 }}
+      className="search-bar-btn" style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: hovered ? '#2a2a2a' : '#1e1e1e', border: '1px solid ' + (hovered ? '#666' : '#444'), borderRadius: '3px', padding: '0 12px', height: '34px', width: '200px', cursor: 'pointer', transition: 'all 0.15s', flexShrink: 0 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}>
       <svg width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='#777' strokeWidth='2'>
