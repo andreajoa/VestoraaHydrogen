@@ -105,6 +105,11 @@ export default function Product() {
     setActiveImg(0);
   }, [selectedVariant?.id]);
 
+  // Reset gallery to first image when variant changes
+  useEffect(() => {
+    setActiveImg(0);
+  }, [selectedVariant?.id]);
+
   const { title, vendor, descriptionHtml, images } = product;
   const allImages = images?.nodes || [];
   
