@@ -70,9 +70,9 @@ function HeroBanner() {
 // ── Gender Categories ────────────────────────────────────────────────────────
 function GenderCategories() {
   const cats = [
-    { label: 'UNDER $80', href: '/collections/under-80', img: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/11_35353139-cd39-4dfe-a4d8-8859cc92f22d.png?v=1771712961' },
-    { label: 'UNDER $150', href: '/collections/under-150', img: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/11_35353139-cd39-4dfe-a4d8-8859cc92f22d.png?v=1771712961' },
-    { label: 'UNDER $300', href: '/collections/under-300', img: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/11_35353139-cd39-4dfe-a4d8-8859cc92f22d.png?v=1771712961' },
+    { label: 'UNDER $80', href: '/collections/under-80', img: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/under_80.avif?v=1771724204' },
+    { label: 'UNDER $150', href: '/collections/under-150', img: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/under_150.avif?v=1771724440' },
+    { label: 'UNDER $300', href: '/collections/under-300', img: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/under_300.avif?v=1771724555' },
   ];
   return (
     <div style={{ display: "flex", gap: "6px", padding: "24px 40px", maxWidth: "1340px", margin: "0 auto", boxSizing: "border-box" }}>
