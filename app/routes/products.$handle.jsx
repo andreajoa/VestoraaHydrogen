@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLoaderData } from 'react-router';
 import {
   getSelectedProductOptions,
@@ -100,11 +100,6 @@ export default function Product() {
 
   useSelectedOptionInUrlParam(productOptions);
 
-  // Reset gallery to first image when variant changes
-  useEffect(() => {
-    setActiveImg(0);
-  }, [selectedVariant?.id]);
-
   const { title, vendor, descriptionHtml, images } = product;
   const allImages = images?.nodes || [];
   
@@ -112,6 +107,13 @@ export default function Product() {
   const displayImages = variantImage
     ? [variantImage, ...allImages.filter(img => img.id !== variantImage.id)]
     : allImages;
+
+  // Reset gallery when variant changes
+  const prevVariantId = useRef(selectedVariant?.id);
+  if (prevVariantId.current !== selectedVariant?.id) {
+    prevVariantId.current = selectedVariant?.id;
+    if (activeImg !== 0) setActiveImg(0);
+  }
 
   const mainImage = displayImages[activeImg] || displayImages[0];
   // Wear it with: complementares por tipo
