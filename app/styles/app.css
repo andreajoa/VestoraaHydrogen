@@ -1050,3 +1050,21 @@ html, body { overflow-x: hidden !important; max-width: 100vw !important; }
     flex-shrink: 0 !important;
   }
 }
+
+/* ── Product info panel — garantir padding dos 2 lados ─────────────────── */
+@media (max-width: 768px) {
+  .product-info-panel {
+    padding: 16px 16px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    width: 100% !important;
+  }
+  .product-info-panel * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  /* Exceção para dropdowns que precisam de posição absoluta */
+  .product-info-panel [style*="position: absolute"] {
+    max-width: none !important;
+  }
+}
