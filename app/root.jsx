@@ -15,6 +15,51 @@ import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import {PageLayout} from './components/PageLayout';
+import {useAnalytics} from '@shopify/hydrogen';
+import {useEffect} from 'react';
+
+const FB_PIXEL_ID = '588906963170317';
+
+function fbq(...args) {
+  if (typeof window !== 'undefined' && window.fbq) window.fbq(...args);
+}
+
+function FacebookPixelEvents() {
+  const {subscribe, cart} = useAnalytics();
+
+  useEffect(() => {
+    // AddToCart
+    const unsubATC = subscribe('product_added_to_cart', (data) => {
+      const line = data?.cart?.lines?.nodes?.[0];
+      const price = line?.cost?.totalAmount?.amount;
+      const currency = line?.cost?.totalAmount?.currencyCode;
+      const productTitle = line?.merchandise?.product?.title;
+      fbq('track', 'AddToCart', {
+        content_name: productTitle,
+        content_type: 'product',
+        value: price ? parseFloat(price) : 0,
+        currency: currency || 'AUD',
+      });
+    });
+
+    // Purchase — triggered by Hydrogen when order is confirmed
+    const unsubPurchase = subscribe('order_placed', (data) => {
+      const order = data?.order;
+      fbq('track', 'Purchase', {
+        value: order?.totalPrice?.amount ? parseFloat(order.totalPrice.amount) : 0,
+        currency: order?.totalPrice?.currencyCode || 'AUD',
+        content_type: 'product',
+      });
+    });
+
+    return () => {
+      unsubATC();
+      unsubPurchase();
+    };
+  }, [subscribe]);
+
+  return null;
+}
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
@@ -155,6 +200,26 @@ export function Layout({children}) {
         <link rel="stylesheet" href={appStyles}></link>
         <Meta />
         <Links />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+              n.queue=[];t=b.createElement(e);t.async=!0;
+              t.src=v;s=b.getElementsByTagName(e)[0];
+              s.parentNode.insertBefore(t,s)}(window,document,'script',
+              'https://connect.facebook.net/en_US/fbevents.js');
+              fbq('init', '588906963170317');
+              fbq('track', 'PageView');
+            `,
+          }}
+        />
+        <noscript
+          dangerouslySetInnerHTML={{
+            __html: \`<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=588906963170317&ev=PageView&noscript=1"/>\`,
+          }}
+        />
       </head>
       <body>
         {children}
@@ -179,6 +244,7 @@ export default function App() {
       shop={data.shop}
       consent={data.consent}
     >
+      <FacebookPixelEvents />
       <PageLayout {...data}>
         <Outlet />
       </PageLayout>

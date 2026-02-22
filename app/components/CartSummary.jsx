@@ -20,7 +20,7 @@ export function CartSummary({cart, layout}) {
       <p style={{ fontSize: '11px', color: '#999', margin: '0 0 16px', textAlign: 'center' }}>Shipping and taxes calculated at checkout</p>
       <CartDiscounts discountCodes={cart?.discountCodes} />
       <CartGiftCard giftCardCodes={cart?.appliedGiftCards} />
-      <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
+      <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} cart={cart} />
     </div>
   );
 }
@@ -28,12 +28,24 @@ export function CartSummary({cart, layout}) {
 /**
  * @param {{checkoutUrl?: string}}
  */
-function CartCheckoutActions({checkoutUrl}) {
+function CartCheckoutActions({checkoutUrl, cart}) {
   if (!checkoutUrl) return null;
+
+  const handleCheckout = () => {
+    if (typeof window !== 'undefined' && window.fbq) {
+      const value = cart?.cost?.totalAmount?.amount;
+      const currency = cart?.cost?.totalAmount?.currencyCode;
+      window.fbq('track', 'InitiateCheckout', {
+        value: value ? parseFloat(value) : 0,
+        currency: currency || 'AUD',
+        num_items: cart?.totalQuantity || 0,
+      });
+    }
+  };
 
   return (
     <div style={{ marginTop: '8px' }}>
-      <a href={checkoutUrl} target="_self" style={{ display: 'block', width: '100%', padding: '14px', backgroundColor: '#111', color: '#fff', textAlign: 'center', textDecoration: 'none', fontSize: '13px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', borderRadius: '2px' }}>
+      <a href={checkoutUrl} target="_self" onClick={handleCheckout} style={{ display: 'block', width: '100%', padding: '14px', backgroundColor: '#111', color: '#fff', textAlign: 'center', textDecoration: 'none', fontSize: '13px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', borderRadius: '2px' }}>
         Checkout →
       </a>
       <a href="/cart" style={{ display: 'block', width: '100%', padding: '12px', backgroundColor: '#fff', color: '#111', textAlign: 'center', textDecoration: 'none', fontSize: '12px', fontWeight: '500', border: '1px solid #ddd', borderRadius: '2px', marginTop: '8px', boxSizing: 'border-box' }}>
