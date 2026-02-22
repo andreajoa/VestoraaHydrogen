@@ -10,18 +10,14 @@ export function CartSummary({cart, layout}) {
     layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside';
 
   return (
-    <div aria-labelledby="cart-summary" className={className}>
-      <h4>Totals</h4>
-      <dl className="cart-subtotal">
-        <dt>Subtotal</dt>
-        <dd>
-          {cart?.cost?.subtotalAmount?.amount ? (
-            <Money data={cart?.cost?.subtotalAmount} />
-          ) : (
-            '-'
-          )}
+    <div aria-labelledby="cart-summary" className={className} style={{ borderTop: '1px solid #f0f0f0', paddingTop: '20px', marginTop: '8px' }}>
+      <dl style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 0 16px' }}>
+        <dt style={{ fontSize: '13px', color: '#555', fontWeight: '400' }}>Subtotal</dt>
+        <dd style={{ fontSize: '16px', fontWeight: '700', color: '#111', margin: 0 }}>
+          {cart?.cost?.subtotalAmount?.amount ? <Money data={cart?.cost?.subtotalAmount} /> : '-'}
         </dd>
       </dl>
+      <p style={{ fontSize: '11px', color: '#999', margin: '0 0 16px', textAlign: 'center' }}>Shipping and taxes calculated at checkout</p>
       <CartDiscounts discountCodes={cart?.discountCodes} />
       <CartGiftCard giftCardCodes={cart?.appliedGiftCards} />
       <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
@@ -36,11 +32,13 @@ function CartCheckoutActions({checkoutUrl}) {
   if (!checkoutUrl) return null;
 
   return (
-    <div>
-      <a href={checkoutUrl} target="_self">
-        <p>Continue to Checkout &rarr;</p>
+    <div style={{ marginTop: '8px' }}>
+      <a href={checkoutUrl} target="_self" style={{ display: 'block', width: '100%', padding: '14px', backgroundColor: '#111', color: '#fff', textAlign: 'center', textDecoration: 'none', fontSize: '13px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', borderRadius: '2px' }}>
+        Checkout →
       </a>
-      <br />
+      <a href="/cart" style={{ display: 'block', width: '100%', padding: '12px', backgroundColor: '#fff', color: '#111', textAlign: 'center', textDecoration: 'none', fontSize: '12px', fontWeight: '500', border: '1px solid #ddd', borderRadius: '2px', marginTop: '8px', boxSizing: 'border-box' }}>
+        View Cart
+      </a>
     </div>
   );
 }
@@ -76,18 +74,12 @@ function CartDiscounts({discountCodes}) {
 
       {/* Show an input to apply a discount */}
       <UpdateDiscountForm discountCodes={codes}>
-        <div>
-          <label htmlFor="discount-code-input" className="sr-only">
-            Discount code
-          </label>
-          <input
-            id="discount-code-input"
-            type="text"
-            name="discountCode"
-            placeholder="Discount code"
-          />
-          &nbsp;
-          <button type="submit" aria-label="Apply discount code">
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+          <label htmlFor="discount-code-input" className="sr-only">Discount code</label>
+          <input id="discount-code-input" type="text" name="discountCode" placeholder="Discount code"
+            style={{ flex: 1, padding: '8px 12px', border: '1px solid #e0e0e0', fontSize: '12px', borderRadius: '2px', outline: 'none', color: '#111' }} />
+          <button type="submit" aria-label="Apply discount code"
+            style={{ padding: '8px 14px', backgroundColor: '#111', color: '#fff', border: 'none', fontSize: '12px', fontWeight: '600', cursor: 'pointer', borderRadius: '2px' }}>
             Apply
           </button>
         </div>

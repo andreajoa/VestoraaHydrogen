@@ -24,60 +24,42 @@ export function CartLineItem({layout, line, childrenMap}) {
   const childrenLabelId = `cart-line-children-${id}`;
 
   return (
-    <li key={id} className="cart-line">
-      <div className="cart-line-inner">
-        {image && (
+    <li key={id} style={{ listStyle: 'none', padding: '20px 0', borderBottom: '1px solid #f0f0f0', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+      {image && (
+        <Link to={lineItemUrl} onClick={() => { if (layout === 'aside') close(); }} style={{ flexShrink: 0 }}>
           <Image
             alt={title}
-            aspectRatio="1/1"
+            aspectRatio="3/4"
             data={image}
-            height={100}
+            height={120}
             loading="lazy"
-            width={100}
+            width={90}
+            style={{ borderRadius: '2px', display: 'block', objectFit: 'cover' }}
           />
-        )}
-
-        <div>
-          <Link
-            prefetch="intent"
-            to={lineItemUrl}
-            onClick={() => {
-              if (layout === 'aside') {
-                close();
-              }
-            }}
-          >
-            <p>
-              <strong>{product.title}</strong>
-            </p>
+        </Link>
+      )}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px', marginBottom: '4px' }}>
+          <Link prefetch="intent" to={lineItemUrl} onClick={() => { if (layout === 'aside') close(); }} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <p style={{ fontSize: '13px', fontWeight: '600', color: '#111', margin: 0, lineHeight: 1.4 }}>{product.title}</p>
           </Link>
           <ProductPrice price={line?.cost?.totalAmount} />
-          <ul>
-            {selectedOptions.map((option) => (
-              <li key={option.name}>
-                <small>
-                  {option.name}: {option.value}
-                </small>
-              </li>
-            ))}
-          </ul>
-          <CartLineQuantity line={line} />
         </div>
+        <div style={{ marginBottom: '12px' }}>
+          {selectedOptions.filter(o => o.value !== 'Default Title').map((option) => (
+            <span key={option.name} style={{ fontSize: '11px', color: '#888', marginRight: '8px' }}>
+              {option.name}: {option.value}
+            </span>
+          ))}
+        </div>
+        <CartLineQuantity line={line} />
       </div>
-
       {lineItemChildren ? (
         <div>
-          <p id={childrenLabelId} className="sr-only">
-            Line items with {product.title}
-          </p>
-          <ul aria-labelledby={childrenLabelId} className="cart-line-children">
+          <p id={childrenLabelId} className="sr-only">Line items with {product.title}</p>
+          <ul aria-labelledby={childrenLabelId} className="cart-line-children" style={{ listStyle: 'none', padding: 0 }}>
             {lineItemChildren.map((childLine) => (
-              <CartLineItem
-                childrenMap={childrenMap}
-                key={childLine.id}
-                line={childLine}
-                layout={layout}
-              />
+              <CartLineItem childrenMap={childrenMap} key={childLine.id} line={childLine} layout={layout} />
             ))}
           </ul>
         </div>
@@ -98,31 +80,19 @@ function CartLineQuantity({line}) {
   const prevQuantity = Number(Math.max(0, quantity - 1).toFixed(0));
   const nextQuantity = Number((quantity + 1).toFixed(0));
 
+  const btnStyle = { width: '28px', height: '28px', border: '1px solid #e0e0e0', background: '#fff', color: '#111', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '2px', lineHeight: 1 };
+  const btnDisabled = { ...btnStyle, color: '#ccc', cursor: 'default' };
   return (
-    <div className="cart-line-quantity">
-      <small>Quantity: {quantity} &nbsp;&nbsp;</small>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0', width: 'fit-content' }}>
       <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
-        <button
-          aria-label="Decrease quantity"
-          disabled={quantity <= 1 || !!isOptimistic}
-          name="decrease-quantity"
-          value={prevQuantity}
-        >
-          <span>&#8722; </span>
-        </button>
+        <button aria-label="Decrease quantity" disabled={quantity <= 1 || !!isOptimistic} name="decrease-quantity" value={prevQuantity}
+          style={quantity <= 1 || !!isOptimistic ? btnDisabled : btnStyle}>−</button>
       </CartLineUpdateButton>
-      &nbsp;
+      <span style={{ width: '36px', textAlign: 'center', fontSize: '13px', fontWeight: '500', color: '#111', border: '1px solid #e0e0e0', borderLeft: 'none', borderRight: 'none', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{quantity}</span>
       <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
-        <button
-          aria-label="Increase quantity"
-          name="increase-quantity"
-          value={nextQuantity}
-          disabled={!!isOptimistic}
-        >
-          <span>&#43;</span>
-        </button>
+        <button aria-label="Increase quantity" name="increase-quantity" value={nextQuantity} disabled={!!isOptimistic}
+          style={!!isOptimistic ? btnDisabled : btnStyle}>+</button>
       </CartLineUpdateButton>
-      &nbsp;
       <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} />
     </div>
   );
@@ -139,13 +109,9 @@ function CartLineQuantity({line}) {
  */
 function CartLineRemoveButton({lineIds, disabled}) {
   return (
-    <CartForm
-      fetcherKey={getUpdateKey(lineIds)}
-      route="/cart"
-      action={CartForm.ACTIONS.LinesRemove}
-      inputs={{lineIds}}
-    >
-      <button disabled={disabled} type="submit">
+    <CartForm fetcherKey={getUpdateKey(lineIds)} route="/cart" action={CartForm.ACTIONS.LinesRemove} inputs={{lineIds}}>
+      <button disabled={disabled} type="submit"
+        style={{ background: 'none', border: 'none', cursor: disabled ? 'default' : 'pointer', color: '#999', fontSize: '11px', textDecoration: 'underline', marginLeft: '12px', padding: '0 4px', height: '28px' }}>
         Remove
       </button>
     </CartForm>
