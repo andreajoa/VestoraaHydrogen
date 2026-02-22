@@ -192,9 +192,9 @@ export default function Product() {
         </nav>
       </div>
 
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 0 40px' }}>
+      <div className="product-outer" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 0 40px' }}>
         {/* TWO COLUMN LAYOUT */}
-        <div className="product-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '40px', alignItems: 'start', padding: '0 16px' }}>
+        <div className="product-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '40px', alignItems: 'start' }}>
 
           {/* LEFT: Gallery */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
@@ -333,7 +333,7 @@ export default function Product() {
 
         {/* PRODUCT DETAILS - expandable */}
         {descriptionHtml && (
-          <div style={{ marginTop: '48px', paddingTop: '40px', borderTop: '1px solid #eee' }}>
+          <div className="product-details-section" style={{ marginTop: '48px', paddingTop: '40px', borderTop: '1px solid #eee', padding: '40px 0 0' }}>
             <h2 style={{ fontSize: '16px', fontWeight: '400', color: '#111', marginBottom: '14px' }}>Product details</h2>
             <div
               style={{
@@ -367,6 +367,7 @@ export default function Product() {
         )}
 
         {/* SIMILAR ITEMS */}
+        <div className="product-below-section">
         <ProductCarousel title="Similar items" products={similarItems.length > 0 ? similarItems : fallback.slice(0, 8)} />
 
         {/* YOU MAY ALSO LIKE */}
@@ -374,6 +375,7 @@ export default function Product() {
 
         {/* REVIEWS */}
         <ReviewsSection productId={product.id} productTitle={title} />
+        </div>
       </div>
 
       <Analytics.ProductView
