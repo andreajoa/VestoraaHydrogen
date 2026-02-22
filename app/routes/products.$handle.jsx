@@ -436,6 +436,7 @@ const PRODUCT_QUERY = `#graphql
           swatch { color image { previewImage { url } } }
         }
       }
+      variants(first: 250) { nodes { ...ProductVariant } }
       selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {
         ...ProductVariant
       }
