@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useLoaderData } from 'react-router';
 import {
@@ -81,6 +82,33 @@ async function loadCriticalData({ context, params, request }) {
 
 function loadDeferredData({ context, params }) {
   return {};
+}
+
+
+function DesktopGallery({ images, title }) {
+  const [active, setActive] = React.useState(0);
+  const mainImg = images[active] || images[0];
+  return (
+    <div className="gallery-desktop" style={{ display: 'flex', gap: '12px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100px', flexShrink: 0, position: 'sticky', top: '96px', maxHeight: 'calc(100vh - 110px)', overflowY: 'auto', scrollbarWidth: 'none', alignSelf: 'flex-start' }}>
+        {images.map((img, idx) => (
+          <button key={img.id || idx} onClick={() => setActive(idx)}
+            style={{ border: 'none', padding: 0, cursor: 'pointer', background: 'none', outline: 'none', position: 'relative', display: 'block', flexShrink: 0 }}>
+            <img src={img.url} alt={img.altText || title}
+              style={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover', objectPosition: 'top', display: 'block', borderRadius: '10px' }} />
+            <div style={{ position: 'absolute', inset: 0, border: active === idx ? '3px solid #C9A84C' : '1px solid #ddd', borderRadius: '12px', pointerEvents: 'none', transition: 'border 0.2s' }} />
+          </button>
+        ))}
+      </div>
+      <div style={{ flex: 1, position: 'relative', backgroundColor: '#f5f5f5' }}>
+        {mainImg && (
+          <img src={mainImg.url} alt={mainImg.altText || title}
+            style={{ width: '100%', maxHeight: '720px', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+        )}
+        <button style={{ position: 'absolute', top: '12px', right: '12px', width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#fff', border: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '16px', color: '#999', boxShadow: '0 1px 4px rgba(0,0,0,0.1)' }}>♡</button>
+      </div>
+    </div>
+  );
 }
 
 export default function Product() {
@@ -199,27 +227,7 @@ export default function Product() {
           {/* LEFT: Gallery */}
           <div key={product.selectedOrFirstAvailableVariant?.id || "default"} style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
             {/* DESKTOP: side thumbnails + main image */}
-            <div key={"desk-" + (selectedVariant?.id || 'x')} className="gallery-desktop" style={{ display: 'flex', gap: '12px' }}>
-              {/* Thumbnails vertical */}
-              <div className="product-thumbs" style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100px', flexShrink: 0, position: 'sticky', top: '96px', maxHeight: 'calc(100vh - 110px)', overflowY: 'auto', scrollbarWidth: 'none', alignSelf: 'flex-start' }}>
-                {displayImages.map((img, idx) => (
-                  <button key={img.id || idx} onClick={() => setActiveImg(idx)}
-                    style={{ border: 'none', padding: 0, cursor: 'pointer', background: 'none', outline: 'none', position: 'relative', display: 'block', flexShrink: 0 }}>
-                    <img src={img.url} alt={img.altText || title}
-                      style={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover', objectPosition: 'top', display: 'block', borderRadius: '10px' }} />
-                    <div style={{ position: 'absolute', inset: 0, border: activeImg === idx ? '3px solid #C9A84C' : '1px solid #ddd', borderRadius: '12px', pointerEvents: 'none', transition: 'border 0.2s' }} />
-                  </button>
-                ))}
-              </div>
-              {/* Main image */}
-              <div style={{ flex: 1, position: 'relative', backgroundColor: '#f5f5f5' }}>
-                {mainImage && (
-                  <img src={mainImage.url} alt={mainImage.altText || title}
-                    style={{ width: '100%', maxHeight: '720px', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
-                )}
-                <button style={{ position: 'absolute', top: '12px', right: '12px', width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#fff', border: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '16px', color: '#999', boxShadow: '0 1px 4px rgba(0,0,0,0.1)' }}>♡</button>
-              </div>
-            </div>
+            <DesktopGallery images={displayImages} title={title} />
 
             {/* MOBILE: main image + horizontal thumbnail strip */}
             <div key={"mob-" + (selectedVariant?.id || 'x')} className="gallery-mobile" style={{ display: 'none', flexDirection: 'column', gap: '8px' }}>
