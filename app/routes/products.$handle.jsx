@@ -182,7 +182,7 @@ export default function Product() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
       {/* Breadcrumb */}
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '10px 16px' }}>
+      <div className="product-breadcrumb" style={{ maxWidth: '1280px', margin: '0 auto', padding: '10px 16px' }}>
         <nav style={{ fontSize: '11px', color: '#666' }}>
           <a href="/" style={{ color: '#666', textDecoration: 'none' }}>Home</a>
           <span style={{ margin: '0 6px' }}>/</span>
@@ -192,14 +192,14 @@ export default function Product() {
         </nav>
       </div>
 
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 16px 40px' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 0 40px' }}>
         {/* TWO COLUMN LAYOUT */}
-        <div className="product-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '40px', alignItems: 'start' }}>
+        <div className="product-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '40px', alignItems: 'start', padding: '0 16px' }}>
 
           {/* LEFT: Gallery */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
             {/* DESKTOP: side thumbnails + main image */}
-            <div className="gallery-desktop" style={{ display: 'flex', gap: '12px' }}>
+            <div key={"desk-" + (selectedVariant?.id || 'x')} className="gallery-desktop" style={{ display: 'flex', gap: '12px' }}>
               {/* Thumbnails vertical */}
               <div className="product-thumbs" style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100px', flexShrink: 0, position: 'sticky', top: '96px', maxHeight: 'calc(100vh - 110px)', overflowY: 'auto', scrollbarWidth: 'none', alignSelf: 'flex-start' }}>
                 {displayImages.map((img, idx) => (
@@ -222,7 +222,7 @@ export default function Product() {
             </div>
 
             {/* MOBILE: main image + horizontal thumbnail strip */}
-            <div className="gallery-mobile" style={{ display: 'none', flexDirection: 'column', gap: '8px' }}>
+            <div key={"mob-" + (selectedVariant?.id || 'x')} className="gallery-mobile" style={{ display: 'none', flexDirection: 'column', gap: '8px' }}>
               <div style={{ position: 'relative', backgroundColor: '#f5f5f5' }}>
                 {mainImage && (
                   <img src={mainImage.url} alt={mainImage.altText || title}

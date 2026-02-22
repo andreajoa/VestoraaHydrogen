@@ -763,240 +763,73 @@ button.reset:hover:not(:has(> *)) {
   cursor: pointer !important;
 }
 
-/* ── MOBILE RESPONSIVE ──────────────────────────────────────────────────── */
 
-/* Hide utility bar and desktop nav on mobile, show hamburger */
-@media (max-width: 768px) {
-  .utility-bar { display: none !important; }
-  .desktop-nav { display: none !important; }
-  .hamburger-btn { display: flex !important; }
-}
+/* ══════════════════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — VERSÃO DEFINITIVA
+   ══════════════════════════════════════════════════════════════════════════ */
 
-@media (min-width: 769px) {
-  .mobile-menu { display: none !important; }
-  .hamburger-btn { display: none !important; }
-}
-
-/* Product page: stack columns on mobile */
-@media (max-width: 768px) {
-  /* Product page two-column → single column */
-  .product-layout {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Hide thumbnails sidebar on mobile */
-  .product-thumbs {
-    display: none !important;
-  }
-
-  /* Product right panel: unstick */
-  .product-info-panel {
-    position: static !important;
-  }
-
-  /* Homepage: price categories 3 cols → 1 col scroll */
-  .gender-cats {
-    padding: 16px !important;
-    gap: 10px !important;
-  }
-
-  /* Homepage: featured grid repeat(5) → repeat(2) */
-  .featured-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  /* Homepage: editorial grid repeat(4) → repeat(2) */
-  .editorial-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  /* Homepage: shop by category repeat(6) → repeat(3) */
-  .category-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-
-  /* Homepage: promo cards repeat(3) → repeat(1) */
-  .promo-cards {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Homepage: hero banner padding */
-  .hero-banner-text {
-    padding: 0 20px !important;
-  }
-
-  /* Homepage: ShopPay banner */
-  .shoppay-banner {
-    margin: 0 16px !important;
-    padding: 16px !important;
-  }
-
-  /* USP strip: 2 cols on mobile */
-  .usp-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
-  }
-
-  /* Collection page: hide sidebar */
-  .collection-sidebar {
-    display: none !important;
-  }
-
-  /* Collection page: product grid 4 col → 2 col */
-  .collection-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  /* All products page */
-  .all-products-sidebar {
-    display: none !important;
-  }
-
-  /* Cart drawer full width */
-  .cart-aside {
-    width: 100vw !important;
-  }
-
-  /* General section padding */
-  .section-padding {
-    padding: 32px 16px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  /* Even smaller phones */
-  .featured-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px !important;
-  }
-
-  .category-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  .gender-cats a {
-    aspect-ratio: 2/3 !important;
-  }
-}
-
-/* ── MOBILE PADDING & LAYOUT FIXES ─────────────────────────────────────── */
-@media (max-width: 768px) {
-  /* Reduce all section padding */
-  [style*="padding: '56px 40px'"],
-  [style*='padding: "56px 40px"'] {
-    padding: 32px 16px !important;
-  }
-
-  /* Hero banner: stack text vertically */
-  .hero-banner-inner {
-    flex-direction: column !important;
-    padding: 0 16px !important;
-    justify-content: center !important;
-    align-items: flex-start !important;
-    gap: 8px !important;
-  }
-  .hero-banner-inner h2 {
-    font-size: 22px !important;
-  }
-  .hero-banner-inner p {
-    font-size: 16px !important;
-  }
-
-  /* Gender cats: horizontal scroll instead of wrap */
-  .gender-cats {
-    overflow-x: auto !important;
-    flex-wrap: nowrap !important;
-    padding: 16px !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-  }
-  .gender-cats::-webkit-scrollbar { display: none; }
-  .gender-cats > * {
-    min-width: 120px !important;
-    flex-shrink: 0 !important;
-  }
-
-  /* ShopPay: stack vertically */
-  .shoppay-banner > div {
-    flex-direction: column !important;
-    gap: 16px !important;
-    align-items: flex-start !important;
-    padding: 20px !important;
-  }
-
-  /* Section headers padding */
-  .section-header {
-    padding: 0 16px !important;
-  }
-
-  /* Product grids gap */
-  .featured-grid, .editorial-grid {
-    gap: 10px 8px !important;
-    padding: 0 16px !important;
-  }
-
-  /* Category grid */
-  .category-grid {
-    padding: 0 16px !important;
-    gap: 8px !important;
-  }
-
-  /* Promo cards: single column */
-  .promo-cards {
-    padding: 0 16px !important;
-    gap: 12px !important;
-  }
-  .promo-cards a {
-    min-height: 160px !important;
-    padding: 28px 24px !important;
-  }
-  .promo-cards h3 {
-    font-size: 22px !important;
-  }
-
-  /* Product page */
-  .product-layout {
-    gap: 24px !important;
-  }
-
-  /* USP grid padding */
-  .usp-grid {
-    padding: 20px 16px !important;
-  }
-}
-
-/* ── PREVENT HORIZONTAL SCROLL GLOBALLY ─────────────────────────────────── */
+/* Prevenir scroll horizontal global */
 html, body { overflow-x: hidden !important; max-width: 100vw !important; }
 
-/* ── GALLERY DESKTOP/MOBILE TOGGLE ──────────────────────────────────────── */
+/* ── Header ──────────────────────────────────────────────────────────────── */
 @media (min-width: 769px) {
-  .gallery-mobile { display: none !important; }
-  .gallery-desktop { display: flex !important; }
+  .utility-bar  { display: flex !important; }
+  .desktop-nav  { display: flex !important; }
+  .hamburger-btn{ display: none !important; }
+  .mobile-menu  { display: none !important; }
 }
 @media (max-width: 768px) {
-  .gallery-desktop { display: none !important; }
+  .utility-bar  { display: none !important; }
+  .desktop-nav  { display: none !important; }
+  .hamburger-btn{ display: flex !important; }
+}
+
+/* ── Gallery toggle ──────────────────────────────────────────────────────── */
+@media (min-width: 769px) {
+  .gallery-mobile { display: none !important; }
+  .gallery-desktop{ display: flex !important; }
+}
+@media (max-width: 768px) {
+  .gallery-desktop{ display: none !important; }
   .gallery-mobile { display: flex !important; }
-  
-  /* Product title font size on mobile */
-  .product-info-panel h1 { font-size: 16px !important; }
+}
 
-  /* Product layout gap */
-  .product-layout { gap: 0 !important; padding: 0 !important; }
+/* ── PRODUTO — Layout mobile ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Grid → coluna única */
+  .product-layout {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+  /* Panel info sem sticky */
+  .product-info-panel {
+    position: static !important;
+    padding: 16px !important;
+  }
+  /* Título menor */
+  .product-info-panel h1 {
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+  }
+}
 
-  /* Product page full width on mobile */
-  .product-layout > div:first-child { padding: 0 !important; }
-  .product-info-panel { padding: 16px !important; }
+/* ── HOMEPAGE — Seções ───────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Padding geral das seções */
+  .section-pad { padding: 28px 16px !important; }
+  .section-bg  { padding: 28px 16px !important; }
+  .section-bg > div { padding: 0 !important; }
 
-  /* Hero banner — manter horizontal mas compacto */
+  /* Hero banner — horizontal compacto */
   .hero-banner-inner {
     padding: 0 16px !important;
-    gap: 8px !important;
+    justify-content: space-between !important;
+    align-items: center !important;
   }
-  .hero-banner-inner h2 { font-size: 18px !important; }
-  .hero-banner-inner p { font-size: 14px !important; margin-bottom: 2px !important; }
-  .hero-banner-inner sup { font-size: 10px !important; }
+  .hero-banner-inner h2 { font-size: 16px !important; }
+  .hero-banner-inner p  { font-size: 13px !important; margin-bottom: 2px !important; }
 
-  /* Gender cats — horizontal scroll sem mostrar scrollbar */
+  /* Gender cats — scroll horizontal */
   .gender-cats {
     overflow-x: auto !important;
     overflow-y: hidden !important;
@@ -1008,64 +841,119 @@ html, body { overflow-x: hidden !important; max-width: 100vw !important; }
   }
   .gender-cats::-webkit-scrollbar { display: none !important; }
   .gender-cats > a {
-    min-width: 100px !important;
+    min-width: 90px !important;
     flex: 0 0 auto !important;
-    aspect-ratio: 3/4 !important;
   }
 
-  /* ShopPay banner no mobile */
-  .shoppay-banner {
-    padding: 0 16px !important;
-  }
+  /* ShopPay banner */
+  .shoppay-banner { padding: 0 16px !important; }
 
-  /* Section paddings */
-  .shoppay-banner ~ div,
-  [style*="padding: '56px 40px'"] {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-  }
-
-  /* Category grid 3 cols */
+  /* Shop by Category */
   .category-grid {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 8px !important;
   }
 
-  /* Featured/editorial grids 2 cols */
-  .featured-grid, .editorial-grid {
+  /* New Arrivals / Top Sellers — 2 colunas */
+  .featured-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px 8px !important;
   }
+  .editorial-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px 8px !important;
+  }
+  .featured-grid p, .editorial-grid p { font-size: 11px !important; }
 
-  /* Promo cards full width stack */
+  /* Promo cards — coluna única */
   .promo-cards {
     grid-template-columns: 1fr !important;
+    gap: 10px !important;
   }
+  .promo-cards > a { min-height: 140px !important; padding: 24px 20px !important; }
+  .promo-cards h3  { font-size: 20px !important; }
 
-  /* USP 2 cols */
+  /* USP strip — 2 colunas */
   .usp-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     padding: 20px 16px !important;
+    gap: 12px !important;
   }
 
-  /* Product name size in cards */
-  .featured-grid p, .editorial-grid p { font-size: 11px !important; }
+  /* Collection sidebar — ocultar */
+  .collection-sidebar { display: none !important; }
 
-  /* Collection grid 2 cols */
+  /* Collection grid — 2 colunas */
   .collection-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px 8px !important;
   }
+
+  /* Cart aside full width */
+  .cart-aside { width: 100vw !important; }
 }
 
+/* ── PRODUTO MOBILE DEFINITIVO ───────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .section-pad {
-    padding: 28px 16px !important;
-  }
-  .section-bg {
-    padding: 28px 16px !important;
-  }
-  .section-bg > div {
+  /* Layout: 1 coluna, sem padding lateral no grid pai */
+  .product-layout {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
     padding: 0 !important;
+  }
+
+  /* Gallery ocupa 100% da largura */
+  .gallery-mobile {
+    width: 100% !important;
+  }
+
+  /* Info panel com padding lateral */
+  .product-info-panel {
+    position: static !important;
+    padding: 16px !important;
+  }
+
+  /* Título do produto */
+  .product-info-panel h1 {
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Cor swatch menor no mobile */
+  .product-info-panel [style*="width: '62px'"] {
+    width: 48px !important;
+    height: 62px !important;
+  }
+
+  /* Add to bag full width */
+  .add-to-bag-wrapper {
+    flex: 1 !important;
+  }
+
+  /* Breadcrumb padding */
+  .product-breadcrumb {
+    padding: 8px 16px !important;
+  }
+
+  /* Wear it with section */
+  .wear-it-with {
+    padding: 16px !important;
+  }
+
+  /* Reviews section */
+  .reviews-section {
+    padding: 16px !important;
+  }
+
+  /* Similar items grid — 2 cols */
+  .similar-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px 8px !important;
+  }
+
+  /* Thumbnails horizontais sem overflow */
+  .gallery-mobile > div:last-child {
+    padding: 4px 8px !important;
   }
 }
