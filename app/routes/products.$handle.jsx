@@ -201,7 +201,7 @@ export default function Product() {
         <div className="product-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '40px', alignItems: 'start' }}>
 
           {/* LEFT: Gallery */}
-          <div key={selectedVariant?.id || "default"} style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+          <div key={product.selectedOrFirstAvailableVariant?.id || "default"} style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
             {/* DESKTOP: side thumbnails + main image */}
             <div key={"desk-" + (selectedVariant?.id || 'x')} className="gallery-desktop" style={{ display: 'flex', gap: '12px' }}>
               {/* Thumbnails vertical */}
