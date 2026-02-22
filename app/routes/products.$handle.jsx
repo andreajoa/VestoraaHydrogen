@@ -109,11 +109,14 @@ export default function Product() {
     : allImages;
 
   // Reset gallery when variant changes
-  const prevVariantId = useRef(selectedVariant?.id);
-  if (prevVariantId.current !== selectedVariant?.id) {
-    prevVariantId.current = selectedVariant?.id;
-    if (activeImg !== 0) setActiveImg(0);
-  }
+  const prevVariantId = useRef(null);
+  useEffect(() => {
+    const newId = selectedVariant?.id;
+    if (newId && prevVariantId.current && prevVariantId.current !== newId) {
+      setActiveImg(0);
+    }
+    prevVariantId.current = newId;
+  }, [selectedVariant?.id]);
 
   const mainImage = displayImages[activeImg] || displayImages[0];
   // Wear it with: complementares por tipo
