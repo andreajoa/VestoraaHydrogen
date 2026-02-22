@@ -30,7 +30,7 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
         <nav style={{ display: 'flex', alignItems: 'center', flex: 1, overflowX: 'auto' }}>
           {(menu || FALLBACK_HEADER_MENU).items.map((item) => {
             if (!item.url) return null;
-            const url = item.url.includes('myshopify.com') || item.url.includes(publicStoreDomain)
+            const url = item.url.includes('myshopify.com') || item.url.includes(publicStoreDomain) || item.url.includes('vestoraa.com')
               ? new URL(item.url).pathname : item.url;
             return (
               <NavLink key={item.id} to={url} prefetch='intent'
@@ -197,7 +197,7 @@ export function HeaderMenu({ menu, primaryDomainUrl, viewport, publicStoreDomain
     <nav style={{ display: 'flex', flexDirection: 'column', padding: '16px' }}>
       {(menu || FALLBACK_HEADER_MENU).items.map((item) => {
         if (!item.url) return null;
-        const url = item.url.includes('myshopify.com') || item.url.includes(publicStoreDomain)
+        const url = item.url.includes('myshopify.com') || item.url.includes(publicStoreDomain) || item.url.includes('vestoraa.com')
           ? new URL(item.url).pathname : item.url;
         return (
           <NavLink key={item.id} to={url} onClick={close} prefetch='intent'
