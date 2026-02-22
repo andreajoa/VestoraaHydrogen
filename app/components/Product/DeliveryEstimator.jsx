@@ -36,7 +36,7 @@ export function DeliveryEstimator() {
     <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #eee' }}>
       <h3 style={{ fontSize: '13px', fontWeight: '600', color: '#111', margin: '0 0 4px' }}>Delivery</h3>
       <p style={{ fontSize: '11px', color: '#888', margin: '0 0 10px' }}>Check your delivery time</p>
-      <form onSubmit={handleCheck} style={{ display: 'flex', marginBottom: '10px', width: '100%', boxSizing: 'border-box' }}>
+      <form onSubmit={handleCheck} style={{ display: 'flex', marginBottom: '10px', width: '100%', boxSizing: 'border-box', paddingRight: '16px' }}>
         <input
           type="text"
           value={postcode}
