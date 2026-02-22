@@ -47,12 +47,10 @@ export function CartMain({layout, cart: originalCart}) {
   return (
     <div className={className}>
       <CartEmpty hidden={linesCount} layout={layout} />
-      <div className="cart-details">
-        <p id="cart-lines" className="sr-only">
-          Line items
-        </p>
-        <div>
-          <ul aria-labelledby="cart-lines">
+      <div className="cart-details" style={{ display: "flex", flexDirection: "column" }}>
+        <p id="cart-lines" className="sr-only">Line items</p>
+        <div style={{ flex: 1, overflowY: "auto", padding: "0 24px" }}>
+          <ul aria-labelledby="cart-lines" style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {(cart?.lines?.nodes ?? []).map((line) => {
               // we do not render non-parent lines at the root of the cart
               if (
@@ -72,7 +70,7 @@ export function CartMain({layout, cart: originalCart}) {
             })}
           </ul>
         </div>
-        {cartHasItems && <CartSummary cart={cart} layout={layout} />}
+        {cartHasItems && <div style={{ padding: "0 24px 24px" }}><CartSummary cart={cart} layout={layout} /></div>}
       </div>
     </div>
   );
@@ -87,15 +85,13 @@ export function CartMain({layout, cart: originalCart}) {
 function CartEmpty({hidden = false}) {
   const {close} = useAside();
   return (
-    <div hidden={hidden}>
-      <br />
-      <p>
-        Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
-        started!
-      </p>
-      <br />
-      <Link to="/collections" onClick={close} prefetch="viewport">
-        Continue shopping →
+    <div hidden={hidden} style={{ padding: '48px 24px', textAlign: 'center' }}>
+      <div style={{ fontSize: '40px', marginBottom: '16px' }}>🛍️</div>
+      <p style={{ fontSize: '15px', fontWeight: '600', color: '#111', margin: '0 0 8px' }}>Your cart is empty</p>
+      <p style={{ fontSize: '13px', color: '#888', margin: '0 0 24px' }}>Add something you love to get started</p>
+      <Link to="/collections" onClick={close} prefetch="viewport"
+        style={{ display: 'inline-block', padding: '12px 28px', backgroundColor: '#111', color: '#fff', textDecoration: 'none', fontSize: '12px', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', borderRadius: '2px' }}>
+        Start Shopping
       </Link>
     </div>
   );
