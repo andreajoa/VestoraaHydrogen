@@ -29,6 +29,7 @@ function WishlistButton({ productHandle }) {
 }
 
 function getOptionLink(value) {
+  console.log('[OPTION LINK]', value.name, {to: value.to, variantUriQuery: value.variantUriQuery, search: value.search, exists: value.exists, selected: value.selected});
   if (value.to) return value.to;
   if (value.variantUriQuery) return '?' + value.variantUriQuery;
   if (value.search) return '?' + value.search;
@@ -85,9 +86,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
                   title={value.name}
                   onClick={() => {
                     if (!sel && exists) {
-                      const url = linkTo.startsWith('?') ? window.location.pathname + linkTo : linkTo;
-                      window.history.replaceState(null, '', url);
-                      window.dispatchEvent(new PopStateEvent('popstate'));
+                      navigate(linkTo, { replace: true, preventScrollReset: true });
                     }
                   }}
                   style={{ display: 'block', width: '62px', height: '80px', borderRadius: '10px', overflow: 'hidden', position: 'relative', flexShrink: 0, textDecoration: 'none', opacity: unavail ? 0.35 : !exists ? 0.2 : 1, outline: sel ? '2px solid ' + GOLD : '1.5px solid #ddd', outlineOffset: sel ? '2px' : '0', transition: 'all 0.15s ease', cursor: exists ? 'pointer' : 'not-allowed', padding: 0, border: 'none', background: 'none' }}>
@@ -163,9 +162,7 @@ export function ProductForm({ productOptions, selectedVariant }) {
                   disabled={!exists}
                   onClick={() => {
                     if (!sel && exists) {
-                      const url = linkTo.startsWith('?') ? window.location.pathname + linkTo : linkTo;
-                      window.history.replaceState(null, '', url);
-                      window.dispatchEvent(new PopStateEvent('popstate'));
+                      navigate(linkTo, { replace: true, preventScrollReset: true });
                     }
                   }}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 16px', fontSize: '12px', borderRadius: '6px', border: sel ? '2px solid ' + GOLD : '1px solid #ddd', backgroundColor: sel ? '#fffcf0' : '#fff', color: '#333', textDecoration: 'none', fontWeight: sel ? '700' : '400', cursor: exists ? 'pointer' : 'not-allowed', opacity: exists ? 1 : 0.3 }}>
