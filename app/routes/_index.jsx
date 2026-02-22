@@ -251,7 +251,7 @@ function USPStrip() {
     <div style={{ borderTop: '1px solid #e8e8e8', borderBottom: '1px solid #e8e8e8' }}>
       <div style={{ maxWidth: '1340px', margin: '0 auto', padding: '28px 40px', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '20px', boxSizing: 'border-box' }}>
         {usps.map(u => (
-          <div key={u.title} style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div key={u.title} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' }}>
             <span style={{ fontSize: '28px' }}>{u.icon}</span>
             <div>
               <p style={{ fontSize: '13px', fontWeight: '700', color: '#111', margin: '0 0 2px' }}>{u.title}</p>
