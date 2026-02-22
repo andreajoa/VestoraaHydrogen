@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useLoaderData } from 'react-router';
 import {
   getSelectedProductOptions,
@@ -108,15 +108,14 @@ export default function Product() {
     ? [variantImage, ...allImages.filter(img => img.id !== variantImage.id)]
     : allImages;
 
-  // Reset gallery when variant changes
-  const prevVariantId = useRef(null);
-  useEffect(() => {
-    const newId = selectedVariant?.id;
-    if (newId && prevVariantId.current && prevVariantId.current !== newId) {
+  // Reset gallery when variant changes  
+  const prevVariantId = useRef(selectedVariant?.id);
+  useLayoutEffect(() => {
+    if (prevVariantId.current !== selectedVariant?.id) {
       setActiveImg(0);
+      prevVariantId.current = selectedVariant?.id;
     }
-    prevVariantId.current = newId;
-  }, [selectedVariant?.id]);
+  });
 
   const mainImage = displayImages[activeImg] || displayImages[0];
   // Wear it with: complementares por tipo
