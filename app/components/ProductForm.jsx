@@ -22,7 +22,7 @@ function WishlistButton({ productHandle }) {
     } catch {}
   };
   return (
-    <button onClick={toggle} type="button" style={{ width: '56px', height: '56px', flexShrink: 0, border: wished ? '1.5px solid ' + GOLD : '1px solid #ddd', borderRadius: '8px', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '20px', color: wished ? '#e33' : '#bbb', transition: 'all 0.2s' }} title={wished ? 'Remove from wishlist' : 'Add to wishlist'}>
+    <button onClick={toggle} type="button" className="wishlist-btn" style={{ width: '56px', height: '56px', flexShrink: 0, border: wished ? '1.5px solid ' + GOLD : '1px solid #ddd', borderRadius: '8px', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '20px', color: wished ? '#e33' : '#bbb', transition: 'all 0.2s' }} title={wished ? 'Remove from wishlist' : 'Add to wishlist'}>
       {wished ? '♥' : '♡'}
     </button>
   );
