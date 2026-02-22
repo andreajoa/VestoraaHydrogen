@@ -14,40 +14,57 @@ const UTILITY_LINKS = [
 
 export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
   const {shop, menu} = header;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const menuItems = (menu || FALLBACK_HEADER_MENU).items.map((item) => {
+    if (!item.url) return null;
+    const url = item.url.includes('myshopify.com') || item.url.includes(publicStoreDomain) || item.url.includes('vestoraa.com')
+      ? new URL(item.url).pathname : item.url;
+    return { ...item, url };
+  }).filter(Boolean);
+
   return (
     <div style={{ position: 'sticky', top: 0, zIndex: 100 }}>
-      <div style={{ backgroundColor: '#1a1a1a', borderBottom: '1px solid #333', padding: '0 24px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', height: '34px' }}>
+      {/* Utility bar - hidden on mobile */}
+      <div className="utility-bar" style={{ backgroundColor: '#1a1a1a', borderBottom: '1px solid #333', padding: '0 24px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', height: '34px' }}>
         {UTILITY_LINKS.map((item, i) => (
           <UtilityLink key={item.label} href={item.href} label={item.label} external={item.external} last={i === UTILITY_LINKS.length - 1} />
         ))}
       </div>
 
+      {/* Main nav */}
       <div style={{ backgroundColor: '#111', padding: '0 24px', display: 'flex', alignItems: 'center', height: '60px', gap: '20px' }}>
-        <NavLink to='/' prefetch='intent' style={{ color: '#fff', textDecoration: 'none', fontSize: '20px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'Georgia, serif', whiteSpace: 'nowrap', flexShrink: 0 }}>
+        {/* Hamburger - mobile only */}
+        <button className="hamburger-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', padding: '8px', color: '#fff', flexShrink: 0 }}>
+          {mobileMenuOpen ? (
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          ) : (
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          )}
+        </button>
+
+        <NavLink to='/' prefetch='intent' style={{ color: '#fff', textDecoration: 'none', fontSize: '20px', fontWeight: '700', letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'Georgia, serif', whiteSpace: 'nowrap', flexShrink: 0, flex: 1 }}>
           {shop.name}
         </NavLink>
 
-        <nav style={{ display: 'flex', alignItems: 'center', flex: 1, overflowX: 'auto' }}>
-          {(menu || FALLBACK_HEADER_MENU).items.map((item) => {
-            if (!item.url) return null;
-            const url = item.url.includes('myshopify.com') || item.url.includes(publicStoreDomain) || item.url.includes('vestoraa.com')
-              ? new URL(item.url).pathname : item.url;
-            return (
-              <NavLink key={item.id} to={url} prefetch='intent'
-                style={({ isActive }) => ({
-                  color: isActive ? '#fff' : '#bbb',
-                  textDecoration: 'none', fontSize: '12px',
-                  fontWeight: isActive ? '700' : '400',
-                  letterSpacing: '0.08em', textTransform: 'uppercase',
-                  padding: '0 10px', height: '60px',
-                  display: 'flex', alignItems: 'center',
-                  borderBottom: isActive ? '2px solid #fff' : '2px solid transparent',
-                  whiteSpace: 'nowrap', transition: 'color 0.15s, border-color 0.15s',
-                })}>
-                {item.title}
-              </NavLink>
-            );
-          })}
+        {/* Desktop nav */}
+        <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', flex: 2, overflowX: 'auto' }}>
+          {menuItems.map((item) => (
+            <NavLink key={item.id} to={item.url} prefetch='intent'
+              style={({ isActive }) => ({
+                color: isActive ? '#fff' : '#bbb',
+                textDecoration: 'none', fontSize: '12px',
+                fontWeight: isActive ? '700' : '400',
+                letterSpacing: '0.08em', textTransform: 'uppercase',
+                padding: '0 10px', height: '60px',
+                display: 'flex', alignItems: 'center',
+                borderBottom: isActive ? '2px solid #fff' : '2px solid transparent',
+                whiteSpace: 'nowrap', transition: 'color 0.15s, border-color 0.15s',
+              })}>
+              {item.title}
+            </NavLink>
+          ))}
         </nav>
 
         <SearchBar />
@@ -76,6 +93,28 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
           <CartToggle cart={cart} />
         </div>
       </div>
+
+      {/* Mobile slide-down menu */}
+      {mobileMenuOpen && (
+        <div className="mobile-menu" style={{ backgroundColor: '#111', borderTop: '1px solid #222', position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 200 }}>
+          {menuItems.map((item) => (
+            <NavLink key={item.id} to={item.url} prefetch='intent'
+              onClick={() => setMobileMenuOpen(false)}
+              style={{ display: 'block', color: '#fff', textDecoration: 'none', fontSize: '14px', fontWeight: '600', letterSpacing: '0.08em', textTransform: 'uppercase', padding: '16px 24px', borderBottom: '1px solid #222' }}>
+              {item.title}
+            </NavLink>
+          ))}
+          <div style={{ padding: '16px 24px', borderTop: '1px solid #333' }}>
+            {UTILITY_LINKS.map((item) => (
+              <a key={item.label} href={item.href} target={item.external ? '_blank' : '_self'} rel="noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ display: 'block', color: '#888', textDecoration: 'none', fontSize: '12px', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '8px 0' }}>
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

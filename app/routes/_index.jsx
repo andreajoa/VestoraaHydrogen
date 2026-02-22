@@ -48,7 +48,7 @@ function HeroBanner() {
         alt="Spend and Save"
         style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }}
       />
-      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 80px', backgroundColor: 'rgba(0,0,0,0.15)' }}>
+      <div className="hero-banner-inner" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 80px', backgroundColor: 'rgba(0,0,0,0.15)' }}>
         <div>
           <h2 style={{ fontSize: '36px', fontWeight: '800', color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase', margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>SPEND &amp; SAVE</h2>
         </div>

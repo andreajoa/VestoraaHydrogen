@@ -765,6 +765,18 @@ button.reset:hover:not(:has(> *)) {
 
 /* ── MOBILE RESPONSIVE ──────────────────────────────────────────────────── */
 
+/* Hide utility bar and desktop nav on mobile, show hamburger */
+@media (max-width: 768px) {
+  .utility-bar { display: none !important; }
+  .desktop-nav { display: none !important; }
+  .hamburger-btn { display: flex !important; }
+}
+
+@media (min-width: 769px) {
+  .mobile-menu { display: none !important; }
+  .hamburger-btn { display: none !important; }
+}
+
 /* Product page: stack columns on mobile */
 @media (max-width: 768px) {
   /* Product page two-column → single column */
@@ -864,5 +876,91 @@ button.reset:hover:not(:has(> *)) {
 
   .gender-cats a {
     aspect-ratio: 2/3 !important;
+  }
+}
+
+/* ── MOBILE PADDING & LAYOUT FIXES ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Reduce all section padding */
+  [style*="padding: '56px 40px'"],
+  [style*='padding: "56px 40px"'] {
+    padding: 32px 16px !important;
+  }
+
+  /* Hero banner: stack text vertically */
+  .hero-banner-inner {
+    flex-direction: column !important;
+    padding: 0 16px !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+  .hero-banner-inner h2 {
+    font-size: 22px !important;
+  }
+  .hero-banner-inner p {
+    font-size: 16px !important;
+  }
+
+  /* Gender cats: horizontal scroll instead of wrap */
+  .gender-cats {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    padding: 16px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+  .gender-cats::-webkit-scrollbar { display: none; }
+  .gender-cats > * {
+    min-width: 120px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* ShopPay: stack vertically */
+  .shoppay-banner > div {
+    flex-direction: column !important;
+    gap: 16px !important;
+    align-items: flex-start !important;
+    padding: 20px !important;
+  }
+
+  /* Section headers padding */
+  .section-header {
+    padding: 0 16px !important;
+  }
+
+  /* Product grids gap */
+  .featured-grid, .editorial-grid {
+    gap: 10px 8px !important;
+    padding: 0 16px !important;
+  }
+
+  /* Category grid */
+  .category-grid {
+    padding: 0 16px !important;
+    gap: 8px !important;
+  }
+
+  /* Promo cards: single column */
+  .promo-cards {
+    padding: 0 16px !important;
+    gap: 12px !important;
+  }
+  .promo-cards a {
+    min-height: 160px !important;
+    padding: 28px 24px !important;
+  }
+  .promo-cards h3 {
+    font-size: 22px !important;
+  }
+
+  /* Product page */
+  .product-layout {
+    gap: 24px !important;
+  }
+
+  /* USP grid padding */
+  .usp-grid {
+    padding: 20px 16px !important;
   }
 }
