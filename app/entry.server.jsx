@@ -22,7 +22,7 @@ export default async function handleRequest(
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
-    scriptSrc: ["'self'", 'https://connect.facebook.net', 'https://www.facebook.com'],
+    scriptSrc: ["'self'", 'https://cdn.shopify.com', 'https://connect.facebook.net', 'https://www.facebook.com'],
     connectSrc: ["'self'", 'https://www.facebook.com', 'https://connect.facebook.net'],
     imgSrc: ["'self'", 'data:', 'https://www.facebook.com', 'https://*.fbcdn.net', 'https://cdn.shopify.com'],
   });
