@@ -227,7 +227,7 @@ export default function Product() {
           {/* LEFT: Gallery */}
           <div key={product.selectedOrFirstAvailableVariant?.id || "default"} style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
             {/* DESKTOP: side thumbnails + main image */}
-            <DesktopGallery images={displayImages} title={title} />
+            <DesktopGallery key={selectedVariant?.id || "default"} images={displayImages} title={title} />
 
             {/* MOBILE: main image + horizontal thumbnail strip */}
             <div key={"mob-" + (selectedVariant?.id || 'x')} className="gallery-mobile" style={{ display: 'none', flexDirection: 'column', gap: '8px' }}>
