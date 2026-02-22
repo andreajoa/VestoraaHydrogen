@@ -217,7 +217,7 @@ export function Layout({children}) {
         />
         <noscript
           dangerouslySetInnerHTML={{
-            __html: \`<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=588906963170317&ev=PageView&noscript=1"/>\`,
+            __html: '<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=588906963170317&ev=PageView&noscript=1"/>',
           }}
         />
       </head>
