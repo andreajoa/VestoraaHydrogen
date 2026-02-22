@@ -108,14 +108,10 @@ export default function Product() {
     ? [variantImage, ...allImages.filter(img => img.id !== variantImage.id)]
     : allImages;
 
-  // Reset gallery when variant changes  
-  const prevVariantId = useRef(selectedVariant?.id);
-  useLayoutEffect(() => {
-    if (prevVariantId.current !== selectedVariant?.id) {
-      setActiveImg(0);
-      prevVariantId.current = selectedVariant?.id;
-    }
-  });
+  // Reset gallery when variant changes
+  useEffect(() => {
+    setActiveImg(0);
+  }, [selectedVariant?.id]);
 
   const mainImage = displayImages[activeImg] || displayImages[0];
   // Wear it with: complementares por tipo
