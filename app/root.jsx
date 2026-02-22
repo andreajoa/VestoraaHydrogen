@@ -100,7 +100,7 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    {rel: 'icon', type: 'image/png', href: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/LOGO_V-removebg-preview_ea357857-739b-4fac-a4ad-3ff622feae7c.png?v=1771732737'},
   ];
 }
 
