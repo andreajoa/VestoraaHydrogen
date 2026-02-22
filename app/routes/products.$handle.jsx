@@ -105,11 +105,6 @@ export default function Product() {
     setActiveImg(0);
   }, [selectedVariant?.id]);
 
-  // Reset gallery to first image when variant changes
-  useEffect(() => {
-    setActiveImg(0);
-  }, [selectedVariant?.id]);
-
   const { title, vendor, descriptionHtml, images } = product;
   const allImages = images?.nodes || [];
   
@@ -203,62 +198,64 @@ export default function Product() {
 
           {/* LEFT: Gallery */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-            <div style={{ display: 'flex', gap: '12px' }}>
-            {/* Thumbnails */}
-            <div className="product-thumbs" style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100px', flexShrink: 0, position: 'sticky', top: '96px', maxHeight: 'calc(100vh - 110px)', overflowY: 'auto', scrollbarWidth: 'none', alignSelf: 'flex-start' }}>
-              {displayImages.map((img, idx) => (
-                <button
-                  key={img.id || idx}
-                  onClick={() => setActiveImg(idx)}
-                  style={{
-                    border: 'none',
-                    padding: 0,
-                    cursor: 'pointer',
-                    background: 'none',
-                    outline: 'none',
-                    position: 'relative',
-                    display: 'block',
-                    flexShrink: 0,
-                  }}
-                >
-                  <img
-                    src={img.url}
-                    alt={img.altText || title}
-                    style={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover', objectPosition: 'top', display: 'block', borderRadius: '10px' }}
-                  />
-                  <div style={{
-                    position: 'absolute', inset: 0,
-                    border: activeImg === idx ? '3px solid #C9A84C' : '1px solid #ddd',
-                    borderRadius: '12px',
-                    pointerEvents: 'none',
-                    transition: 'border 0.2s',
-                  }} />
-                </button>
-              ))}
-            </div>
-            {/* Main image */}
-            <div style={{ flex: 1, position: 'relative', backgroundColor: '#f5f5f5' }}>
-              {mainImage && (
-                <img
-                  src={mainImage.url}
-                  alt={mainImage.altText || title}
-                  style={{ width: '100%', maxHeight: '720px', objectFit: 'cover', objectPosition: 'top', display: 'block' }}
-                />
-              )}
-              <button
-                style={{
-                  position: 'absolute', top: '12px', right: '12px',
-                  width: '36px', height: '36px', borderRadius: '50%',
-                  backgroundColor: '#fff', border: '1px solid #eee',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer', fontSize: '16px', color: '#999',
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-                }}
-              >
-                ♡
-              </button>
+            {/* DESKTOP: side thumbnails + main image */}
+            <div className="gallery-desktop" style={{ display: 'flex', gap: '12px' }}>
+              {/* Thumbnails vertical */}
+              <div className="product-thumbs" style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100px', flexShrink: 0, position: 'sticky', top: '96px', maxHeight: 'calc(100vh - 110px)', overflowY: 'auto', scrollbarWidth: 'none', alignSelf: 'flex-start' }}>
+                {displayImages.map((img, idx) => (
+                  <button key={img.id || idx} onClick={() => setActiveImg(idx)}
+                    style={{ border: 'none', padding: 0, cursor: 'pointer', background: 'none', outline: 'none', position: 'relative', display: 'block', flexShrink: 0 }}>
+                    <img src={img.url} alt={img.altText || title}
+                      style={{ width: '100%', aspectRatio: '2/3', objectFit: 'cover', objectPosition: 'top', display: 'block', borderRadius: '10px' }} />
+                    <div style={{ position: 'absolute', inset: 0, border: activeImg === idx ? '3px solid #C9A84C' : '1px solid #ddd', borderRadius: '12px', pointerEvents: 'none', transition: 'border 0.2s' }} />
+                  </button>
+                ))}
+              </div>
+              {/* Main image */}
+              <div style={{ flex: 1, position: 'relative', backgroundColor: '#f5f5f5' }}>
+                {mainImage && (
+                  <img src={mainImage.url} alt={mainImage.altText || title}
+                    style={{ width: '100%', maxHeight: '720px', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+                )}
+                <button style={{ position: 'absolute', top: '12px', right: '12px', width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#fff', border: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '16px', color: '#999', boxShadow: '0 1px 4px rgba(0,0,0,0.1)' }}>♡</button>
+              </div>
             </div>
 
+            {/* MOBILE: main image + horizontal thumbnail strip */}
+            <div className="gallery-mobile" style={{ display: 'none', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ position: 'relative', backgroundColor: '#f5f5f5' }}>
+                {mainImage && (
+                  <img src={mainImage.url} alt={mainImage.altText || title}
+                    style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+                )}
+                {/* Prev/Next arrows */}
+                {displayImages.length > 1 && (
+                  <>
+                    <button onClick={() => setActiveImg(i => (i - 1 + displayImages.length) % displayImages.length)}
+                      style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', boxShadow: '0 1px 4px rgba(0,0,0,0.15)' }}>‹</button>
+                    <button onClick={() => setActiveImg(i => (i + 1) % displayImages.length)}
+                      style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', boxShadow: '0 1px 4px rgba(0,0,0,0.15)' }}>›</button>
+                  </>
+                )}
+                {/* Dot indicators */}
+                <div style={{ position: 'absolute', bottom: '10px', left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: '5px' }}>
+                  {displayImages.slice(0, 8).map((_, idx) => (
+                    <button key={idx} onClick={() => setActiveImg(idx)}
+                      style={{ width: activeImg === idx ? '18px' : '6px', height: '6px', borderRadius: '3px', backgroundColor: activeImg === idx ? '#fff' : 'rgba(255,255,255,0.6)', border: 'none', cursor: 'pointer', padding: 0, transition: 'width 0.2s, background 0.2s' }} />
+                  ))}
+                </div>
+              </div>
+              {/* Horizontal thumbnail strip */}
+              <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', scrollbarWidth: 'none', padding: '4px 2px' }}>
+                {displayImages.map((img, idx) => (
+                  <button key={img.id || idx} onClick={() => setActiveImg(idx)}
+                    style={{ border: 'none', padding: 0, cursor: 'pointer', background: 'none', outline: 'none', position: 'relative', flexShrink: 0, width: '56px' }}>
+                    <img src={img.url} alt={img.altText || title}
+                      style={{ width: '56px', aspectRatio: '2/3', objectFit: 'cover', objectPosition: 'top', display: 'block', borderRadius: '6px' }} />
+                    <div style={{ position: 'absolute', inset: 0, border: activeImg === idx ? '2px solid #C9A84C' : '1px solid #ddd', borderRadius: '6px', pointerEvents: 'none' }} />
+                  </button>
+                ))}
+              </div>
             </div>
             {/* WEAR IT WITH - abaixo da imagem+thumbnails */}
             <WearItWithStrip products={products.slice(0, 6)} />

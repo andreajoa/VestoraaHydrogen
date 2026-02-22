@@ -76,7 +76,7 @@ function GenderCategories() {
     { label: 'UNDER $300', href: '/collections/under-300', img: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/under_300.avif?v=1771724555' },
   ];
   return (
-    <div className="gender-cats" style={{ display: "flex", gap: "6px", padding: "24px 40px", maxWidth: "1340px", margin: "0 auto", boxSizing: "border-box" }}>
+    <div className="gender-cats" style={{ display: "flex", gap: "6px", padding: "24px 40px", maxWidth: "1340px", margin: "0 auto", boxSizing: "border-box", overflowX: "hidden" }}>
       {cats.map(cat => (
         <a key={cat.label} href={cat.href} style={{ flex: 1, position: "relative", overflow: "hidden", textDecoration: "none", display: "block", aspectRatio: "3/4" }}>
           <img src={cat.img} alt={cat.label} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
@@ -90,16 +90,15 @@ function GenderCategories() {
 function PromoWideBanner() {
   return (
     <div className="shoppay-banner" style={{ padding: '0 40px', maxWidth: '1340px', margin: '0 auto', boxSizing: 'border-box' }}>
-      <div style={{ backgroundColor: '#1e3a6e', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '100px', padding: '20px 32px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ flex: 1 }}>
-          <p style={{ fontSize: '22px', fontWeight: '800', color: '#fff', margin: '0 0 4px', lineHeight: 1.2 }}>
+      <div style={{ backgroundColor: '#1e3a6e', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 24px', position: 'relative', overflow: 'hidden', gap: '16px' }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontSize: '15px', fontWeight: '800', color: '#fff', margin: '0 0 2px', lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             Pay over time for orders over <span style={{ color: '#5bc8f5' }}>$35.00</span>
           </p>
-          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.75)', margin: '0 0 6px' }}>with Shop Pay — flexible installments at checkout</p>
-          <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>* Eligibility criteria apply. Learn more at checkout.</p>
+          <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', margin: 0 }}>with Shop Pay — flexible installments at checkout</p>
         </div>
-        <div style={{ backgroundColor: '#5a31f4', borderRadius: '40px', padding: '12px 28px', flexShrink: 0 }}>
-          <span style={{ fontSize: '18px', fontWeight: '900', color: '#fff', letterSpacing: '0.02em' }}>shop<span style={{ color: '#b2fcf4' }}>pay</span></span>
+        <div style={{ backgroundColor: '#5a31f4', borderRadius: '40px', padding: '8px 20px', flexShrink: 0 }}>
+          <span style={{ fontSize: '14px', fontWeight: '900', color: '#fff', letterSpacing: '0.02em' }}>shop<span style={{ color: '#b2fcf4' }}>pay</span></span>
         </div>
       </div>
     </div>
@@ -118,10 +117,9 @@ const CATEGORIES = [
 
 function ShopByCategory({collections}) {
   return (
-    <div style={{ padding: '56px 40px', maxWidth: '1340px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '28px' }}>
+    <div className="section-pad" style={{ padding: '56px 40px', maxWidth: '1340px', margin: '0 auto' }}>
+      <div style={{ marginBottom: '28px' }}>
         <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#111', letterSpacing: '-0.01em' }}>Shop by Category</h2>
-        <a href="/collections" style={{ fontSize: '13px', color: '#666', textDecoration: 'none', borderBottom: '1px solid #ccc' }}>View all</a>
       </div>
       <div className="category-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '12px' }}>
         {CATEGORIES.map(cat => {
@@ -152,7 +150,7 @@ function PromoCards() {
     { title: 'Sale', subtitle: 'Up to 50% off', cta: 'Shop Sale', href: '/collections/all', bg: '#c9a84c', color: '#111' },
   ];
   return (
-    <div style={{ backgroundColor: '#f8f8f8', padding: '56px 40px' }}>
+    <div className="section-bg" style={{ backgroundColor: '#f8f8f8', padding: '56px 40px' }}>
       <div className="promo-cards" style={{ maxWidth: '1340px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px' }}>
         {cards.map(card => (
           <a key={card.title} href={card.href} style={{ textDecoration: 'none', display: 'block', backgroundColor: card.bg, padding: '40px 32px', borderRadius: '4px', position: 'relative', overflow: 'hidden', minHeight: '200px' }}>
@@ -194,7 +192,7 @@ function HomeProductCard({product}) {
 // ── New Arrivals Section ──────────────────────────────────────────────────────
 function NewArrivalsSection({newArrivals}) {
   return (
-    <div style={{ padding: '56px 40px', maxWidth: '1340px', margin: '0 auto' }}>
+    <div className="section-pad" style={{ padding: '56px 40px', maxWidth: '1340px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '28px' }}>
         <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#111', letterSpacing: '-0.01em' }}>New Arrivals</h2>
         <a href="/collections/new-arrival" style={{ fontSize: '13px', color: '#666', textDecoration: 'none', borderBottom: '1px solid #ccc' }}>View all</a>
@@ -217,7 +215,7 @@ function NewArrivalsSection({newArrivals}) {
 // ── Recommended Products ──────────────────────────────────────────────────────
 function RecommendedSection({recommendedProducts}) {
   return (
-    <div style={{ backgroundColor: '#f8f8f8', padding: '56px 40px' }}>
+    <div className="section-bg" style={{ backgroundColor: '#f8f8f8', padding: '56px 40px' }}>
       <div style={{ maxWidth: '1340px', margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '28px' }}>
           <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#111', letterSpacing: '-0.01em' }}>This Week\'s Top Sellers</h2>
