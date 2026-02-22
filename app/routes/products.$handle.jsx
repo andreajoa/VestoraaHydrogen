@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLoaderData } from 'react-router';
 import {
   getSelectedProductOptions,
@@ -99,6 +99,11 @@ export default function Product() {
   });
 
   useSelectedOptionInUrlParam(productOptions);
+
+  // Reset gallery to first image when variant changes
+  useEffect(() => {
+    setActiveImg(0);
+  }, [selectedVariant?.id]);
 
   const { title, vendor, descriptionHtml, images } = product;
   const allImages = images?.nodes || [];
