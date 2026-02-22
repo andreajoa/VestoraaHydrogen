@@ -41,13 +41,7 @@ function PromoBanner() {
 // ── Hero Banner ───────────────────────────────────────────────────────────────
 function HeroBanner() {
   return (
-    <div className="hero-banner-wrap" style={{ width: '100%', position: 'relative', overflow: 'hidden', height: '200px', backgroundColor: '#b8c4c2' }}>
-      <img src='https://cdn.shopify.com/s/files/1/0706/4456/4124/files/banner.avif?v=1771725046' alt='Spend and Save' style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
-      <img
-        src="https://cdn.shopify.com/s/files/1/0706/4456/4124/files/11_35353139-cd39-4dfe-a4d8-8859cc92f22d.png?v=1771712961"
-        alt="Spend and Save"
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }}
-      />
+    <div className="hero-banner-wrap" style={{ width: '100%', position: 'relative', overflow: 'hidden', height: '200px', backgroundImage: 'url(https://cdn.shopify.com/s/files/1/0706/4456/4124/files/banner.avif?v=1771725046)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <div className="hero-banner-inner" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px', backgroundColor: 'rgba(0,0,0,0.2)' }}>
         <div style={{ flexShrink: 0 }}>
           <h2 className="hero-title" style={{ fontSize: '36px', fontWeight: '800', color: '#fff', letterSpacing: '0.05em', textTransform: 'uppercase', margin: 0, textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>SPEND &amp; SAVE</h2>
