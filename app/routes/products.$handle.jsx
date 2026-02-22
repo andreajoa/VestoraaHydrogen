@@ -262,7 +262,7 @@ export default function Product() {
           </div>
 
           {/* RIGHT: Product info panel */}
-          <div className="product-info-panel" style={{ position: 'sticky', top: '16px', minWidth: 0, paddingRight: '28px' }}>
+          <div className="product-info-panel" style={{ position: 'sticky', top: '16px', minWidth: 0, paddingRight: '40px' }}>
             {/* Brand + Favourite */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
               <div>
