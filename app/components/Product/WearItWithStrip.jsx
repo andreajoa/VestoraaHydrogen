@@ -13,7 +13,7 @@ export function WearItWithStrip({ products }) {
   const items = products.slice(start, start + visible);
 
   return (
-    <div style={{ marginTop: '20px' }}>
+    <div style={{ marginTop: '20px', width: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
         <span style={{ fontSize: '12px', fontWeight: '600', color: '#111', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Wear it with</span>
         <div style={{ display: 'flex', gap: '4px' }}>
@@ -30,7 +30,7 @@ export function WearItWithStrip({ products }) {
           })}
         </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', overflow: 'hidden' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', width: '100%', boxSizing: 'border-box' }}>
         {items.map((p) => {
           const img = p.featuredImage;
           const price = parseFloat(p.priceRange?.minVariantPrice?.amount || 0);

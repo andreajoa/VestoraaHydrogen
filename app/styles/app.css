@@ -984,7 +984,7 @@ html, body { overflow-x: hidden !important; max-width: 100vw !important; }
 /* ── Hero banner — horizontal no mobile igual ShopPay ───────────────────── */
 @media (max-width: 768px) {
   .hero-banner-wrap {
-    height: 90px !important;
+    height: 110px !important;
   }
   .hero-banner-inner {
     padding: 0 16px !important;
@@ -1029,5 +1029,24 @@ html, body { overflow-x: hidden !important; max-width: 100vw !important; }
   }
   .add-to-bag-wrapper button {
     width: 100% !important;
+  }
+}
+
+/* ── Size guide mobile — sem emoji ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .size-guide-btn {
+    padding: 0 8px !important;
+    font-size: 10px !important;
+    gap: 2px !important;
+  }
+  /* Esconder emoji do size guide no mobile */
+  .size-guide-btn span:first-child {
+    display: none !important;
+  }
+  /* Wishlist — pouquinho menor */
+  .wishlist-btn {
+    width: 44px !important;
+    height: 48px !important;
+    flex-shrink: 0 !important;
   }
 }
