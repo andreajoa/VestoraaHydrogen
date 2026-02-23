@@ -100,7 +100,7 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/png', href: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/LOGO_V-removebg-preview_ea357857-739b-4fac-a4ad-3ff622feae7c.png?v=1771732737'},
+    {rel: 'icon', type: 'image/png', href: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/Whisk_492fc56b82fa7a59e01400f371c8187cdr.png?v=1771814973'},
   ];
 }
 
@@ -198,6 +198,7 @@ export function Layout({children}) {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
+        <title>Got You Looking 👀🔥 | Fashion by Vestoraa</title>
         <Meta />
         <Links />
         <script
