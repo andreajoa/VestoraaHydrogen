@@ -100,7 +100,7 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/png', href: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/Whisk_492fc56b82fa7a59e01400f371c8187cdr.png?v=1771814973'},
+    {rel: 'icon', type: 'image/png', href: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/Circle_Monogram_Logo.png?v=1771863565'},
   ];
 }
 
