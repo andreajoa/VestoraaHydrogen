@@ -100,7 +100,7 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/png', href: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/Circle_Monogram_Logo.png?v=1771863565'},
+    {rel: 'icon', type: 'image/png', href: 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/favicon_logo.png?v=1771865006'},
   ];
 }
 
