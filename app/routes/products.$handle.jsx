@@ -68,6 +68,7 @@ async function loadCriticalData({ context, params, request }) {
       context.storefront
         .query(RECOMMENDED_PRODUCTS_QUERY, {
           variables: { productType: "tag:" + tag },
+          cache: context.storefront.CacheNone(),
         })
         .catch(() => null)
     )
@@ -102,6 +103,7 @@ async function loadCriticalData({ context, params, request }) {
   const similarProducts = await context.storefront
     .query(SIMILAR_PRODUCTS_QUERY, {
       variables: { productType: "tag:" + currentCategory },
+      cache: context.storefront.CacheNone(),
     })
     .catch(() => null);
 
