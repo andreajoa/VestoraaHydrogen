@@ -403,7 +403,7 @@ export default function Product() {
 
         {/* SIMILAR ITEMS */}
         <div className="product-below-section">
-        <ProductCarousel title="Similar items" products={similarItems.length > 0 ? similarItems : complementary.slice(0, 8)} />
+        <ProductCarousel title="Similar items" products={similarItems} />
 
         {/* YOU MAY ALSO LIKE */}
         <RecentlyViewedCarousel currentProduct={{
