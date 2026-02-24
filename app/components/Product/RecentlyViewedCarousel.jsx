@@ -19,15 +19,16 @@ export function RecentlyViewedCarousel({ currentProduct }) {
   useEffect(() => {
     if (!currentProduct) return;
 
-    // Salva produto atual no historico
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    const filtered = stored.filter(p => p.id !== currentProduct.id);
-    const updated = [currentProduct, ...filtered].slice(0, MAX_ITEMS);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    const isValid = p => p && p.id && p.handle && p.imageUrl && parseFloat(p.price || 0) > 0;
 
-    // Mostra os produtos visitados anteriormente (excluindo o atual)
-    const previous = updated.filter(p => p.id !== currentProduct.id);
-    setItems(previous);
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    const cleaned = stored.filter(isValid).filter(p => p.id !== currentProduct.id);
+    const toSave = isValid(currentProduct)
+      ? [currentProduct, ...cleaned].slice(0, MAX_ITEMS)
+      : cleaned;
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    setItems(toSave.filter(p => p.id !== currentProduct.id));
   }, [currentProduct?.id]);
 
   if (!items || items.length === 0) return null;
@@ -52,25 +53,25 @@ export function RecentlyViewedCarousel({ currentProduct }) {
         </div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${perPage}, 1fr)`, gap: '10px' }}>
-        {visible.map((product) => {
-          const price = parseFloat(product.price || 0);
-          const comparePrice = parseFloat(product.comparePrice || 0);
+        {visible.map((p) => {
+          const price = parseFloat(p.price || 0);
+          const comparePrice = parseFloat(p.comparePrice || 0);
           const onSale = comparePrice && comparePrice > price;
-          const symbol = product.symbol || 'A$';
-
+          const currency = p.currencyCode || 'AUD';
+          const symbol = currency === 'GBP' ? '£' : currency === 'EUR' ? '€' : 'A$';
           return (
-            <div key={product.id}>
-              <Link to={'/products/' + product.handle} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+            <div key={p.id}>
+              <Link to={'/products/' + p.handle} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                 <div style={{ position: 'relative', overflow: 'hidden', backgroundColor: '#f5f5f5', aspectRatio: '2/3', marginBottom: '8px', borderRadius: '4px' }}>
-                  {product.imageUrl
-                    ? <img src={product.imageUrl} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+                  {p.imageUrl
+                    ? <img src={p.imageUrl} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
                     : <div style={{ width: '100%', height: '100%', backgroundColor: '#eee' }} />
                   }
                   {onSale && (
                     <span style={{ position: 'absolute', top: '6px', left: '6px', backgroundColor: '#e00', color: '#fff', fontSize: '9px', fontWeight: '700', padding: '2px 5px', letterSpacing: '0.05em', borderRadius: '2px' }}>SALE</span>
                   )}
                 </div>
-                <p style={{ fontSize: '11px', color: '#555', margin: '0 0 3px', lineHeight: 1.3, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{product.title}</p>
+                <p style={{ fontSize: '11px', color: '#555', margin: '0 0 3px', lineHeight: 1.3, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{p.title}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
                   <span style={{ fontSize: '12px', fontWeight: '700', color: onSale ? '#c00' : '#111' }}>{symbol}{price.toFixed(2)}</span>
                   {onSale && comparePrice > 0 && (

@@ -409,10 +409,10 @@ export default function Product() {
           id: product.id,
           handle: product.handle,
           title: product.title,
-          imageUrl: product.featuredImage?.url,
-          price: parseFloat(product.priceRange?.minVariantPrice?.amount || 0),
-          comparePrice: parseFloat(product.compareAtPriceRange?.minVariantPrice?.amount || 0),
-          symbol: product.priceRange?.minVariantPrice?.currencyCode === 'GBP' ? '£' : product.priceRange?.minVariantPrice?.currencyCode === 'EUR' ? '€' : 'A$',
+          imageUrl: product.featuredImage?.url || product.images?.nodes?.[0]?.url,
+          price: product.priceRange?.minVariantPrice?.amount,
+          comparePrice: product.compareAtPriceRange?.minVariantPrice?.amount,
+          currencyCode: product.priceRange?.minVariantPrice?.currencyCode,
         }} />
 
         {/* REVIEWS */}
