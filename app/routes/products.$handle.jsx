@@ -17,6 +17,7 @@ import { DeliveryEstimator } from '~/components/Product/DeliveryEstimator';
 import { ProductCarousel } from '~/components/Product/ProductCarousel';
 import { ReviewsSection } from '~/components/Product/ReviewsSection';
 import { WearItWithStrip } from '~/components/Product/WearItWithStrip';
+import { RecentlyViewedCarousel } from '~/components/Product/RecentlyViewedCarousel';
 
 export const meta = ({ data }) => {
   return [
@@ -393,7 +394,15 @@ export default function Product() {
         <ProductCarousel title="Similar items" products={similarItems.length > 0 ? similarItems : complementary.slice(0, 8)} />
 
         {/* YOU MAY ALSO LIKE */}
-        <ProductCarousel title="You may also like" products={complementary} />
+        <RecentlyViewedCarousel currentProduct={{
+          id: product.id,
+          handle: product.handle,
+          title: product.title,
+          imageUrl: product.featuredImage?.url,
+          price: parseFloat(product.priceRange?.minVariantPrice?.amount || 0),
+          comparePrice: parseFloat(product.compareAtPriceRange?.minVariantPrice?.amount || 0),
+          symbol: product.priceRange?.minVariantPrice?.currencyCode === 'GBP' ? '£' : product.priceRange?.minVariantPrice?.currencyCode === 'EUR' ? '€' : 'A$',
+        }} />
 
         {/* REVIEWS */}
         <ReviewsSection productId={product.id} productTitle={title} productType={product.productType} />
