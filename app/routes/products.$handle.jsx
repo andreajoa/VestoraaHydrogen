@@ -46,7 +46,6 @@ async function loadCriticalData({ context, params, request }) {
   const currentCat = (product.tags || []).find(t => CATEGORIES.includes(t)) || 'dress';
 
   // Wear it with: mostra categorias COMPLEMENTARES (nunca a mesma categoria)
-  // Shopify Storefront API: usa tag: com um valor por vez, busca multiplas e combina no servidor
   let complementTags = [];
   if (currentCat === 'dress' || currentCat === 'skirt' || currentCat === 'jumpsuit' || currentCat === 'suit') {
     complementTags = ['bag', 'shoe', 'jewellery'];
@@ -61,13 +60,21 @@ async function loadCriticalData({ context, params, request }) {
   } else {
     complementTags = ['dress', 'bag', 'shoe'];
   }
-  const complementQuery = complementTags.map(t => "tag:" + t).join(" OR ");
 
-  const recommendedProducts = await context.storefront
+  // Busca todos os produtos e filtra no servidor pelas tags complementares
+  const allProductsRaw = await context.storefront
     .query(RECOMMENDED_PRODUCTS_QUERY, {
-      variables: { productType: complementQuery },
+      variables: { productType: "available_for_sale:true" },
     })
     .catch(() => null);
+
+  const complementaryFiltered = (allProductsRaw?.complementary?.nodes || [])
+    .filter(p => {
+      const ptags = (p.tags || []);
+      return complementTags.some(ct => ptags.includes(ct));
+    });
+
+  const recommendedProducts = { complementary: { nodes: complementaryFiltered } };
 
   const currentHandle = product.handle;
 
@@ -490,7 +497,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     $language: LanguageCode
     $productType: String
   ) @inContext(country: $country, language: $language) {
-    complementary: products(first: 12, sortKey: UPDATED_AT, reverse: true, query: $productType) {
+    complementary: products(first: 50, sortKey: UPDATED_AT, reverse: true, query: $productType) {
       nodes {
         id title handle vendor productType tags
         priceRange { minVariantPrice { amount currencyCode } }
