@@ -2,11 +2,15 @@ export async function action({ request, context }) {
   const { email, phone } = await request.json();
 
   if (!email || !email.includes('@')) {
-    return Response.json({ error: 'E-mail inválido' }, { status: 400 });
+    return Response.json({ error: 'Invalid email address.' }, { status: 400 });
   }
 
-  const adminDomain = process.env.SHOPIFY_STORE_DOMAIN;
-  const adminToken = process.env.SHOPIFY_ADMIN_API_TOKEN;
+  const adminDomain = context.env?.SHOPIFY_STORE_DOMAIN || process.env.SHOPIFY_STORE_DOMAIN;
+  const adminToken = context.env?.SHOPIFY_ADMIN_API_TOKEN || process.env.SHOPIFY_ADMIN_API_TOKEN;
+
+  if (!adminDomain || !adminToken) {
+    return Response.json({ error: 'Server configuration error.' }, { status: 500 });
+  }
 
   const mutation = `
     mutation customerCreate($input: CustomerInput!) {
@@ -26,7 +30,6 @@ export async function action({ request, context }) {
 
   const input = {
     email,
-    phone: phone || null,
     tags: ['popup-lead'],
     emailMarketingConsent: {
       marketingState: 'SUBSCRIBED',
@@ -34,7 +37,8 @@ export async function action({ request, context }) {
     },
   };
 
-  if (phone) {
+  if (phone && phone.trim()) {
+    input.phone = phone.trim();
     input.smsMarketingConsent = {
       marketingState: 'SUBSCRIBED',
       marketingOptInLevel: 'SINGLE_OPT_IN',
@@ -56,11 +60,19 @@ export async function action({ request, context }) {
     );
 
     const data = await response.json();
+
+    if (!response.ok) {
+      return Response.json({ error: 'Shopify API error.' }, { status: 500 });
+    }
+
     const errors = data?.data?.customerCreate?.userErrors;
 
     if (errors && errors.length > 0) {
-      // Se cliente já existe, tudo bem
-      if (errors[0].message.includes('already')) {
+      // Cliente já existe — retorna sucesso mesmo assim
+      if (
+        errors[0].message.toLowerCase().includes('already') ||
+        errors[0].message.toLowerCase().includes('taken')
+      ) {
         return Response.json({ success: true, existing: true });
       }
       return Response.json({ error: errors[0].message }, { status: 400 });
@@ -68,6 +80,7 @@ export async function action({ request, context }) {
 
     return Response.json({ success: true });
   } catch (err) {
-    return Response.json({ error: 'Erro ao salvar. Tente novamente.' }, { status: 500 });
+    console.error('Subscribe error:', err);
+    return Response.json({ error: 'Connection error. Please try again.' }, { status: 500 });
   }
 }

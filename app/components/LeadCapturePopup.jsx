@@ -4,6 +4,8 @@ const STORAGE_KEY = 'vestoraa_lead_popup';
 const MAX_SHOWS = 3;
 const COOLDOWN_DAYS = 10;
 const DELAY_MS = 8000;
+const DISCOUNT_CODE = 'vestoraa5%';
+const IMAGE_URL = 'https://cdn.shopify.com/s/files/1/0706/4456/4124/files/Whisk_a7ffca236cdfe8fa2414bac46e2c802bdr.jpg?v=1771894146';
 
 function getStorageData() {
   try {
@@ -28,6 +30,7 @@ export function LeadCapturePopup() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -67,6 +70,13 @@ export function LeadCapturePopup() {
     setTimeout(() => setVisible(false), 400);
   }
 
+  function copyCode() {
+    navigator.clipboard.writeText(DISCOUNT_CODE).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
   async function handleSubmit() {
     if (!email || !email.includes('@')) {
       setError('Please enter a valid email address.');
@@ -91,7 +101,6 @@ export function LeadCapturePopup() {
 
       saveStorageData({ count: MAX_SHOWS, lastShown: Date.now(), subscribed: true });
       setSubmitted(true);
-      setTimeout(() => close(), 3500);
     } catch {
       setError('Connection error. Please try again.');
       setLoading(false);
@@ -102,7 +111,6 @@ export function LeadCapturePopup() {
 
   return (
     <>
-      {/* Overlay */}
       <div
         onClick={close}
         style={{
@@ -115,7 +123,6 @@ export function LeadCapturePopup() {
         }}
       />
 
-      {/* Modal */}
       <div
         style={{
           position: 'fixed',
@@ -135,33 +142,15 @@ export function LeadCapturePopup() {
           fontFamily: 'sans-serif',
         }}
       >
-        {/* Image top half */}
-        <div style={{
-          position: 'relative',
-          height: 'clamp(160px, 28vw, 220px)',
-          overflow: 'hidden',
-        }}>
+        {/* Image top */}
+        <div style={{ position: 'relative', height: 'clamp(160px, 28vw, 220px)', overflow: 'hidden' }}>
           <img
-            src="https://cdn.shopify.com/s/files/1/0706/4456/4124/files/Whisk_248113639476fe2af5a4f3ed7c8c7460dr.jpg?v=1771894146"
+            src={IMAGE_URL}
             alt=""
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center 30%',
-              filter: 'brightness(0.75)',
-            }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', filter: 'brightness(0.7)' }}
           />
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%)',
-          }} />
-          <div style={{
-            position: 'absolute',
-            bottom: '20px',
-            left: '24px',
-          }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.55) 100%)' }} />
+          <div style={{ position: 'absolute', bottom: '20px', left: '24px' }}>
             <p style={{ fontSize: '10px', letterSpacing: '3px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', marginBottom: '4px' }}>
               Exclusive offer
             </p>
@@ -172,46 +161,56 @@ export function LeadCapturePopup() {
           <button
             onClick={close}
             style={{
-              position: 'absolute',
-              top: '14px',
-              right: '14px',
-              background: 'rgba(255,255,255,0.2)',
-              border: 'none',
-              borderRadius: '50%',
-              width: '30px',
-              height: '30px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              color: '#fff',
-              fontSize: '18px',
+              position: 'absolute', top: '14px', right: '14px',
+              background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%',
+              width: '30px', height: '30px', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', cursor: 'pointer', color: '#fff', fontSize: '18px',
               backdropFilter: 'blur(4px)',
             }}
-          >
-            ×
-          </button>
+          >×</button>
         </div>
 
-        {/* Bottom white section */}
-        <div style={{
-          background: '#fff',
-          padding: 'clamp(20px, 5vw, 32px)',
-        }}>
+        {/* Bottom */}
+        <div style={{ background: '#fff', padding: 'clamp(20px, 5vw, 28px)' }}>
           {submitted ? (
-            <div style={{ textAlign: 'center', padding: '12px 0' }}>
-              <div style={{ fontSize: '36px', marginBottom: '12px' }}>🎉</div>
-              <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#111', marginBottom: '8px' }}>
-                Your 5% OFF is on its way!
+            <div style={{ textAlign: 'center', padding: '8px 0' }}>
+              <div style={{ fontSize: '32px', marginBottom: '10px' }}>🎉</div>
+              <h3 style={{ fontSize: '17px', fontWeight: '700', color: '#111', marginBottom: '6px' }}>
+                You&apos;re in! Here&apos;s your code:
               </h3>
-              <p style={{ color: '#888', fontSize: '13px', lineHeight: '1.6' }}>
-                Check your inbox — your discount code is valid for 10 days on your first purchase.
+              <p style={{ color: '#888', fontSize: '13px', lineHeight: '1.6', marginBottom: '16px' }}>
+                Use it at checkout. Valid for <strong>10 days</strong> on your first purchase.
               </p>
+
+              {/* Coupon code box */}
+              <div
+                onClick={copyCode}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: '#f5f5f5',
+                  border: '1.5px dashed #ccc',
+                  borderRadius: '10px',
+                  padding: '14px 18px',
+                  cursor: 'pointer',
+                  marginBottom: '10px',
+                }}
+              >
+                <span style={{ fontSize: '18px', fontWeight: '800', letterSpacing: '1px', color: '#111' }}>
+                  {DISCOUNT_CODE}
+                </span>
+                <span style={{ fontSize: '11px', fontWeight: '600', color: copied ? '#22c55e' : '#888', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                  {copied ? '✓ Copied!' : 'Tap to copy'}
+                </span>
+              </div>
+
+              <p style={{ fontSize: '11px', color: '#ccc' }}>Check your inbox for a confirmation email.</p>
             </div>
           ) : (
             <>
-              <p style={{ fontSize: '13px', color: '#888', marginBottom: '20px', lineHeight: '1.6' }}>
-                Enter your email and phone to receive your exclusive discount. Valid for 10 days.
+              <p style={{ fontSize: '13px', color: '#888', marginBottom: '18px', lineHeight: '1.6' }}>
+                Enter your email and phone to unlock your exclusive discount code.
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '14px' }}>
@@ -220,16 +219,7 @@ export function LeadCapturePopup() {
                   placeholder="Your email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  style={{
-                    padding: '13px 16px',
-                    border: '1.5px solid #e5e5e5',
-                    borderRadius: '10px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    color: '#111',
-                    width: '100%',
-                    boxSizing: 'border-box',
-                  }}
+                  style={{ padding: '13px 16px', border: '1.5px solid #e5e5e5', borderRadius: '10px', fontSize: '14px', outline: 'none', color: '#111', width: '100%', boxSizing: 'border-box' }}
                   onFocus={(e) => (e.target.style.borderColor = '#111')}
                   onBlur={(e) => (e.target.style.borderColor = '#e5e5e5')}
                 />
@@ -238,16 +228,7 @@ export function LeadCapturePopup() {
                   placeholder="Phone number (optional)"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  style={{
-                    padding: '13px 16px',
-                    border: '1.5px solid #e5e5e5',
-                    borderRadius: '10px',
-                    fontSize: '14px',
-                    outline: 'none',
-                    color: '#111',
-                    width: '100%',
-                    boxSizing: 'border-box',
-                  }}
+                  style={{ padding: '13px 16px', border: '1.5px solid #e5e5e5', borderRadius: '10px', fontSize: '14px', outline: 'none', color: '#111', width: '100%', boxSizing: 'border-box' }}
                   onFocus={(e) => (e.target.style.borderColor = '#111')}
                   onBlur={(e) => (e.target.style.borderColor = '#e5e5e5')}
                 />
@@ -261,18 +242,10 @@ export function LeadCapturePopup() {
                 onClick={handleSubmit}
                 disabled={loading}
                 style={{
-                  width: '100%',
-                  padding: '14px',
-                  background: loading ? '#888' : '#111',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '10px',
-                  fontSize: '13px',
-                  fontWeight: '700',
-                  letterSpacing: '0.5px',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  marginBottom: '10px',
-                  transition: 'background 0.2s',
+                  width: '100%', padding: '14px', background: loading ? '#888' : '#111',
+                  color: '#fff', border: 'none', borderRadius: '10px', fontSize: '13px',
+                  fontWeight: '700', letterSpacing: '0.5px', cursor: loading ? 'not-allowed' : 'pointer',
+                  marginBottom: '10px', transition: 'background 0.2s',
                 }}
               >
                 {loading ? 'Saving...' : 'Claim my discount →'}
