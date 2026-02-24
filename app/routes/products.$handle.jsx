@@ -73,13 +73,20 @@ async function loadCriticalData({ context, params, request }) {
     )
   );
 
-  // Combina resultados, remove duplicatas e produto atual
+  // Combina resultados, remove duplicatas, produto atual, e garante que nao tem tag da categoria atual
   const seen = new Set();
   const allComplementary = complementaryResults
-    .flatMap(r => r?.complementary?.nodes || [])
+    .flatMap((r, idx) => {
+      const tag = complementTags[idx];
+      return (r?.complementary?.nodes || []).map(p => ({ ...p, _matchedTag: tag }));
+    })
     .filter(p => {
       if (p.handle === product.handle) return false;
       if (seen.has(p.id)) return false;
+      // Garante que o produto tem a tag correta E nao tem a tag da categoria atual
+      const ptags = p.tags || [];
+      if (ptags.includes(currentCat)) return false;
+      if (!ptags.includes(p._matchedTag)) return false;
       seen.add(p.id);
       return true;
     });
