@@ -406,7 +406,7 @@ export default function Product() {
 
         {/* SIMILAR ITEMS */}
         <div className="product-below-section">
-        {similarItems.length > 0 && <ProductCarousel title="Similar items" products={similarItems} />}
+        <ProductCarousel title="Similar items" products={similarItems.length > 0 ? similarItems : complementary.slice(0, 8)} />
 
         {/* YOU MAY ALSO LIKE */}
         <ProductCarousel title="You may also like" products={complementary} />
