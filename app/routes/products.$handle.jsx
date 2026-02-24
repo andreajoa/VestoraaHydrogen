@@ -67,9 +67,14 @@ async function loadCriticalData({ context, params, request }) {
 
   // Similar items: mesmo tipo do produto atual
   const currentType = product.productType || '';
+  // Monta query com variantes de capitalização para garantir match
   const similarQuery = currentType
-    ? ("product_type:" + currentType)
-    : "";
+    ? (
+        "product_type:\"" + currentType + "\"" +
+        " OR product_type:\"" + currentType.toLowerCase() + "\"" +
+        " OR product_type:\"" + (currentType.charAt(0).toUpperCase() + currentType.slice(1).toLowerCase()) + "\""
+      )
+    : "available_for_sale:true";
 
   const similarProducts = await context.storefront
     .query(SIMILAR_PRODUCTS_QUERY, {
