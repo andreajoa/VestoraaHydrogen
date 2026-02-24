@@ -31,59 +31,115 @@ export async function loader(args) {
   return { ...deferredData, ...criticalData };
 }
 
+// Helper: build similar items query based on product type + style tags
+function buildSimilarQuery(product) {
+  const type = (product.productType || '').toLowerCase().trim();
+  const tags = (product.tags || []).map(t => t.toLowerCase());
+  const title = (product.title || '').toLowerCase();
+
+  // Detect category
+  const isDress = /dress/.test(type) || tags.some(t => /dress/.test(t));
+  const isSkirt = /skirt/.test(type) || tags.some(t => /skirt/.test(t));
+  const isTop = /top|blouse|shirt/.test(type) || tags.some(t => /\btop\b|blouse|shirt/.test(t));
+  const isBodysuit = /bodysuit/.test(type) || tags.some(t => /bodysuit/.test(t));
+  const isJumpsuit = /jumpsuit|playsuit/.test(type) || tags.some(t => /jumpsuit|playsuit/.test(t));
+  const isBag = /bag|handbag|purse|tote|clutch/.test(type) || tags.some(t => /bag|handbag|purse|tote|clutch/.test(t));
+  const isShoe = /shoe|heel|boot|sandal|sneaker|footwear/.test(type) || tags.some(t => /shoe|heel|boot|sandal|sneaker/.test(t));
+  const isJewellery = /jewel|necklace|earring|bracelet|ring/.test(type) || tags.some(t => /jewel|necklace|earring|bracelet|ring/.test(t));
+
+  // Detect style/cut/length tags
+  const isMini = tags.some(t => /\bmini\b/.test(t)) || /mini/.test(title);
+  const isMidi = tags.some(t => /\bmidi\b/.test(t)) || /midi/.test(title);
+  const isMaxi = tags.some(t => /\bmaxi\b/.test(t)) || /maxi/.test(title);
+  const isBodycon = tags.some(t => /bodycon|fitted|tight/.test(t));
+  const isFlowy = tags.some(t => /flowy|floral|flare|wrap|relaxed/.test(t));
+  const isCargo = tags.some(t => /cargo/.test(t));
+  const isCasual = tags.some(t => /casual|everyday/.test(t));
+  const isFormal = tags.some(t => /formal|evening|gala|cocktail/.test(t));
+
+  // Build query parts
+  let parts = [];
+
+  if (type) parts.push(`product_type:${product.productType}`);
+
+  // Add style/cut refinement tags
+  if (isMini) parts.push('tag:mini');
+  if (isMidi) parts.push('tag:midi');
+  if (isMaxi) parts.push('tag:maxi');
+  if (isBodycon) parts.push('tag:bodycon');
+  if (isFlowy) parts.push('tag:flowy OR tag:floral OR tag:wrap');
+  if (isFormal) parts.push('tag:formal OR tag:evening');
+  if (isCasual) parts.push('tag:casual');
+  if (isBag) parts.push('product_type:Bag OR product_type:Bags OR product_type:Handbag');
+  if (isShoe) parts.push('product_type:Shoes OR product_type:Heels OR product_type:Boots');
+  if (isJewellery) parts.push('product_type:Jewellery OR product_type:Jewelry');
+
+  // If no type detected, fall back to broad
+  if (parts.length === 0) parts.push('available_for_sale:true');
+
+  return parts.join(' AND ');
+}
+
+// Helper: build complementary "Wear it with" query (DIFFERENT category)
+function buildComplementaryQuery(product) {
+  const type = (product.productType || '').toLowerCase();
+  const tags = (product.tags || []).map(t => t.toLowerCase());
+
+  const isDress = /dress/.test(type) || tags.some(t => /dress/.test(t));
+  const isSkirt = /skirt/.test(type) || tags.some(t => /skirt/.test(t));
+  const isTop = /top|blouse|shirt/.test(type) || tags.some(t => /\btop\b|blouse/.test(t));
+  const isBag = /bag|handbag|purse|tote|clutch/.test(type) || tags.some(t => /bag|handbag/.test(t));
+  const isShoe = /shoe|heel|boot|sandal|sneaker/.test(type) || tags.some(t => /shoe|heel|boot|sandal/.test(t));
+  const isJewellery = /jewel|necklace|earring|bracelet/.test(type) || tags.some(t => /jewel|necklace|earring/.test(t));
+
+  if (isDress || isJumpsuit) {
+    return 'product_type:Bag OR product_type:Bags OR product_type:Shoes OR product_type:Heels OR product_type:Jewellery OR product_type:Jewelry OR product_type:Accessories';
+  }
+  if (isSkirt || isTop) {
+    return 'product_type:Bag OR product_type:Shoes OR product_type:Heels OR product_type:Jewellery OR product_type:Top OR product_type:Skirt';
+  }
+  if (isBag) {
+    return 'product_type:Dress OR product_type:Top OR product_type:Skirt OR product_type:Shoes OR product_type:Heels OR product_type:Jewellery';
+  }
+  if (isShoe) {
+    return 'product_type:Dress OR product_type:Top OR product_type:Skirt OR product_type:Bag OR product_type:Jewellery';
+  }
+  if (isJewellery) {
+    return 'product_type:Dress OR product_type:Top OR product_type:Bag OR product_type:Shoes';
+  }
+  return 'product_type:Bag OR product_type:Shoes OR product_type:Jewellery OR product_type:Accessories';
+}
+
 async function loadCriticalData({ context, params, request }) {
   const { handle } = params;
   const { storefront } = context;
   if (!handle) throw new Response('Expected product handle', { status: 404 });
+
   const selectedOptions = getSelectedProductOptions(request) || [];
   const [{ product }] = await Promise.all([
     storefront.query(PRODUCT_QUERY, { variables: { handle, selectedOptions } }),
   ]);
   if (!product?.id) throw new Response('Product not found', { status: 404 });
   redirectIfHandleIsLocalized(request, { handle, data: product });
-  // Definir tipos complementares por tipo do produto atual
-  const productType = (product.productType || '').toLowerCase();
-  const isDress = /dress|skirt|top|bodysuit|jumpsuit/.test(productType) || 
-    (product.tags || []).some(t => /dress|skirt|top|bodysuit|jumpsuit/.test(t.toLowerCase()));
-  const isShoes = /shoe|heel|boot|sandal|sneaker/.test(productType);
-  const isAccessory = /bag|jewel|accessory|accessories|belt|hat|scarf/.test(productType);
 
-  let complementQuery = '';
-  if (isDress) {
-    complementQuery = 'product_type:accessories OR product_type:shoes OR product_type:bags OR product_type:jewellery OR product_type:jewelry';
-  } else if (isShoes) {
-    complementQuery = 'product_type:dress OR product_type:top OR product_type:skirt OR product_type:accessories';
-  } else if (isAccessory) {
-    complementQuery = 'product_type:dress OR product_type:top OR product_type:skirt OR product_type:shoes';
-  } else {
-    complementQuery = 'product_type:accessories OR product_type:shoes';
-  }
+  const similarQuery = buildSimilarQuery(product);
+  const complementaryQuery = buildComplementaryQuery(product);
 
-  const recommendedProducts = await context.storefront
-    .query(RECOMMENDED_PRODUCTS_QUERY, {
-      variables: { productType: complementQuery },
-    })
-    .catch(() => null);
+  const [similarProducts, recommendedProducts] = await Promise.all([
+    storefront.query(SIMILAR_PRODUCTS_QUERY, {
+      variables: { query: similarQuery },
+    }).catch(() => null),
+    storefront.query(RECOMMENDED_PRODUCTS_QUERY, {
+      variables: { query: complementaryQuery },
+    }).catch(() => null),
+  ]);
 
-  // Similar items: mesmo tipo do produto atual
-  const currentType = product.productType || '';
-  const similarQuery = currentType
-    ? ("product_type:" + currentType)
-    : "";
-
-  const similarProducts = await context.storefront
-    .query(SIMILAR_PRODUCTS_QUERY, {
-      variables: { productType: similarQuery },
-    })
-    .catch(() => null);
-
-  return { product, recommendedProducts, similarProducts };
+  return { product, similarProducts, recommendedProducts };
 }
 
 function loadDeferredData({ context, params }) {
   return {};
 }
-
 
 function DesktopGallery({ images, title }) {
   const [active, setActive] = React.useState(0);
@@ -130,86 +186,58 @@ export default function Product() {
 
   const { title, vendor, descriptionHtml, images } = product;
   const allImages = images?.nodes || [];
-  
   const variantImage = selectedVariant?.image;
   const displayImages = variantImage
     ? [variantImage, ...allImages.filter(img => img.id !== variantImage.id)]
     : allImages;
 
-  // Reset gallery when variant changes
-  useEffect(() => {
-    setActiveImg(0);
-  }, [selectedVariant?.id]);
+  useEffect(() => { setActiveImg(0); }, [selectedVariant?.id]);
 
   const mainImage = displayImages[activeImg] || displayImages[0];
-  // Wear it with: complementares por tipo
   const currentHandle = product.handle;
-  const complementary = (recommendedProducts?.complementary?.nodes || [])
-    .filter(p => p.handle !== currentHandle);
-  const fallback = (recommendedProducts?.fallback?.nodes || [])
-    .filter(p => p.handle !== currentHandle);
-  const products = complementary.length > 0 ? complementary : fallback;
 
-  // Similar items: mesmo tipo, excluindo produto atual
-  const similarItems = (similarProducts?.sameType?.nodes || [])
+  // Similar items: same type + style, exclude current product
+  const similarItems = (similarProducts?.results?.nodes || [])
+    .filter(p => p.handle !== currentHandle)
+    .slice(0, 8);
+
+  // Wear it with: complementary category, exclude current product
+  const complementary = (recommendedProducts?.results?.nodes || [])
+    .filter(p => p.handle !== currentHandle)
+    .slice(0, 6);
+
+  // Fallback if similar is empty
+  const fallbackProducts = (recommendedProducts?.results?.nodes || [])
     .filter(p => p.handle !== currentHandle)
     .slice(0, 8);
 
   const metafields = product.metafields || [];
   const getMeta = (key) => metafields.find(m => m?.key === key)?.value;
-  
-  // Buscar material de todos os campos possiveis
-  const materialInfo = (() => {
-    // 1. Tentar metafields primeiro
+
+  const materialContent = (() => {
     const fromMeta = getMeta('material') || getMeta('fabric') || getMeta('composition') || getMeta('materials');
-    if (fromMeta) return fromMeta;
-    // 2. Tentar extrair da descricao - padrao: 95% Polyester, 5% Elastane
+    if (fromMeta && !fromMeta.includes('gid://')) return fromMeta;
     const desc = product.descriptionHtml || product.description || '';
     const clean = desc.replace(/<[^>]+>/g, ' ');
     const pct = clean.match(/(\d+%\s*[A-Za-z][A-Za-z\s]*(?:,\s*\d+%\s*[A-Za-z][A-Za-z\s]*)*)/);
     if (pct) return pct[0].trim();
-    // 3. Tentar padrao "Material: ..." ou "Fabric: ..."
     const label = clean.match(/(?:material|fabric|composition|content)[:\s]+([^.\n<]{3,60})/i);
     if (label) return label[1].trim();
-    // 4. Tentar tags do produto
-    const tags = (product.tags || []).filter(t => t.toLowerCase().includes('% ') || ['cotton','polyester','silk','linen','wool','nylon','spandex','elastane','rayon','viscose'].some(f => t.toLowerCase().includes(f)));
-    if (tags.length > 0) return tags.join(', ');
-    return null;
-  })();
-  const careInfo = getMeta('care_instructions') || getMeta('care') || null;
-
-  const materialContent = (() => {
-    if (materialInfo && !materialInfo.includes('gid://') && !materialInfo.startsWith('[')) return materialInfo;
-    const d = product.descriptionHtml || product.description || '';
-    const c = d.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-    const pct = c.match(/(\d+%\s*[A-Za-z][A-Za-z\s]*(?:,\s*\d+%\s*[A-Za-z][A-Za-z\s]*)*)/);
-    if (pct) return pct[0].trim();
-    const lbl = c.match(/(?:material|fabric|composition|content|made of|made from)[:\s]+([^.\n]{3,80})/i);
-    if (lbl) return lbl[1].trim();
-    const fab = c.match(/\b(cotton|polyester|silk|linen|wool|nylon|spandex|elastane|rayon|viscose|satin|chiffon|denim|jersey|crepe|velvet|suede|leather)[\w\s,]*\b/i);
+    const fab = clean.match(/\b(cotton|polyester|silk|linen|wool|nylon|spandex|elastane|rayon|viscose|satin|chiffon|denim|jersey|crepe|velvet|suede|leather)[\w\s,]*\b/i);
     if (fab) return fab[0].trim();
     return 'Please refer to the product label for material information.';
   })();
 
+  const careInfo = getMeta('care_instructions') || getMeta('care') || null;
+
   const accordionItems = [
-    {
-      title: 'Material',
-      content: materialContent,
-    },
-    {
-      title: 'Size & fit',
-      content: 'This style fits true to size. Model wears size AU8/S.',
-      link: { text: 'VIEW SIZE GUIDE', onClick: () => {} },
-    },
-    {
-      title: 'Care',
-      content: careInfo || 'Cold Hand Wash, Warm Inside Out, Do Not Bleach or Soak. Do Not Tumble Dry. Warm Iron only.',
-    },
+    { title: 'Material', content: materialContent },
+    { title: 'Size & fit', content: 'This style fits true to size. Model wears size AU8/S.', link: { text: 'VIEW SIZE GUIDE', onClick: () => {} } },
+    { title: 'Care', content: careInfo || 'Cold Hand Wash, Warm Inside Out, Do Not Bleach or Soak. Do Not Tumble Dry. Warm Iron only.' },
   ];
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
-      {/* Breadcrumb */}
       <div className="product-breadcrumb" style={{ maxWidth: '1280px', margin: '0 auto', padding: '10px 16px' }}>
         <nav style={{ fontSize: '11px', color: '#666' }}>
           <a href="/" style={{ color: '#666', textDecoration: 'none' }}>Home</a>
@@ -221,22 +249,19 @@ export default function Product() {
       </div>
 
       <div className="product-outer" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 0 40px' }}>
-        {/* TWO COLUMN LAYOUT */}
         <div className="product-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '40px', alignItems: 'start' }}>
 
           {/* LEFT: Gallery */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-            {/* DESKTOP: side thumbnails + main image */}
             <DesktopGallery key={selectedVariant?.id || "default"} images={displayImages} title={title} />
 
-            {/* MOBILE: main image + horizontal thumbnail strip */}
+            {/* MOBILE gallery */}
             <div key={"mob-" + (selectedVariant?.id || 'x')} className="gallery-mobile" style={{ display: 'none', flexDirection: 'column', gap: '8px' }}>
               <div style={{ position: 'relative', backgroundColor: '#f5f5f5' }}>
                 {mainImage && (
                   <img src={mainImage.url} alt={mainImage.altText || title}
                     style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
                 )}
-                {/* Prev/Next arrows */}
                 {displayImages.length > 1 && (
                   <>
                     <button onClick={() => setActiveImg(i => (i - 1 + displayImages.length) % displayImages.length)}
@@ -245,7 +270,6 @@ export default function Product() {
                       style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', boxShadow: '0 1px 4px rgba(0,0,0,0.15)' }}>›</button>
                   </>
                 )}
-                {/* Dot indicators */}
                 <div style={{ position: 'absolute', bottom: '10px', left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: '5px' }}>
                   {displayImages.slice(0, 8).map((_, idx) => (
                     <button key={idx} onClick={() => setActiveImg(idx)}
@@ -253,7 +277,6 @@ export default function Product() {
                   ))}
                 </div>
               </div>
-              {/* Horizontal thumbnail strip */}
               <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', scrollbarWidth: 'none', padding: '4px 2px' }}>
                 {displayImages.map((img, idx) => (
                   <button key={img.id || idx} onClick={() => setActiveImg(idx)}
@@ -265,44 +288,33 @@ export default function Product() {
                 ))}
               </div>
             </div>
-            {/* WEAR IT WITH - abaixo da imagem+thumbnails */}
-            <WearItWithStrip products={products.slice(0, 6)} />
+
+            {/* WEAR IT WITH - always complementary, never same product */}
+            <WearItWithStrip products={complementary} />
           </div>
 
-          {/* RIGHT: Product info panel */}
+          {/* RIGHT: Product info */}
           <div className="product-info-panel" style={{ position: 'sticky', top: '16px', minWidth: 0, paddingRight: '72px' }}>
-            {/* Brand + Favourite */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
               <div>
                 {vendor && (
-                  <p style={{ fontSize: '11px', fontWeight: '700', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
-                    {vendor}
-                  </p>
+                  <p style={{ fontSize: '11px', fontWeight: '700', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>{vendor}</p>
                 )}
                 <h1 style={{ fontSize: '18px', fontWeight: '400', color: '#111', lineHeight: 1.4, margin: 0, wordBreak: 'break-word' }}>{title}</h1>
               </div>
-              <button style={{
-                fontSize: '18px', border: 'none', background: 'none',
-                color: '#ccc', cursor: 'pointer', flexShrink: 0,
-                marginLeft: '8px', padding: '4px',
-              }} title="Favourite Brand">
-                ♡
-              </button>
+              <button style={{ fontSize: '18px', border: 'none', background: 'none', color: '#ccc', cursor: 'pointer', flexShrink: 0, marginLeft: '8px', padding: '4px' }}>♡</button>
             </div>
 
-            {/* Stars */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: '8px 0 12px' }}>
               <div style={{ display: 'flex', color: '#f5a623', fontSize: '13px' }}>★★★★☆</div>
               <span style={{ fontSize: '11px', color: '#888' }}>(9)</span>
               <a href="#reviews" style={{ fontSize: '11px', color: '#555', marginLeft: '4px' }}>Write a review</a>
             </div>
 
-            {/* Price */}
             <div style={{ marginBottom: '8px' }}>
               <ProductPrice price={selectedVariant?.price} compareAtPrice={selectedVariant?.compareAtPrice} />
             </div>
 
-            {/* ShopPay + Free Shipping */}
             <div style={{ marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{ fontSize: '11px', color: '#555' }}>Pay over time for orders over</span>
@@ -316,73 +328,53 @@ export default function Product() {
               </div>
             </div>
 
-            {/* Product Form (Color + Size + Buttons) */}
             <ProductForm productOptions={productOptions} selectedVariant={selectedVariant} />
-
-            {/* Accordion */}
             <ProductAccordion items={accordionItems} />
-
-            {/* Delivery */}
             <DeliveryEstimator />
 
-            {/* Returns */}
             <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: '1px solid #eee' }}>
               <p style={{ fontSize: '11px', color: '#555', marginBottom: '4px' }}>
                 <strong>Returns</strong> — Returns are free for 30 days unless marked.
               </p>
-              <a href="/policies/refund-policy" style={{ fontSize: '11px', color: '#0066cc' }}>
-                Find out more about our return policy
-              </a>
+              <a href="/policies/refund-policy" style={{ fontSize: '11px', color: '#0066cc' }}>Find out more about our return policy</a>
             </div>
           </div>
         </div>
 
-
-
-        {/* PRODUCT DETAILS - expandable */}
+        {/* PRODUCT DETAILS */}
         {descriptionHtml && (
           <div className="product-details-section" style={{ marginTop: '48px', paddingTop: '40px', borderTop: '1px solid #eee', padding: '40px 0 0' }}>
             <h2 style={{ fontSize: '16px', fontWeight: '400', color: '#111', marginBottom: '14px' }}>Product details</h2>
             <div
-              style={{
-                fontSize: '13px', color: '#555', lineHeight: 1.7,
-                maxHeight: detailsExpanded ? 'none' : '80px',
-                overflow: 'hidden',
-                position: 'relative',
-              }}
+              style={{ fontSize: '13px', color: '#555', lineHeight: 1.7, maxHeight: detailsExpanded ? 'none' : '80px', overflow: 'hidden', position: 'relative' }}
               dangerouslySetInnerHTML={{ __html: descriptionHtml }}
             />
             {!detailsExpanded && (
               <div style={{ position: 'relative' }}>
                 <div style={{ background: 'linear-gradient(to bottom, transparent, #fff)', height: '40px', marginTop: '-40px', position: 'relative' }} />
-                <button
-                  onClick={() => setDetailsExpanded(true)}
-                  style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#555', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontWeight: '600' }}
-                >
-                  Read more ▾
-                </button>
+                <button onClick={() => setDetailsExpanded(true)} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#555', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontWeight: '600' }}>Read more ▾</button>
               </div>
             )}
             {detailsExpanded && (
-              <button
-                onClick={() => setDetailsExpanded(false)}
-                style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#555', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontWeight: '600' }}
-              >
-                Read less ▴
-              </button>
+              <button onClick={() => setDetailsExpanded(false)} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#555', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', fontWeight: '600' }}>Read less ▴</button>
             )}
           </div>
         )}
 
-        {/* SIMILAR ITEMS */}
+        {/* SIMILAR ITEMS — same type + style, never current product */}
         <div className="product-below-section">
-        <ProductCarousel title="Similar items" products={similarItems.length > 0 ? similarItems : fallback.slice(0, 8)} />
+          <ProductCarousel
+            title="Similar items"
+            products={similarItems.length >= 2 ? similarItems : fallbackProducts}
+          />
 
-        {/* YOU MAY ALSO LIKE */}
-        <ProductCarousel title="You may also like" products={products.slice(4, 8).length > 0 ? products.slice(4, 8) : products.slice(0, 4)} />
+          {/* YOU MAY ALSO LIKE — complementary category */}
+          <ProductCarousel
+            title="You may also like"
+            products={complementary.length >= 2 ? complementary : fallbackProducts}
+          />
 
-        {/* REVIEWS */}
-        <ReviewsSection productId={product.id} productTitle={title} productType={product.productType} />
+          <ReviewsSection productId={product.id} productTitle={title} productType={product.productType} />
         </div>
       </div>
 
@@ -426,7 +418,7 @@ const PRODUCT_QUERY = `#graphql
     $selectedOptions: [SelectedOptionInput!]!
   ) @inContext(country: $country, language: $language) {
     product(handle: $handle) {
-      id title vendor handle descriptionHtml description tags
+      id title vendor handle descriptionHtml description tags productType
       encodedVariantExistence encodedVariantAvailability
       options {
         name
@@ -465,12 +457,11 @@ const SIMILAR_PRODUCTS_QUERY = `#graphql
   query SimilarProducts(
     $country: CountryCode
     $language: LanguageCode
-    $productType: String
-    $excludeId: String
+    $query: String!
   ) @inContext(country: $country, language: $language) {
-    sameType: products(first: 8, sortKey: UPDATED_AT, reverse: true, query: $productType) {
+    results: products(first: 12, sortKey: UPDATED_AT, reverse: true, query: $query) {
       nodes {
-        id title handle vendor productType
+        id title handle vendor productType tags
         priceRange { minVariantPrice { amount currencyCode } }
         compareAtPriceRange { minVariantPrice { amount currencyCode } }
         featuredImage { id url altText width height }
@@ -481,23 +472,16 @@ const SIMILAR_PRODUCTS_QUERY = `#graphql
 `;
 
 const RECOMMENDED_PRODUCTS_QUERY = `#graphql
-  query ProductPageRecommended(
+  query RecommendedProducts(
     $country: CountryCode
     $language: LanguageCode
-    $productType: String
+    $query: String!
   ) @inContext(country: $country, language: $language) {
-    complementary: products(first: 8, sortKey: UPDATED_AT, reverse: true, query: $productType) {
+    results: products(first: 12, sortKey: UPDATED_AT, reverse: true, query: $query) {
       nodes {
         id title handle vendor productType tags
         priceRange { minVariantPrice { amount currencyCode } }
-        featuredImage { id url altText width height }
-        variants(first: 1) { nodes { id availableForSale } }
-      }
-    }
-    fallback: products(first: 8, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        id title handle vendor productType tags
-        priceRange { minVariantPrice { amount currencyCode } }
+        compareAtPriceRange { minVariantPrice { amount currencyCode } }
         featuredImage { id url altText width height }
         variants(first: 1) { nodes { id availableForSale } }
       }
