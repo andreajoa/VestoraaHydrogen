@@ -61,20 +61,30 @@ async function loadCriticalData({ context, params, request }) {
     complementTags = ['dress', 'bag', 'shoe'];
   }
 
-  // Busca todos os produtos e filtra no servidor pelas tags complementares
-  const allProductsRaw = await context.storefront
-    .query(RECOMMENDED_PRODUCTS_QUERY, {
-      variables: { productType: "available_for_sale:true" },
-    })
-    .catch(() => null);
+  // Busca produtos complementares diretamente por tag na Storefront API
+  // Faz uma query por tag e combina os resultados
+  const complementaryResults = await Promise.all(
+    complementTags.map(tag =>
+      context.storefront
+        .query(RECOMMENDED_PRODUCTS_QUERY, {
+          variables: { productType: "tag:" + tag },
+        })
+        .catch(() => null)
+    )
+  );
 
-  const complementaryFiltered = (allProductsRaw?.complementary?.nodes || [])
+  // Combina resultados, remove duplicatas e produto atual
+  const seen = new Set();
+  const allComplementary = complementaryResults
+    .flatMap(r => r?.complementary?.nodes || [])
     .filter(p => {
-      const ptags = (p.tags || []);
-      return complementTags.some(ct => ptags.includes(ct));
+      if (p.handle === product.handle) return false;
+      if (seen.has(p.id)) return false;
+      seen.add(p.id);
+      return true;
     });
 
-  const recommendedProducts = { complementary: { nodes: complementaryFiltered } };
+  const recommendedProducts = { complementary: { nodes: allComplementary } };
 
   const currentHandle = product.handle;
 
