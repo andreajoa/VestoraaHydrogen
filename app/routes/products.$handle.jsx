@@ -382,7 +382,7 @@ export default function Product() {
         <ProductCarousel title="You may also like" products={products.slice(4, 8).length > 0 ? products.slice(4, 8) : products.slice(0, 4)} />
 
         {/* REVIEWS */}
-        <ReviewsSection productId={product.id} productTitle={title} />
+        <ReviewsSection productId={product.id} productTitle={title} productType={product.productType} />
         </div>
       </div>
 

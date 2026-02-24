@@ -11,107 +11,209 @@ function seededRng(seed) {
 }
 
 const AUTHORS = [
-  { name: 'Sophie T.',    country: 'Australia',     flag: '🇦🇺' },
-  { name: 'Emma R.',      country: 'United Kingdom', flag: '🇬🇧' },
-  { name: 'Isabella M.',  country: 'United States',  flag: '🇺🇸' },
-  { name: 'Charlotte B.', country: 'Canada',         flag: '🇨🇦' },
-  { name: 'Olivia S.',    country: 'New Zealand',    flag: '🇳🇿' },
-  { name: 'Amelia K.',    country: 'Germany',        flag: '🇩🇪' },
-  { name: 'Mia W.',       country: 'France',         flag: '🇫🇷' },
-  { name: 'Chloe P.',     country: 'Singapore',      flag: '🇸🇬' },
-  { name: 'Zoe L.',       country: 'Netherlands',    flag: '🇳🇱' },
-  { name: 'Hannah J.',    country: 'Ireland',        flag: '🇮🇪' },
-  { name: 'Lily C.',      country: 'Australia',      flag: '🇦🇺' },
-  { name: 'Grace H.',     country: 'United Kingdom', flag: '🇬🇧' },
-  { name: 'Aria N.',      country: 'Sweden',         flag: '🇸🇪' },
-  { name: 'Luna F.',      country: 'Spain',          flag: '🇪🇸' },
-  { name: 'Stella D.',    country: 'Italy',          flag: '🇮🇹' },
-  { name: 'Nora V.',      country: 'Belgium',        flag: '🇧🇪' },
-  { name: 'Ruby A.',      country: 'Australia',      flag: '🇦🇺' },
-  { name: 'Isla G.',      country: 'Scotland',       flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿' },
-  { name: 'Freya O.',     country: 'Denmark',        flag: '🇩🇰' },
-  { name: 'Piper M.',     country: 'United States',  flag: '🇺🇸' },
-  { name: 'Hazel B.',     country: 'Canada',         flag: '🇨🇦' },
-  { name: 'Violet C.',    country: 'New Zealand',    flag: '🇳🇿' },
-  { name: 'Aurora L.',    country: 'Norway',         flag: '🇳🇴' },
-  { name: 'Scarlett R.',  country: 'Australia',      flag: '🇦🇺' },
-  { name: 'Penelope W.',  country: 'United Kingdom', flag: '🇬🇧' },
-  { name: 'Elena S.',     country: 'Portugal',       flag: '🇵🇹' },
-  { name: 'Maya T.',      country: 'United States',  flag: '🇺🇸' },
-  { name: 'Layla K.',     country: 'UAE',            flag: '🇦🇪' },
-  { name: 'Jasmine F.',   country: 'Malaysia',       flag: '🇲🇾' },
-  { name: 'Camille D.',   country: 'France',         flag: '🇫🇷' },
+  { name: 'Sophie T.',    country: 'Australia',      flag: '🇦🇺' },
+  { name: 'Emma R.',      country: 'United Kingdom',  flag: '🇬🇧' },
+  { name: 'Isabella M.',  country: 'United States',   flag: '🇺🇸' },
+  { name: 'Charlotte B.', country: 'Canada',          flag: '🇨🇦' },
+  { name: 'Olivia S.',    country: 'New Zealand',     flag: '🇳🇿' },
+  { name: 'Amelia K.',    country: 'Germany',         flag: '🇩🇪' },
+  { name: 'Mia W.',       country: 'France',          flag: '🇫🇷' },
+  { name: 'Chloe P.',     country: 'Singapore',       flag: '🇸🇬' },
+  { name: 'Zoe L.',       country: 'Netherlands',     flag: '🇳🇱' },
+  { name: 'Hannah J.',    country: 'Ireland',         flag: '🇮🇪' },
+  { name: 'Lily C.',      country: 'Australia',       flag: '🇦🇺' },
+  { name: 'Grace H.',     country: 'United Kingdom',  flag: '🇬🇧' },
+  { name: 'Aria N.',      country: 'Sweden',          flag: '🇸🇪' },
+  { name: 'Luna F.',      country: 'Spain',           flag: '🇪🇸' },
+  { name: 'Stella D.',    country: 'Italy',           flag: '🇮🇹' },
+  { name: 'Nora V.',      country: 'Belgium',         flag: '🇧🇪' },
+  { name: 'Ruby A.',      country: 'Australia',       flag: '🇦🇺' },
+  { name: 'Isla G.',      country: 'Scotland',        flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿' },
+  { name: 'Freya O.',     country: 'Denmark',         flag: '🇩🇰' },
+  { name: 'Piper M.',     country: 'United States',   flag: '🇺🇸' },
+  { name: 'Hazel B.',     country: 'Canada',          flag: '🇨🇦' },
+  { name: 'Violet C.',    country: 'New Zealand',     flag: '🇳🇿' },
+  { name: 'Aurora L.',    country: 'Norway',          flag: '🇳🇴' },
+  { name: 'Scarlett R.',  country: 'Australia',       flag: '🇦🇺' },
+  { name: 'Penelope W.',  country: 'United Kingdom',  flag: '🇬🇧' },
+  { name: 'Elena S.',     country: 'Portugal',        flag: '🇵🇹' },
+  { name: 'Maya T.',      country: 'United States',   flag: '🇺🇸' },
+  { name: 'Layla K.',     country: 'UAE',             flag: '🇦🇪' },
+  { name: 'Jasmine F.',   country: 'Malaysia',        flag: '🇲🇾' },
+  { name: 'Camille D.',   country: 'France',          flag: '🇫🇷' },
 ];
 
-const TEMPLATES = [
-  { title: 'Absolutely love this piece',           body: 'From the moment I put it on I knew this was going to be a favourite. The fabric feels elevated and the fit is exactly right.' },
-  { title: 'Better than I expected',               body: 'Honestly was a little unsure ordering online but this exceeded every expectation. The quality is genuinely impressive for the price point.' },
-  { title: 'My new go-to for weekends',            body: 'I have already worn this three weekends in a row. It washes beautifully, holds its shape and still looks fresh every time.' },
-  { title: 'Compliments every single time',        body: 'Every time I wear this someone asks where it is from. The cut is really flattering and the colour in person is even nicer than the photos.' },
-  { title: 'True to size and gorgeous',            body: 'Ordered my usual size and it fits like it was made for me. The fabric drapes beautifully and feels comfortable all day.' },
-  { title: 'Exactly what I was looking for',       body: 'I had been searching for something like this for months. The fit, the colour, the fabric — everything is just right.' },
-  { title: 'Looks far more expensive than it is',  body: 'The construction is really solid. The stitching is neat, the fabric has weight to it and overall it looks like something from a designer rack.' },
-  { title: 'Worn it to work and evenings out',     body: 'This piece does double duty effortlessly. Wore it to a team lunch and then straight to dinner — just changed my shoes and bag.' },
-  { title: 'Fabric is really lovely',              body: 'The material is soft and breathable without being thin or cheap feeling. It moves nicely and does not cling in the wrong places.' },
-  { title: 'Will be buying more colours',          body: 'Already planning my next order. This is the kind of piece you want in every colour once you feel the quality.' },
-  { title: 'Fits like a dream',                    body: 'I am quite petite and often struggle with proportions but this fit perfectly straight out of the bag. No alterations needed.' },
-  { title: 'Packaged beautifully, arrived fast',   body: 'Came well packaged and arrived earlier than expected. The item itself is even lovelier in person — really pleased.' },
-  { title: 'Colour is stunning in person',         body: 'The colour photographed well but in real life it is even richer and more beautiful. I have had so many compliments already.' },
-  { title: 'Great for the office',                 body: 'Smart enough for a professional setting but comfortable enough to wear all day. Exactly the balance I was looking for.' },
-  { title: 'Flattering on every body type',        body: 'I was nervous about the cut but it is genuinely flattering. It skims rather than clings and gives a really elegant silhouette.' },
-  { title: 'Second purchase, just as happy',       body: 'This is not my first order from Vestoraa and I am just as impressed this time. Consistent quality you can rely on.' },
-  { title: 'Does not crease — huge bonus',         body: 'Threw it in a bag for a weekend trip and pulled it out completely crease-free. The fabric is brilliant for travelling.' },
-  { title: 'Wears really comfortably all day',     body: 'Wore this for a full day of meetings and felt comfortable the entire time. No pulling, no discomfort — just a great fit.' },
-  { title: 'Really versatile piece',               body: 'I have styled this so many different ways already. It works with trainers for a casual look and heels for something more dressed up.' },
-  { title: 'Highly recommend to everyone',         body: 'Showed this to my sister and she immediately ordered one too. The quality speaks for itself when you see it in person.' },
-  { title: 'Loved everything about it',            body: 'The cut, the fabric, the colour — all perfect. Nothing to fault at all. This is going straight into the regular rotation.' },
-  { title: 'A wardrobe essential',                 body: 'This is the kind of piece every wardrobe needs. Understated enough to wear often but special enough to feel intentional.' },
-  { title: 'Exceeded my expectations completely',  body: 'I keep my expectations measured when buying online. This blew past them. Really well made and incredibly wearable.' },
-  { title: 'Ran true to the size guide',           body: 'I used the size guide and my measurements matched perfectly. Good to know they put effort into accurate sizing information.' },
-  { title: 'Looks great in photos and real life',  body: 'No gap between the product photo and what arrived. Exactly as described — refreshing honesty in product imagery.' },
-  { title: 'Comfortable from morning to evening',  body: 'Put this on at 7am and was still comfortable wearing it at 10pm. That kind of all-day wearability is hard to find.' },
-  { title: 'Perfect weight for the season',        body: 'Not too heavy, not too light. The fabric weight is spot on — breathable but with enough structure to look polished.' },
-  { title: 'Makes getting dressed so easy',        body: 'When you have one piece that just works with everything it takes so much stress out of getting dressed. This is that piece.' },
-  { title: 'Received so many compliments',         body: 'Wore this to a work event and had multiple people ask where it was from. Always a good sign when that happens.' },
-  { title: 'Really glad I took the chance',        body: 'I was hesitant because I had not ordered from here before. Completely glad I did — quality is excellent and delivery was fast.' },
-  { title: 'Beautiful drape and movement',         body: 'The way this fabric moves is really lovely. It flows without being flimsy and has a real elegance to the way it sits.' },
-  { title: 'Solid construction throughout',        body: 'Checked all the seams and stitching when it arrived — everything is neat and well finished. The kind of quality that lasts.' },
-  { title: 'Great value for what you get',         body: 'At this price point you do not usually get this level of finish. Really impressed with the quality relative to cost.' },
-  { title: 'Wore it straight out of the bag',      body: 'Arrived with minimal creasing and looked ready to wear immediately. Perfect when you need something for a last-minute occasion.' },
-  { title: 'Exactly as described online',          body: 'The product description was accurate and honest. What arrived matched perfectly — no disappointment, no surprises.' },
-  { title: 'Perfect for a special occasion',       body: 'Wore this to a wedding reception and felt completely confident. Elegant without trying too hard — exactly the right tone.' },
-  { title: 'Will hold up to regular wear',         body: 'You can tell this is built to last. The fabric has quality to it and the construction feels robust rather than disposable.' },
-  { title: 'Comfortable fabric all day',           body: 'Some fabrics feel great at first but become uncomfortable after a few hours. This one stayed comfortable from start to finish.' },
-  { title: 'Easy to style',                        body: 'One of those pieces that works with half the things already in my wardrobe. Very easy to style without thinking too hard.' },
-  { title: 'Lovely piece, fast delivery',          body: 'Item arrived quickly and in perfect condition. The quality is everything I hoped for and more. Very satisfied overall.' },
-  { title: 'Feels premium without the price tag',  body: 'The quality genuinely surprised me. It has the feel of something much more expensive without the price tag to match.' },
-  { title: 'Great silhouette on',                  body: 'The cut creates a really nice silhouette. It gives shape in the right places without being restrictive or overly fitted.' },
-  { title: 'My most-worn piece this month',        body: 'I have reached for this more than anything else in my wardrobe this month. It just works for everything.' },
-  { title: 'Colour does not fade after washing',   body: 'Washed this several times now and the colour is still as vibrant as when it arrived. Good dye quality makes a big difference.' },
-  { title: 'Feels great against the skin',         body: 'No itching, no scratching, no irritation. Just a really comfortable fabric that sits well all day without any issues.' },
-  { title: 'Looks polished without effort',        body: 'One of those rare pieces where you look pulled together without actually trying. That effortless quality is hard to find.' },
-  { title: 'Generous sizing, good to know',        body: 'I sized down based on the description and it was the right call. Good to know the size guide is reliable — will use it again.' },
-  { title: 'Smart enough for work events',         body: 'Wore this to a corporate function and felt completely appropriate and confident. Professional but still interesting.' },
-  { title: 'Loved it from the first wear',         body: 'Some pieces take time to love — this one I liked immediately. Comfortable, flattering, and just really well put together.' },
-  { title: 'Impressive quality for online',        body: 'Online shopping can be a gamble with quality but this delivered. Really impressed with the overall standard.' },
-  { title: 'Nothing to fault',                     body: 'I genuinely cannot think of a single criticism. Everything from the packaging to the product itself was excellent.' },
-  { title: 'Would gift this to a friend',          body: 'This is the kind of quality I would happily give as a gift. It looks and feels like something thoughtfully chosen.' },
-  { title: 'A pleasure to wear',                   body: 'Some clothes you wear out of necessity. This one you actually look forward to putting on. That is a real quality indicator.' },
-  { title: 'Bought two just in case',              body: 'Loved this so much I ordered a second one in a different colour. Hoping they keep this style in the range permanently.' },
-  { title: 'Turned heads at the event',            body: 'Wore this to a dinner and had so many people comment on it. The cut is really striking in person.' },
-  { title: 'Well thought out design',              body: 'You can tell this was designed by people who actually think about how clothes are worn. Everything is in the right place.' },
-  { title: 'Arrived better than expected',         body: 'The product looked good in the photos but arrived even better in person. Colour, quality and fit all surpassed my expectations.' },
-  { title: 'Great everyday piece',                 body: 'This works so well as an everyday piece. Not fussy, does not need special care, and looks great every single time.' },
-  { title: 'Elegant and comfortable together',     body: 'Getting both elegance and comfort in one piece is harder than it sounds. This manages it well — a genuinely wearable piece.' },
-  { title: 'Quality that is obvious immediately',  body: 'You can tell from the first touch that this is well made. The weight, the finish, the stitching — all reassuringly good.' },
-  { title: 'Washed well, held its shape',          body: 'After several washes it still looks exactly as it did when it arrived. The shape has not changed and the colour is still strong.' },
-];
+function detectCategory(title, productType) {
+  const text = ((title || '') + ' ' + (productType || '')).toLowerCase();
+  if (/\b(bag|bags|tote|handbag|clutch|purse|satchel|crossbody|backpack|pouch)\b/.test(text)) return 'bag';
+  if (/\b(shoe|shoes|heel|heels|sneaker|sneakers|boot|boots|sandal|sandals|flat|flats|loafer|loafers|pump|pumps|mule|mules)\b/.test(text)) return 'shoes';
+  if (/\b(dress|dresses|gown|maxi|mini dress|midi dress|wrap dress)\b/.test(text)) return 'dress';
+  if (/\b(skirt|skirts|mini skirt|midi skirt|maxi skirt|pleated skirt)\b/.test(text)) return 'skirt';
+  if (/\b(pant|pants|trouser|trousers|wide.leg|jogger|joggers|legging|leggings|culotte|culottes)\b/.test(text)) return 'pants';
+  if (/\b(top|tops|blouse|blouses|shirt|shirts|tee|tees|tank|tanks|cami|camisole|bodysuit|crop top)\b/.test(text)) return 'top';
+  if (/\b(jacket|jackets|coat|coats|blazer|blazers|cardigan|cardigans|knit|knitwear|sweater|jumper)\b/.test(text)) return 'outerwear';
+  if (/\b(jumpsuit|jumpsuits|romper|rompers|playsuit|playsuits|matching set|two.piece)\b/.test(text)) return 'jumpsuit';
+  if (/\b(jewel|jewellery|jewelry|necklace|ring|bracelet|earring|earrings|bangle|pendant|chain)\b/.test(text)) return 'jewellery';
+  if (/\b(belt|belts|scarf|scarves|hat|hats|cap|caps|headband|sunglasses|accessory|accessories)\b/.test(text)) return 'accessory';
+  return 'general';
+}
 
-function generateReviews(productId) {
+const CATEGORY_TEMPLATES = {
+  bag: [
+    { title: 'The perfect everyday bag',            body: 'I was looking for something that fits my essentials without being bulky and this is exactly it. My phone, wallet, keys and more all fit perfectly with room to spare. The straps are comfortable even after a full day of carrying it.' },
+    { title: 'Holds more than it looks',            body: 'Genuinely surprised by how much fits inside. I packed it for a day out with my laptop, water bottle and all my usual bits and it handled everything. The structure means it keeps its shape even when full.' },
+    { title: 'Gets so many compliments',            body: 'I have had strangers stop me to ask where this bag is from. The hardware detail is really beautiful in person and the colour is rich and deep. It photographs well but looks even better on your arm.' },
+    { title: 'The strap length is perfect',         body: 'I can wear this crossbody or on my shoulder and both options feel right. The strap does not dig in and the bag sits at a really flattering height. A small detail but it makes such a difference for all-day wear.' },
+    { title: 'Quality zips, no snagging',           body: 'The zipper glides perfectly — no catching, no stiffness. I have had expensive bags where the zip was the first thing to go and this feels far more solid. The lining inside is also really clean and easy to wipe down.' },
+    { title: 'Great size for work and weekends',    body: 'Monday to Friday it holds my work essentials, weekends it becomes my going-out bag. That kind of versatility is exactly what I look for. No need to swap everything between bags each day.' },
+    { title: 'Does not scratch easily',             body: 'I have been carrying this daily for two months and it still looks pristine. No scratches, no peeling, no discolouration. Really pleased with how well it is wearing over time.' },
+    { title: 'Organised interior, love it',         body: 'The pockets inside are genuinely useful — card slots, a zipped pocket and a phone slot. I always know exactly where everything is, which saves so much time instead of rummaging at the bottom.' },
+    { title: 'Lightweight despite its size',        body: 'I was worried it would be heavy but it is really lightweight even loaded up. My shoulders are not aching at the end of the day which says a lot about how well it is constructed.' },
+    { title: 'Colour is true to the photos',        body: 'I ordered online nervous the colour might look different in person. It is exactly as it looks on screen — no surprises. Really happy with the accuracy of the product photography.' },
+    { title: 'Structured and holds its shape',      body: 'Unlike softer bags that slump when you put them down, this one stands up on its own. The base is firm and the sides keep their form. Makes it so much easier to find things inside.' },
+    { title: 'Hardware is solid, not plasticky',    body: 'The clasp and rings feel weighty and real. Nothing rattles or flexes in a way that feels cheap. You can tell the quality in every touchpoint — the kind of thing that ages well.' },
+    { title: 'Perfect for travelling light',        body: 'Took this on a weekend trip as my only bag and it held everything I needed. Fits under the seat on the plane with room left over. It has become my go-to travel companion.' },
+    { title: 'Converts from tote to crossbody',     body: 'The detachable strap is a really useful feature. I use the tote handles for smart occasions and clip on the strap when I need my hands free. Two bags in one, essentially.' },
+    { title: 'Real quality leather, smells lovely', body: 'When I opened the box the leather smell was immediate and genuine — not artificial. The surface is smooth and supple and it has softened even more with use. A bag I will have for years.' },
+  ],
+  shoes: [
+    { title: 'Comfortable from the very first wear',        body: 'I never expect new shoes to feel broken in immediately but these did. No blisters, no rubbing, no pinching — just comfort. I wore them for a full evening out and my feet felt fine at the end of the night.' },
+    { title: 'The heel height is totally manageable',       body: 'I am not someone who wears high heels regularly but these feel stable and secure. The block heel gives me enough height to feel dressed up without wobbling. Perfect for someone who wants the look without the pain.' },
+    { title: 'True to size — order your usual',             body: 'I debated going up a half size as I sometimes do with heels but my regular size fit perfectly. The toe box has a little room without being loose at the heel. Reassuring when buying shoes online.' },
+    { title: 'Did not slip in the rain at all',             body: 'I wore these on a wet day and the sole gripped well on both pavement and tiles. I was nervous about slipping but had no issues at all. That grip quality matters more than people admit when choosing shoes.' },
+    { title: 'Elegant without looking overdone',            body: 'There is a refinement to these shoes that works with both casual and formal outfits. Not too much embellishment, not too plain. They lift any outfit without demanding attention.' },
+    { title: 'Ankle strap holds securely all day',          body: 'The strap does not loosen throughout the day which is something I always worry about with ankle strap designs. My foot stays securely in place even after hours of walking.' },
+    { title: 'Stood for six hours, feet were fine',         body: 'The insole has a real layer of cushioning which makes standing for long periods so much more bearable. I wore these at a wedding and was on my feet for six hours — something I could not have done in most heels.' },
+    { title: 'Goes with everything in my wardrobe',         body: 'I chose the neutral colour and it works with dresses, trousers, jeans and skirts. A genuinely versatile shoe that earns its place in my rotation by going with almost everything.' },
+    { title: 'No breaking-in period needed at all',         body: 'I have had shoes that took weeks of suffering before they became comfortable. Not these — they felt right from day one. The leather is supple and the lining is soft against the foot.' },
+    { title: 'Looks expensive, holds its own',              body: 'The finish on these shoes is really impressive. The stitching is neat, the sole is solid and the overall look is polished. They sit alongside far more expensive pairs I own and hold their own completely.' },
+    { title: 'Great for standing on my feet all day',       body: 'I work in a role where I am on my feet most of the day and finding comfortable shoes that also look professional is hard. These manage both. My feet are not aching by 3pm which is honestly rare.' },
+    { title: 'Toe shape is flattering, not painful',        body: 'The cut at the toe is flattering without squeezing. It gives a sleek, elongating line without the pinching that pointed toe shoes can cause by the end of the day.' },
+    { title: 'Easy to walk in, even on cobblestones',       body: 'I tested these on a city walk with uneven surfaces and they performed well. The heel did not catch and the sole was stable throughout. For anyone who lives in an older city, that matters.' },
+    { title: 'Colour matched the photos exactly',           body: 'I ordered the nude colour online which can go very wrong depending on undertones. The colour on arrival matched my skin tone well and looked exactly as it did in the product images. Really pleased.' },
+    { title: 'My new go-to for dinners and events',         body: 'I wore these to a dinner and got three separate compliments on them through the evening. They look really beautiful with a midi dress and the heel height photographs perfectly. A great occasion shoe.' },
+  ],
+  dress: [
+    { title: 'Wore it to a wedding — got stopped all night', body: 'Multiple people asked where this dress was from throughout the evening. The way it moves when you walk is really beautiful and the fabric photographs incredibly well. A dress that earns every compliment.' },
+    { title: 'The midi length is so flattering',            body: 'The midi length hits at exactly the right point on my leg. It grazes the calf in a way that is genuinely elongating without being impractical. I have been looking for a midi this flattering for ages.' },
+    { title: 'No shapewear needed — the cut does it all',   body: 'The cut is forgiving in the right places and structured where it needs to be. I wore this without shapewear for the first time in years and felt completely confident. The design does the work for you.' },
+    { title: 'Drove 40 mins and arrived crease-free',       body: 'I drove to an event in this dress and arrived completely crease-free. The fabric is brilliant — it moves and breathes without picking up creases. Perfect for travelling to an occasion.' },
+    { title: 'Skims the body, does not cling or ride up',   body: 'The material skims over the body rather than clinging, and it stays put when I walk. On a hot day when everything else sticks, this one moves freely and stays exactly where it should.' },
+    { title: 'Side zip is discreet and smooth',             body: 'The zip is well concealed and glides without any resistance. I can get in and out of it myself without any gymnastics which is something I always check with fitted dresses. A really well-thought-out detail.' },
+    { title: 'Dressed it up and down the same day',         body: 'I wore this with sandals and a basket bag for a lunch and then with heels and gold jewellery for dinner. The same dress, completely different looks. That kind of versatility justifies the purchase immediately.' },
+    { title: 'Neckline is elegant and stays put all night', body: 'The neckline sits exactly where it should — low enough to feel feminine but secure enough to lean forward without worry. I appreciated being able to wear it without constantly adjusting it all evening.' },
+    { title: 'True to size, no guessing needed',            body: 'I ordered my usual size based on the measurements and it fits exactly as expected. The bodice sits flat, the waist is in the right place, and the length is exactly as photographed. Reliable sizing makes such a difference.' },
+    { title: 'Colour is rich and saturated in person',      body: 'In the photos it looked beautiful. In person it is even more vibrant. The dye quality is really apparent — it has depth and saturation that you do not usually see at this price point.' },
+    { title: 'Breathable fabric, wore it comfortably all day', body: 'I had a full day of activities in this dress and never felt uncomfortable or overheated. The fabric breathes well and did not feel heavy even as the day warmed up. That is rare in a dress this structured.' },
+    { title: 'Back detail is just as pretty as the front',  body: 'The back of this dress is as beautiful as the front. There is a detail in the fabric or cut that makes turning around just as interesting as facing forward. I always love a dress that works from every angle.' },
+    { title: 'Washed on cold, still perfect',               body: 'I carefully hand-washed this on cold and it came out looking exactly as it did on arrival. No shrinkage, no colour bleeding, no distortion. The care instructions are accurate and the fabric handles washing well.' },
+    { title: 'Comfortable enough to dance in all night',    body: 'I wore this to a wedding reception and danced for hours without any pulling, slipping or discomfort. A dress that moves with you rather than against you is genuinely hard to find at any price.' },
+    { title: 'A dress I will genuinely wear for years',     body: 'The style is not trend-dependent — it is classic enough to feel relevant in three years. The construction quality matches that longevity. This is the kind of dress you photograph and remember.' },
+  ],
+  skirt: [
+    { title: 'The waistband sits perfectly all day',        body: 'I am always wary of waistbands that roll or dig in, but this one sits flat and stays put all day. No adjusting, no rolling, no discomfort. It just works every single time I wear it.' },
+    { title: 'Pairs with literally everything I own',       body: 'I have worn this with four different tops already and it works with all of them. A neutral skirt that genuinely goes with the rest of your wardrobe is harder to find than it sounds.' },
+    { title: 'Does not ride up when I walk',                body: 'I walk a lot and skirts that ride up with each stride are a constant frustration. This one stays exactly where it is meant to be. The weight of the fabric and the cut together prevent it entirely.' },
+    { title: 'Length is perfect for the office',            body: 'I was looking for something smart enough for work and this delivers. The knee length is professional without feeling dated. I have worn it with blazers and cardigans and it works in every combination.' },
+    { title: 'Pleats stay crisp even after washing',        body: 'After wearing and washing, the pleats have kept their shape. I expected them to soften out but they have maintained their crispness. The fabric quality is clearly a factor in how well they hold.' },
+    { title: 'Flows beautifully when I walk',               body: 'There is something about how this skirt moves when you walk that feels really special. It swings in a way that is neither stiff nor floppy — just the right amount of movement for the length.' },
+    { title: 'Lining length is exactly right',              body: 'The lining is the right length and does not peek below the hem, which is such a common problem with lined skirts. It also prevents the outer fabric from clinging to tights in winter. Thoughtfully done.' },
+    { title: 'Works with heels and flats equally well',     body: 'I wore this with heels to a dinner and again with ballet flats for errands. Both looked intentional and put-together. A skirt that only works one way is limiting — this one adapts well.' },
+    { title: 'High waist is genuinely flattering',          body: 'The high waist sits at the natural waist rather than above it, which I prefer. It gives definition without looking costumey. The positioning makes the most of any shape.' },
+    { title: 'Real pockets — actually useful ones',         body: 'Real pockets that fit a hand and a phone. I know the bar is low but we appreciate it enormously. The pockets are properly sewn in and do not bulge or distort the silhouette when in use.' },
+  ],
+  pants: [
+    { title: 'Finally, trousers that fit my proportions',   body: 'The rise, the leg width and the length are all exactly right for me. I have a longer torso and shorter legs and often struggle — these fit without needing any alteration. A genuinely rare find.' },
+    { title: 'The wide leg is elegant, not overwhelming',   body: 'Wide leg trousers can look overwhelming on a shorter frame but the cut of these manages to be flattering. The fabric falls cleanly and gives a really elongating line from waist to floor.' },
+    { title: 'Comfortable to sit in for a full day',        body: 'I wore these for a full day of desk work and meetings and never once felt restricted or uncomfortable. The waistband does not pinch when seated and the fabric does not pull across the thighs.' },
+    { title: 'Crease-resistant — great for travel',         body: 'I wore these on a long flight and they arrived looking almost as pressed as when I put them on. For anyone who travels for work, that is genuinely important. A fabric that handles being sat in well.' },
+    { title: 'Hem length is perfect for a modest heel',     body: 'The length is exactly right to graze the floor with a modest heel. If you are petite you may want to hem them but the length photographed is the length you get — no extra fabric pooling.' },
+    { title: 'Smart enough for the boardroom',              body: 'I wore these to a client presentation and felt completely professional. The cut is clean, the fabric is polished and they sat flat with a tucked-in blouse. Exactly the look I was going for.' },
+    { title: 'Waistband stays in place all day',            body: 'No rolling down throughout the day, no readjusting after sitting. The waistband is properly constructed and sits where it should from morning to evening. A simple thing that matters enormously.' },
+    { title: 'Forgiving fabric — skims beautifully',        body: 'The fabric weight and drape are really forgiving. Unlike thinner fabrics that show everything, this one skims and moves. I felt genuinely comfortable and confident wearing these all day.' },
+    { title: 'Breathable but does not crease like linen',   body: 'It has the light, breathable quality of linen without picking up every crease the moment you sit down. The weave preserves the comfort while losing the limitation. A really clever fabric choice.' },
+    { title: 'Changed at work — looked completely fresh',   body: 'I packed these in my bag and changed at the office — arrived looking completely clean and pressed. The fabric recovers quickly from being folded which makes it a really practical choice for commuters.' },
+  ],
+  top: [
+    { title: 'Tucks in and stays there all day',            body: 'I am particular about how tops behave when tucked in — whether they bunch, whether the hem is smooth, whether they stay put. This one tucks perfectly and stays there. A small detail that makes a big difference.' },
+    { title: 'Sleeve length hits the perfect spot',         body: 'Not too long to roll up, not too short to leave the wrist exposed in autumn. The sleeve hits at the exact right point on my arm and gives the proportions I was hoping for.' },
+    { title: 'Does not go see-through in direct sunlight',  body: 'I wore this on a bright day and was able to move through direct sunlight without any transparency issues. The fabric has enough weight to it that it remains opaque in all conditions.' },
+    { title: 'Stays tucked in from morning to evening',     body: 'I spent the day alternating between sitting and standing and this top stayed exactly where I put it. No constant adjusting, no shirt tail appearing — it just behaves all day.' },
+    { title: 'Collar keeps its shape all day long',         body: 'The collar keeps its shape even after a full day of wear. It does not wilt or lose its structure by the afternoon. The interfacing is clearly good quality and the collar sits flat and clean.' },
+    { title: 'Feminine without being fussy to style',       body: 'There is a delicacy to the design — a small ruffle, a subtle pleat, a refined neckline — that feels feminine without requiring any effort to style. I threw it on with jeans and felt completely put-together.' },
+    { title: 'Fits perfectly under a blazer',               body: 'The fit is slim enough to sit under a blazer without bunching but not so fitted that it becomes uncomfortable. I have been reaching for it as my go-to office base layer all week.' },
+    { title: 'Shoulder seam sits exactly right',            body: 'The shoulder seam lands exactly on the shoulder point which is often where tops go wrong for me. When a garment fits at the shoulder everything else falls into place, and this one does.' },
+    { title: 'Machine wash, comes out perfect',             body: 'I machine-washed this on a cool gentle cycle and it came out looking exactly as it went in. No shrinkage, no fading, no distortion. Easy-care clothing is genuinely underrated.' },
+    { title: 'Desk to dinner without changing',             body: 'I wore this in the office all day with tailored trousers and swapped to a skirt and heels for a dinner afterwards. The top held its own in both contexts without a single adjustment.' },
+  ],
+  outerwear: [
+    { title: 'Blocks the wind completely',                  body: 'I wore this on a really blustery day and felt completely shielded. The fabric is tightly woven enough to block wind without feeling stiff or heavy. A coat that does its job properly without the bulk.' },
+    { title: 'Fits over chunky knits with ease',            body: 'One of my frustrations with tailored coats is that they are cut too slim to wear over anything thick. This one has enough room through the body to layer comfortably without pulling at the buttons.' },
+    { title: 'Shoulder fit is exactly right',               body: 'The shoulder fit is everything with a coat and this one sits perfectly. No padding that extends too far, no dropping that makes you look swamped. The structure is really clean and intentional.' },
+    { title: 'Warm without any bulk at all',                body: 'I am surprised by how warm this is given how light it feels to carry. The lining is clearly doing a lot of work. It packs down better than most coats I own and provides real warmth throughout.' },
+    { title: 'Buttons are weighty and solid',               body: 'The buttons are substantial and real-feeling. They do not catch the light in a cheap way and they sit flush when fastened. A good button on a coat is a marker of overall quality.' },
+    { title: 'Length is flattering on every height',        body: 'The coat hits at a point that works with everything I own — long enough to cover most hemlines, short enough not to drag. The length was clearly considered carefully in the design.' },
+    { title: 'No pilling after multiple washes',            body: 'I have washed this several times now and there is no pilling on the body or sleeves. The fabric quality is really evident in how it holds up to wear and cleaning over time.' },
+    { title: 'A classic I will wear for years',             body: 'The cut is timeless rather than trend-led. I do not want to be replacing a coat every season and this is the kind of investment that pays off — something I will reach for every autumn for years.' },
+    { title: 'Pockets are deep and actually useful',        body: 'The pockets are properly deep and sit at the right height on the body. I can fit my phone and a folded card case in each one. Functional coat pockets are not a given and these are excellent.' },
+    { title: 'Lining makes it easy to pull on',            body: 'The lining is silky and the coat slides on over other clothes without dragging or creating static. A small thing but one that makes the morning routine genuinely easier every day.' },
+  ],
+  jumpsuit: [
+    { title: 'Getting dressed has never been easier',       body: 'One piece and the outfit is done. No thinking about what goes with what, no second-guessing proportions. I just put this on and feel immediately pulled-together. The convenience is genuinely underrated.' },
+    { title: 'Waist is defined — not shapeless at all',     body: 'I was worried a jumpsuit would make me look shapeless but the waist detail creates real definition. It emphasises the right place and gives a feminine silhouette that a lot of one-pieces miss completely.' },
+    { title: 'Bathroom trips are actually manageable',      body: 'Yes, I am going to say it — the design makes bathroom trips actually manageable. Whoever designed this thought about wearability in a real, practical way. It matters more than people admit with jumpsuits.' },
+    { title: 'Proportions work even for petite frames',     body: 'I am 5\'3 and jumpsuits often have too much fabric in the torso or legs. This one works well at my height — the proportions are spot on without needing significant alteration.' },
+    { title: 'Office to dinner without changing',           body: 'I wore this to the office with loafers and a blazer, then straight out for dinner by removing the blazer and adding heels. No outfit change needed — the jumpsuit does the heavy lifting.' },
+    { title: 'Neckline sits and stays perfectly',           body: 'The neckline framing makes a real difference to how the whole piece wears. This one sits beautifully — not so low as to require tape, not so high as to feel frumpy. Exactly right.' },
+    { title: 'No creases after a full day at a desk',       body: 'I was in meetings and at a desk all day and this did not pick up a single crease in the seat or back. The fabric choice is clearly deliberate — it moves and recovers well even after hours of sitting.' },
+    { title: 'Belt loops are reinforced and solid',         body: 'The loops are stitched properly and show no sign of weakening. I wear this with a thin belt often and the loops handle the weight without pulling or distorting the fabric around the waist.' },
+  ],
+  jewellery: [
+    { title: 'Has not tarnished even with daily wear',      body: 'I wear this almost daily and it still looks as bright as the day it arrived. I was sceptical given the price point but the plating quality is clearly better than I expected. No green marks, no dulling at all.' },
+    { title: 'Clasp is easy to do up by myself',            body: 'I can fasten this by myself in seconds, which is something I cannot say for most necklaces I own. The clasp is well engineered — it clicks closed securely and stays that way all day.' },
+    { title: 'Sits flat and does not twist around',         body: 'The chain lays flat against the neckline without rotating or bunching. Necklaces that twist around are constantly frustrating to fix. This one stays where you put it, which I appreciate enormously.' },
+    { title: 'Lightweight — forgot I was wearing it',       body: 'I forgot I was wearing this by midday which is the best compliment I can give a piece of jewellery. No pulling, no heaviness at the ears or neck. Just there when you want it to be.' },
+    { title: 'Feels substantial, not hollow or flimsy',     body: 'There is a satisfying heaviness to this piece — not so heavy as to be uncomfortable, but enough to feel substantial and real. It does not feel hollow or flimsy the way some pieces at this price can.' },
+    { title: 'Earrings do not drag on my lobes at all',     body: 'I have sensitive ears and heavy earrings become painful quickly. These are engineered well enough that the weight is distributed and my ears do not ache after a full day of wearing them.' },
+    { title: 'Works with both gold and silver pieces',      body: 'The tone sits between warm and cool enough that it layers with both gold and silver jewellery I own. Mixed metals are having a moment and this piece plays nicely in both directions.' },
+    { title: 'Someone asked if it was a designer piece',    body: 'I wore this to an event and someone asked if it was a designer piece. The design is refined and the finish is clean enough to hold its own alongside far more expensive things.' },
+  ],
+  accessory: [
+    { title: 'Ties so many outfits together',               body: 'I had not appreciated how much a well-chosen accessory could change a look until I started wearing this regularly. It adds something to even the simplest outfit without any effort at all.' },
+    { title: 'Adjustable and stays exactly in place',       body: 'The fit is adjustable and once I found my size it did not move throughout the day. Nothing worse than constantly repositioning something — this one stays exactly where you put it.' },
+    { title: 'Works with neutrals and prints equally',      body: 'I chose this because I wanted something that would work across my wardrobe and it does. Neutrals, prints, patterned pieces — it coordinates without clashing in any combination.' },
+    { title: 'The perfect finishing touch to any look',     body: 'This is the kind of accessory that makes a basic outfit feel complete. On its own the piece is nice; on an outfit it elevates the whole look. That is what good accessories do.' },
+  ],
+  general: [
+    { title: 'Absolutely love this piece',                  body: 'From the moment I received it I knew this was going to be a favourite. The quality feels elevated and everything about it is exactly right.' },
+    { title: 'Better than I expected',                      body: 'I was a little unsure ordering online but this exceeded every expectation. The quality is genuinely impressive for the price point.' },
+    { title: 'Compliments every single time',               body: 'Every time I wear or use this someone asks where it is from. The design is really striking and the quality in person is even nicer than the photos.' },
+    { title: 'Looks far more expensive than it is',         body: 'The construction is really solid and overall it looks like something from a designer shelf. Genuinely impressed with the quality relative to the cost.' },
+    { title: 'Will be buying more styles',                  body: 'Already planning my next order. This is the kind of piece you want in every version once you experience the quality.' },
+    { title: 'Packaged beautifully, arrived fast',          body: 'Came well packaged and arrived earlier than expected. The item itself is even lovelier in person — really pleased overall.' },
+    { title: 'Exactly as described online',                 body: 'The product description was accurate and honest. What arrived matched perfectly — no disappointment, no surprises.' },
+    { title: 'Second purchase, just as happy',              body: 'This is not my first order from Vestoraa and I am just as impressed this time. Consistent quality you can rely on.' },
+    { title: 'Really glad I took the chance',               body: 'I was hesitant because I had not ordered from here before. Completely glad I did — quality is excellent and delivery was fast.' },
+    { title: 'Nothing to fault at all',                     body: 'I genuinely cannot think of a single criticism. Everything from the packaging to the product itself was excellent.' },
+    { title: 'A pleasure to use every time',                body: 'Some things you use out of necessity. This one you actually look forward to reaching for. That is a real quality indicator.' },
+    { title: 'Would gift this to a friend',                 body: 'This is the kind of quality I would happily give as a gift. It looks and feels like something thoughtfully chosen.' },
+    { title: 'Impressive quality for online shopping',      body: 'Online shopping can be a gamble with quality but this delivered. Really impressed with the overall standard of the product.' },
+    { title: 'Colour is stunning in person',                body: 'The colour photographed well but in real life it is even richer and more beautiful. I have had so many compliments already.' },
+    { title: 'My most-reached-for piece this month',        body: 'I have reached for this more than anything else I own this month. It just works every single time.' },
+  ],
+};
+
+function generateReviews(productId, productTitle, productType) {
+  const category = detectCategory(productTitle, productType);
+  const templates = CATEGORY_TEMPLATES[category] || CATEGORY_TEMPLATES.general;
+  const general = CATEGORY_TEMPLATES.general;
+  const combined = [...templates, ...general].filter(
+    (t, i, arr) => arr.findIndex(x => x.title === t.title) === i
+  );
   const rng = seededRng(String(productId));
-  const count = 12 + Math.floor(rng() * 12);
+  const count = Math.min(12 + Math.floor(rng() * 12), combined.length);
   const authorPool = [...AUTHORS].sort(() => rng() - 0.5);
-  const templatePool = [...TEMPLATES].sort(() => rng() - 0.5).slice(0, count);
+  const templatePool = [...combined].sort(() => rng() - 0.5).slice(0, count);
   const targetAvg = 4.3 + rng() * 0.7;
   const ratings = Array.from({ length: count }, () => {
     const r = rng();
@@ -251,9 +353,12 @@ function ReviewCard({ review }) {
 
 const REVIEWS_PER_PAGE = 5;
 
-export function ReviewsSection({ productId, productTitle }) {
+export function ReviewsSection({ productId, productTitle, productType }) {
   const storageKey = `vestoraa_reviews_v2_${productId}`;
-  const autoReviews = useMemo(() => generateReviews(productId), [productId]);
+  const autoReviews = useMemo(
+    () => generateReviews(productId, productTitle, productType),
+    [productId, productTitle, productType]
+  );
   const [customerReviews, setCustomerReviews] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
