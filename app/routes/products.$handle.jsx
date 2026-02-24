@@ -65,9 +65,26 @@ async function loadCriticalData({ context, params, request }) {
     })
     .catch(() => null);
 
-  // Similar items: busca produtos e filtra pelo productType exato no servidor
-  const currentType = (product.productType || '').trim();
   const currentHandle = product.handle;
+  const titleLower = (product.title || '').toLowerCase();
+
+  // Detecta categoria pelo titulo do produto
+  function detectCategory(title) {
+    const t = title.toLowerCase();
+    if (/\bjumpsuit|playsuit|romper\b/.test(t)) return 'jumpsuit';
+    if (/\bjean|denim|pant|trouser|cargo\b/.test(t)) return 'pants';
+    if (/\bsuit set|blazer|co-ord\b/.test(t)) return 'suit';
+    if (/\bskirt\b/.test(t)) return 'skirt';
+    if (/\btop|blouse|shirt|corset|bodysuit\b/.test(t)) return 'top';
+    if (/\bdress|gown|prom|evening|maxi|mini|midi|mermaid|ballgown\b/.test(t)) return 'dress';
+    if (/\bbag|handbag|purse|tote|clutch\b/.test(t)) return 'bag';
+    if (/\bheel|shoe|boot|sandal|sneaker|pump\b/.test(t)) return 'shoe';
+    if (/\bnecklace|earring|bracelet|ring|jewel|pendant\b/.test(t)) return 'jewellery';
+    if (/\bscarf|hat|belt|sunglasses|accessory\b/.test(t)) return 'accessory';
+    return 'other';
+  }
+
+  const currentCategory = detectCategory(titleLower);
 
   const allForSimilar = await context.storefront
     .query(SIMILAR_PRODUCTS_QUERY, {
@@ -75,13 +92,9 @@ async function loadCriticalData({ context, params, request }) {
     })
     .catch(() => null);
 
-  // Filtra no servidor pelo mesmo productType exato (case-insensitive) excluindo produto atual
   const filteredSimilar = (allForSimilar?.sameType?.nodes || [])
-    .filter(p =>
-      p.handle !== currentHandle &&
-      p.productType &&
-      p.productType.trim().toLowerCase() === currentType.toLowerCase()
-    );
+    .filter(p => p.handle !== currentHandle && detectCategory(p.title) === currentCategory)
+    .slice(0, 8);
 
   const similarProducts = { sameType: { nodes: filteredSimilar } };
 
