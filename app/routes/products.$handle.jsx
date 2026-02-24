@@ -46,20 +46,22 @@ async function loadCriticalData({ context, params, request }) {
   const currentCat = (product.tags || []).find(t => CATEGORIES.includes(t)) || 'dress';
 
   // Wear it with: mostra categorias COMPLEMENTARES (nunca a mesma categoria)
-  let complementQuery = '';
+  // Shopify Storefront API: usa tag: com um valor por vez, busca multiplas e combina no servidor
+  let complementTags = [];
   if (currentCat === 'dress' || currentCat === 'skirt' || currentCat === 'jumpsuit' || currentCat === 'suit') {
-    complementQuery = 'tag:bag OR tag:shoe OR tag:jewellery';
+    complementTags = ['bag', 'shoe', 'jewellery'];
   } else if (currentCat === 'top' || currentCat === 'pants') {
-    complementQuery = 'tag:bag OR tag:shoe OR tag:skirt OR tag:dress OR tag:jewellery';
+    complementTags = ['bag', 'shoe', 'dress', 'jewellery'];
   } else if (currentCat === 'bag') {
-    complementQuery = 'tag:dress OR tag:top OR tag:shoe OR tag:jumpsuit';
+    complementTags = ['dress', 'top', 'shoe', 'jumpsuit'];
   } else if (currentCat === 'shoe') {
-    complementQuery = 'tag:dress OR tag:bag OR tag:top OR tag:jumpsuit';
+    complementTags = ['dress', 'bag', 'top', 'jumpsuit'];
   } else if (currentCat === 'jewellery') {
-    complementQuery = 'tag:dress OR tag:bag OR tag:top';
+    complementTags = ['dress', 'bag', 'top'];
   } else {
-    complementQuery = 'tag:dress OR tag:bag OR tag:shoe';
+    complementTags = ['dress', 'bag', 'shoe'];
   }
+  const complementQuery = complementTags.map(t => "tag:" + t).join(" OR ");
 
   const recommendedProducts = await context.storefront
     .query(RECOMMENDED_PRODUCTS_QUERY, {
@@ -147,10 +149,8 @@ export default function Product() {
   // Wear it with: complementares por tipo
   const currentHandle = product.handle;
   const complementary = (recommendedProducts?.complementary?.nodes || [])
-    .filter(p => p.handle !== currentHandle);
-  const fallback = (recommendedProducts?.fallback?.nodes || [])
-    .filter(p => p.handle !== currentHandle);
-  const products = complementary.length > 0 ? complementary : fallback;
+    .filter(p => p.handle !== currentHandle)
+    .slice(0, 6);
 
   // Similar items: mesmo tipo, excluindo produto atual
   const similarItems = (similarProducts?.sameType?.nodes || [])
@@ -270,7 +270,7 @@ export default function Product() {
               </div>
             </div>
             {/* WEAR IT WITH - abaixo da imagem+thumbnails */}
-            <WearItWithStrip products={products.slice(0, 6)} />
+            <WearItWithStrip products={complementary} />
           </div>
 
           {/* RIGHT: Product info panel */}
@@ -380,10 +380,10 @@ export default function Product() {
 
         {/* SIMILAR ITEMS */}
         <div className="product-below-section">
-        <ProductCarousel title="Similar items" products={similarItems.length > 0 ? similarItems : fallback.slice(0, 8)} />
+        <ProductCarousel title="Similar items" products={similarItems} />
 
         {/* YOU MAY ALSO LIKE */}
-        <ProductCarousel title="You may also like" products={products.slice(4, 8).length > 0 ? products.slice(4, 8) : products.slice(0, 4)} />
+        <ProductCarousel title="You may also like" products={complementary} />
 
         {/* REVIEWS */}
         <ReviewsSection productId={product.id} productTitle={title} productType={product.productType} />
@@ -490,15 +490,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     $language: LanguageCode
     $productType: String
   ) @inContext(country: $country, language: $language) {
-    complementary: products(first: 8, sortKey: UPDATED_AT, reverse: true, query: $productType) {
-      nodes {
-        id title handle vendor productType tags
-        priceRange { minVariantPrice { amount currencyCode } }
-        featuredImage { id url altText width height }
-        variants(first: 1) { nodes { id availableForSale } }
-      }
-    }
-    fallback: products(first: 8, sortKey: UPDATED_AT, reverse: true) {
+    complementary: products(first: 12, sortKey: UPDATED_AT, reverse: true, query: $productType) {
       nodes {
         id title handle vendor productType tags
         priceRange { minVariantPrice { amount currencyCode } }
