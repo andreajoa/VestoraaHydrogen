@@ -66,37 +66,17 @@ async function loadCriticalData({ context, params, request }) {
     .catch(() => null);
 
   const currentHandle = product.handle;
-  const titleLower = (product.title || '').toLowerCase();
 
-  // Detecta categoria pelo titulo do produto
-  function detectCategory(title) {
-    const t = title.toLowerCase();
-    if (/\bjumpsuit|playsuit|romper\b/.test(t)) return 'jumpsuit';
-    if (/\bjean|denim|pant|trouser|cargo\b/.test(t)) return 'pants';
-    if (/\bsuit set|blazer|co-ord\b/.test(t)) return 'suit';
-    if (/\bskirt\b/.test(t)) return 'skirt';
-    if (/\btop|blouse|shirt|corset|bodysuit\b/.test(t)) return 'top';
-    if (/\bdress|gown|prom|evening|maxi|mini|midi|mermaid|ballgown\b/.test(t)) return 'dress';
-    if (/\bbag|handbag|purse|tote|clutch\b/.test(t)) return 'bag';
-    if (/\bheel|shoe|boot|sandal|sneaker|pump\b/.test(t)) return 'shoe';
-    if (/\bnecklace|earring|bracelet|ring|jewel|pendant\b/.test(t)) return 'jewellery';
-    if (/\bscarf|hat|belt|sunglasses|accessory\b/.test(t)) return 'accessory';
-    return 'other';
-  }
+  // Pega a tag de categoria do produto atual (dress, bag, shoe, etc)
+  const CATEGORIES = ['dress','bag','shoe','jewellery','top','skirt','suit','pants','jumpsuit'];
+  const currentCategory = (product.tags || []).find(t => CATEGORIES.includes(t)) || 'dress';
 
-  const currentCategory = detectCategory(titleLower);
-
-  const allForSimilar = await context.storefront
+  // Busca similares pela tag de categoria
+  const similarProducts = await context.storefront
     .query(SIMILAR_PRODUCTS_QUERY, {
-      variables: { productType: "available_for_sale:true" },
+      variables: { productType: "tag:" + currentCategory },
     })
     .catch(() => null);
-
-  const filteredSimilar = (allForSimilar?.sameType?.nodes || [])
-    .filter(p => p.handle !== currentHandle && detectCategory(p.title) === currentCategory)
-    .slice(0, 8);
-
-  const similarProducts = { sameType: { nodes: filteredSimilar } };
 
   return { product, recommendedProducts, similarProducts };
 }
@@ -175,6 +155,8 @@ export default function Product() {
   const similarItems = (similarProducts?.sameType?.nodes || [])
     .filter(p => p.handle !== currentHandle)
     .slice(0, 8);
+
+  // currentCategory ja definido no loader, disponivel aqui via similarProducts
 
   const metafields = product.metafields || [];
   const getMeta = (key) => metafields.find(m => m?.key === key)?.value;
