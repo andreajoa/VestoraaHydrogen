@@ -79,18 +79,26 @@ async function loadCriticalData({ context, params, request }) {
 
   const recommendedProducts = { complementary: { nodes: complementaryNodes } };
 
+  // IDs dos produtos ja usados no Wear it with
+  const wearItWithIds = new Set(complementaryNodes.map(p => p.id));
+
   const currentHandle = product.handle;
 
   // Pega a tag de categoria do produto atual (dress, bag, shoe, etc)
   const currentCategory = (product.tags || []).find(t => CATEGORIES.includes(t)) || 'dress';
 
-  // Busca similares pela tag de categoria
-  const similarProducts = await context.storefront
+  // Busca similares pela tag de categoria - exclui produtos que ja aparecem no Wear it with
+  const similarRaw = await context.storefront
     .query(SIMILAR_PRODUCTS_QUERY, {
       variables: { productType: "tag:" + currentCategory },
       cache: context.storefront.CacheNone(),
     })
     .catch(() => null);
+
+  const similarFiltered = (similarRaw?.sameType?.nodes || [])
+    .filter(p => p.handle !== currentHandle && !wearItWithIds.has(p.id));
+
+  const similarProducts = { sameType: { nodes: similarFiltered } };
 
   return { product, recommendedProducts, similarProducts };
 }
