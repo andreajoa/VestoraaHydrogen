@@ -70,7 +70,6 @@ async function loadCriticalData({ context, params, request }) {
   const currentHandle = product.handle;
 
   // Pega a tag de categoria do produto atual (dress, bag, shoe, etc)
-  const CATEGORIES = ['dress','bag','shoe','jewellery','top','skirt','suit','pants','jumpsuit'];
   const currentCategory = (product.tags || []).find(t => CATEGORIES.includes(t)) || 'dress';
 
   // Busca similares pela tag de categoria
