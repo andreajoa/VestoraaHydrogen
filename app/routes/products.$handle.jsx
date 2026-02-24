@@ -396,11 +396,8 @@ export default function Product() {
           </div>
         )}
 
-        {/* ALSO BOUGHT TOGETHER */}
-        <div className="product-below-section">
-        <ProductCarousel title="Also bought together" products={complementary.slice(0, 8)} />
-
         {/* SIMILAR ITEMS */}
+        <div className="product-below-section">
         <ProductCarousel title="Similar items" products={similarItems} />
 
         {/* YOU MAY ALSO LIKE */}
