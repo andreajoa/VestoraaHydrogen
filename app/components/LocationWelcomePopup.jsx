@@ -9,29 +9,19 @@ export function LocationWelcomePopup() {
     const seen = sessionStorage.getItem('vestoraa_location_seen');
     if (seen) return;
 
-    // Tenta múltiplas APIs em sequência até uma funcionar
-    const tryAPIs = async () => {
-      const apis = [
-        () => fetch('https://ipapi.co/json/').then(r => r.json()).then(d => d.city || d.region || ''),
-        () => fetch('https://ip-api.com/json/?fields=city,regionName').then(r => r.json()).then(d => d.city || d.regionName || ''),
-        () => fetch('https://ipwho.is/').then(r => r.json()).then(d => d.city || d.region || ''),
-      ];
-
-      for (const api of apis) {
-        try {
-          const result = await api();
-          if (result) return result;
-        } catch {}
-      }
-      return '';
-    };
-
-    tryAPIs().then((detectedCity) => {
-      setCity(detectedCity);
-      setVisible(true);
-      setTimeout(() => setAnimateIn(true), 50);
-      sessionStorage.setItem('vestoraa_location_seen', '1');
-    });
+    fetch('/api/location')
+      .then((r) => r.json())
+      .then((data) => {
+        setCity(data.city || '');
+        setVisible(true);
+        setTimeout(() => setAnimateIn(true), 50);
+        sessionStorage.setItem('vestoraa_location_seen', '1');
+      })
+      .catch(() => {
+        setVisible(true);
+        setTimeout(() => setAnimateIn(true), 50);
+        sessionStorage.setItem('vestoraa_location_seen', '1');
+      });
   }, []);
 
   function close() {
@@ -59,7 +49,6 @@ export function LocationWelcomePopup() {
           boxShadow: '-8px 0 40px rgba(0,0,0,0.18)',
         }}
       >
-        {/* Background image */}
         <div style={{
           position: 'absolute',
           inset: 0,
@@ -69,14 +58,12 @@ export function LocationWelcomePopup() {
           filter: 'brightness(0.4)',
         }} />
 
-        {/* Gradient */}
         <div style={{
           position: 'absolute',
           inset: 0,
           background: 'linear-gradient(160deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%)',
         }} />
 
-        {/* Close */}
         <button
           onClick={close}
           style={{
@@ -99,7 +86,6 @@ export function LocationWelcomePopup() {
           }}
         >×</button>
 
-        {/* Content */}
         <div style={{
           position: 'relative',
           zIndex: 1,
@@ -125,12 +111,16 @@ export function LocationWelcomePopup() {
             fontWeight: '700',
             color: '#fff',
             margin: '0 0 12px',
-            lineHeight: '1.4',
+            lineHeight: '1.5',
           }}>
-            {city
-              ? <>We noticed you&apos;re shopping from <span style={{ color: '#e2c88a', fontWeight: '800' }}>{city}</span>.</>
-              : <>We noticed you&apos;re visiting our store.</>
-            }
+            {city ? (
+              <>
+                We noticed you&apos;re shopping from{' '}
+                <span style={{ color: '#e2c88a', fontWeight: '800' }}>{city}</span>.
+              </>
+            ) : (
+              <>We noticed you&apos;re visiting our store.</>
+            )}
           </h2>
 
           <p style={{
