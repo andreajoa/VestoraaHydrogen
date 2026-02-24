@@ -26,43 +26,36 @@ export function LeadCapturePopup() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const timer = setTimeout(() => {
       const data = getStorageData();
-
-      // Já se inscreveu, nunca mais mostra
       if (data.subscribed) return;
 
       const now = Date.now();
       const cooldownMs = COOLDOWN_DAYS * 24 * 60 * 60 * 1000;
 
-      // Atingiu o máximo de exibições
       if (data.count >= MAX_SHOWS) {
-        // Verifica se passou o cooldown de 10 dias
         if (!data.lastShown || now - data.lastShown < cooldownMs) return;
-        // Reseta contagem após cooldown
         saveStorageData({ ...data, count: 0, lastShown: null });
       }
 
-      // Verifica cooldown entre exibições normais (mínimo 1 dia entre cada)
       if (data.lastShown && now - data.lastShown < 24 * 60 * 60 * 1000) return;
 
-      // Aguarda o pop-up de localização fechar (sessão)
-      const locationSeen = sessionStorage.getItem('vestoraa_location_seen');
-      const showWithDelay = () => {
+      const show = () => {
         setVisible(true);
         setTimeout(() => setAnimateIn(true), 50);
         const updated = getStorageData();
         saveStorageData({ ...updated, count: updated.count + 1, lastShown: now });
       };
 
+      const locationSeen = sessionStorage.getItem('vestoraa_location_seen');
       if (!locationSeen) {
-        // Se localização ainda não apareceu, aguarda mais 3s
-        setTimeout(showWithDelay, 3000);
+        setTimeout(show, 3000);
       } else {
-        showWithDelay();
+        show();
       }
     }, DELAY_MS);
 
@@ -74,34 +67,55 @@ export function LeadCapturePopup() {
     setTimeout(() => setVisible(false), 400);
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!email || !email.includes('@')) {
-      setError('Por favor insira um e-mail válido.');
+      setError('Please enter a valid email address.');
       return;
     }
     setError('');
-    // Aqui você pode integrar com Klaviyo, Mailchimp, etc.
-    console.log('Lead capturado:', { email, phone });
-    saveStorageData({ count: MAX_SHOWS, lastShown: Date.now(), subscribed: true });
-    setSubmitted(true);
-    setTimeout(() => close(), 3000);
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, phone }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Something went wrong. Please try again.');
+        setLoading(false);
+        return;
+      }
+
+      saveStorageData({ count: MAX_SHOWS, lastShown: Date.now(), subscribed: true });
+      setSubmitted(true);
+      setTimeout(() => close(), 3500);
+    } catch {
+      setError('Connection error. Please try again.');
+      setLoading(false);
+    }
   }
 
   if (!visible) return null;
 
   return (
     <>
+      {/* Overlay */}
       <div
         onClick={close}
         style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(0,0,0,0.5)',
+          background: 'rgba(0,0,0,0.55)',
           zIndex: 9996,
           opacity: animateIn ? 1 : 0,
           transition: 'opacity 0.4s ease',
         }}
       />
+
+      {/* Modal */}
       <div
         style={{
           position: 'fixed',
@@ -109,154 +123,167 @@ export function LeadCapturePopup() {
           left: '50%',
           transform: animateIn
             ? 'translate(-50%, -50%) scale(1)'
-            : 'translate(-50%, -50%) scale(0.92)',
+            : 'translate(-50%, -50%) scale(0.94)',
           zIndex: 9997,
-          background: '#fff',
-          borderRadius: '20px',
           width: '90%',
-          maxWidth: '420px',
-          padding: '40px 32px',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
+          maxWidth: '460px',
+          borderRadius: '20px',
+          overflow: 'hidden',
+          boxShadow: '0 24px 80px rgba(0,0,0,0.3)',
           opacity: animateIn ? 1 : 0,
           transition: 'all 0.4s cubic-bezier(0.32, 0.72, 0, 1)',
           fontFamily: 'sans-serif',
         }}
       >
-        {/* Fechar */}
-        <button
-          onClick={close}
-          style={{
+        {/* Image top half */}
+        <div style={{
+          position: 'relative',
+          height: 'clamp(160px, 28vw, 220px)',
+          overflow: 'hidden',
+        }}>
+          <img
+            src="https://cdn.shopify.com/s/files/1/0706/4456/4124/files/Whisk_248113639476fe2af5a4f3ed7c8c7460dr.jpg?v=1771894146"
+            alt=""
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center 30%',
+              filter: 'brightness(0.75)',
+            }}
+          />
+          <div style={{
             position: 'absolute',
-            top: '16px',
-            right: '16px',
-            background: 'none',
-            border: 'none',
-            fontSize: '20px',
-            cursor: 'pointer',
-            color: '#aaa',
-            lineHeight: 1,
-          }}
-        >
-          ×
-        </button>
-
-        {submitted ? (
-          <div style={{ textAlign: 'center', padding: '20px 0' }}>
-            <div style={{ fontSize: '40px', marginBottom: '16px' }}>🎉</div>
-            <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#111', marginBottom: '8px' }}>
-              Você ganhou 5% OFF!
-            </h3>
-            <p style={{ color: '#666', fontSize: '14px', lineHeight: '1.6' }}>
-              Seu cupom foi enviado para o e-mail cadastrado. Válido por 10 dias na sua primeira compra.
+            inset: 0,
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%)',
+          }} />
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            left: '24px',
+          }}>
+            <p style={{ fontSize: '10px', letterSpacing: '3px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', marginBottom: '4px' }}>
+              Exclusive offer
             </p>
-          </div>
-        ) : (
-          <>
-            {/* Tag */}
-            <div style={{
-              display: 'inline-block',
-              background: '#f5f5f5',
-              borderRadius: '6px',
-              padding: '4px 10px',
-              fontSize: '11px',
-              letterSpacing: '2px',
-              textTransform: 'uppercase',
-              color: '#888',
-              marginBottom: '16px',
-            }}>
-              Oferta exclusiva
-            </div>
-
-            <h2 style={{
-              fontSize: '26px',
-              fontWeight: '800',
-              color: '#111',
-              margin: '0 0 8px',
-              lineHeight: '1.2',
-            }}>
-              5% OFF na sua<br />primeira compra
+            <h2 style={{ fontSize: 'clamp(20px, 5vw, 26px)', fontWeight: '800', color: '#fff', margin: 0, lineHeight: '1.2' }}>
+              5% OFF your<br />first order
             </h2>
+          </div>
+          <button
+            onClick={close}
+            style={{
+              position: 'absolute',
+              top: '14px',
+              right: '14px',
+              background: 'rgba(255,255,255,0.2)',
+              border: 'none',
+              borderRadius: '50%',
+              width: '30px',
+              height: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              color: '#fff',
+              fontSize: '18px',
+              backdropFilter: 'blur(4px)',
+            }}
+          >
+            ×
+          </button>
+        </div>
 
-            <p style={{
-              fontSize: '14px',
-              color: '#888',
-              marginBottom: '28px',
-              lineHeight: '1.6',
-            }}>
-              Cadastre seu e-mail e telefone para receber seu cupom. Válido por 10 dias.
-            </p>
-
-            {/* Inputs */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
-              <input
-                type="email"
-                placeholder="Seu melhor e-mail"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                style={{
-                  padding: '14px 16px',
-                  border: '1.5px solid #e5e5e5',
-                  borderRadius: '10px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  color: '#111',
-                  transition: 'border-color 0.2s',
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#111'}
-                onBlur={(e) => e.target.style.borderColor = '#e5e5e5'}
-              />
-              <input
-                type="tel"
-                placeholder="Telefone (opcional)"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                style={{
-                  padding: '14px 16px',
-                  border: '1.5px solid #e5e5e5',
-                  borderRadius: '10px',
-                  fontSize: '14px',
-                  outline: 'none',
-                  color: '#111',
-                  transition: 'border-color 0.2s',
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#111'}
-                onBlur={(e) => e.target.style.borderColor = '#e5e5e5'}
-              />
+        {/* Bottom white section */}
+        <div style={{
+          background: '#fff',
+          padding: 'clamp(20px, 5vw, 32px)',
+        }}>
+          {submitted ? (
+            <div style={{ textAlign: 'center', padding: '12px 0' }}>
+              <div style={{ fontSize: '36px', marginBottom: '12px' }}>🎉</div>
+              <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#111', marginBottom: '8px' }}>
+                Your 5% OFF is on its way!
+              </h3>
+              <p style={{ color: '#888', fontSize: '13px', lineHeight: '1.6' }}>
+                Check your inbox — your discount code is valid for 10 days on your first purchase.
+              </p>
             </div>
+          ) : (
+            <>
+              <p style={{ fontSize: '13px', color: '#888', marginBottom: '20px', lineHeight: '1.6' }}>
+                Enter your email and phone to receive your exclusive discount. Valid for 10 days.
+              </p>
 
-            {error && (
-              <p style={{ color: '#e53e3e', fontSize: '13px', marginBottom: '12px' }}>{error}</p>
-            )}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '14px' }}>
+                <input
+                  type="email"
+                  placeholder="Your email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  style={{
+                    padding: '13px 16px',
+                    border: '1.5px solid #e5e5e5',
+                    borderRadius: '10px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    color: '#111',
+                    width: '100%',
+                    boxSizing: 'border-box',
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = '#111')}
+                  onBlur={(e) => (e.target.style.borderColor = '#e5e5e5')}
+                />
+                <input
+                  type="tel"
+                  placeholder="Phone number (optional)"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  style={{
+                    padding: '13px 16px',
+                    border: '1.5px solid #e5e5e5',
+                    borderRadius: '10px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    color: '#111',
+                    width: '100%',
+                    boxSizing: 'border-box',
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = '#111')}
+                  onBlur={(e) => (e.target.style.borderColor = '#e5e5e5')}
+                />
+              </div>
 
-            <button
-              onClick={handleSubmit}
-              style={{
-                width: '100%',
-                padding: '16px',
-                background: '#111',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '12px',
-                fontSize: '14px',
-                fontWeight: '700',
-                letterSpacing: '0.5px',
-                cursor: 'pointer',
-                marginBottom: '12px',
-              }}
-            >
-              Quero meu desconto →
-            </button>
+              {error && (
+                <p style={{ color: '#e53e3e', fontSize: '12px', marginBottom: '10px' }}>{error}</p>
+              )}
 
-            <p style={{
-              textAlign: 'center',
-              fontSize: '11px',
-              color: '#bbb',
-              lineHeight: '1.5',
-            }}>
-              Sem spam. Você pode cancelar a qualquer momento.
-            </p>
-          </>
-        )}
+              <button
+                onClick={handleSubmit}
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  background: loading ? '#888' : '#111',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  letterSpacing: '0.5px',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  marginBottom: '10px',
+                  transition: 'background 0.2s',
+                }}
+              >
+                {loading ? 'Saving...' : 'Claim my discount →'}
+              </button>
+
+              <p style={{ textAlign: 'center', fontSize: '11px', color: '#ccc' }}>
+                No spam. Unsubscribe anytime.
+              </p>
+            </>
+          )}
+        </div>
       </div>
     </>
   );

@@ -8,6 +8,7 @@ export function LocationWelcomePopup() {
   useEffect(() => {
     const seen = sessionStorage.getItem('vestoraa_location_seen');
     if (seen) return;
+
     fetch('https://ipapi.co/json/')
       .then((r) => r.json())
       .then((data) => {
@@ -32,21 +33,111 @@ export function LocationWelcomePopup() {
 
   return (
     <>
-      <div onClick={close} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.3)', zIndex:9998, opacity:animateIn?1:0, transition:'opacity 0.4s ease' }} />
-      <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:9999, background:'#fff', borderRadius:'20px 20px 0 0', padding:'40px 32px 48px', boxShadow:'0 -8px 40px rgba(0,0,0,0.12)', transform:animateIn?'translateY(0)':'translateY(100%)', transition:'transform 0.4s cubic-bezier(0.32,0.72,0,1)', maxWidth:'480px', margin:'0 auto', fontFamily:'sans-serif' }}>
-        <div style={{ width:'40px', height:'4px', background:'#e5e5e5', borderRadius:'2px', margin:'0 auto 28px' }} />
-        <div style={{ textAlign:'center', marginBottom:'20px' }}><span style={{ fontSize:'28px' }}>📦</span></div>
-        <div style={{ textAlign:'center' }}>
-          <p style={{ fontSize:'11px', letterSpacing:'3px', textTransform:'uppercase', color:'#999', marginBottom:'10px' }}>Bem-vindo à</p>
-          <h2 style={{ fontSize:'24px', fontWeight:'700', color:'#111', margin:'0 0 16px' }}>Vestoraa</h2>
-          <p style={{ fontSize:'15px', color:'#555', lineHeight:'1.6', marginBottom:'8px' }}>
-            Percebemos que você está acessando nossa loja{city ? <> de <strong style={{ color:'#111' }}>{city}</strong></> : null}.
-          </p>
-          <p style={{ fontSize:'15px', color:'#555', lineHeight:'1.6', marginBottom:'32px' }}>Boas compras! Entregamos para você com segurança. 🛡️</p>
-        </div>
-        <button onClick={close} style={{ width:'100%', padding:'16px', background:'#111', color:'#fff', border:'none', borderRadius:'12px', fontSize:'14px', fontWeight:'600', letterSpacing:'1px', textTransform:'uppercase', cursor:'pointer' }}>
-          Explorar a loja
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 9999,
+          width: '100%',
+          maxWidth: '340px',
+          transform: animateIn ? 'translateX(0)' : 'translateX(110%)',
+          transition: 'transform 0.5s cubic-bezier(0.32, 0.72, 0, 1)',
+          overflow: 'hidden',
+          borderRadius: '16px 0 0 16px',
+          boxShadow: '-8px 0 40px rgba(0,0,0,0.18)',
+        }}
+      >
+        {/* Background image */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'url(https://cdn.shopify.com/s/files/1/0706/4456/4124/files/Whisk_248113639476fe2af5a4f3ed7c8c7460dr.jpg?v=1771894146)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'brightness(0.45)',
+        }} />
+
+        {/* Gradient overlay */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 100%)',
+        }} />
+
+        {/* Close button */}
+        <button
+          onClick={close}
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            background: 'rgba(255,255,255,0.15)',
+            border: 'none',
+            borderRadius: '50%',
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: '#fff',
+            fontSize: '18px',
+            lineHeight: 1,
+            backdropFilter: 'blur(4px)',
+            zIndex: 2,
+          }}
+        >
+          ×
         </button>
+
+        {/* Content */}
+        <div style={{
+          position: 'relative',
+          zIndex: 1,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+          padding: '40px 28px',
+          fontFamily: 'sans-serif',
+        }}>
+          <p style={{
+            fontSize: '10px',
+            letterSpacing: '3px',
+            textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.6)',
+            marginBottom: '10px',
+          }}>
+            Welcome to Vestoraa
+          </p>
+          <h2 style={{
+            fontSize: 'clamp(18px, 4vw, 22px)',
+            fontWeight: '700',
+            color: '#fff',
+            margin: '0 0 12px',
+            lineHeight: '1.3',
+          }}>
+            {city ? `We noticed you're shopping from ${city}.` : `We noticed you're visiting our store.`}
+          </h2>
+          <p style={{
+            fontSize: '13px',
+            color: 'rgba(255,255,255,0.7)',
+            lineHeight: '1.7',
+            marginBottom: '0',
+          }}>
+            Happy shopping — we deliver to you safely and securely. 🛡️
+          </p>
+
+          {/* Decorative line */}
+          <div style={{
+            width: '40px',
+            height: '2px',
+            background: 'rgba(255,255,255,0.4)',
+            marginTop: '24px',
+          }} />
+        </div>
       </div>
     </>
   );
