@@ -95,8 +95,9 @@ async function loadCriticalData({ context, params, request }) {
     })
     .catch(() => null);
 
+  const wearItWithHandles = new Set(complementaryNodes.map(p => p.handle));
   const similarFiltered = (similarRaw?.sameType?.nodes || [])
-    .filter(p => p.handle !== currentHandle && !wearItWithIds.has(p.id));
+    .filter(p => p.handle !== currentHandle && !wearItWithHandles.has(p.handle));
 
   const similarProducts = { sameType: { nodes: similarFiltered } };
 
@@ -171,7 +172,7 @@ export default function Product() {
     .filter(p => p.handle !== currentHandle)
     .slice(0, 6);
 
-  // Similar items: loader ja filtra, so limita a 8
+  // Similar items: loader ja filtra por handle, limita a 8
   const similarItems = (similarProducts?.sameType?.nodes || []).slice(0, 8);
 
   // currentCategory ja definido no loader, disponivel aqui via similarProducts
@@ -395,9 +396,12 @@ export default function Product() {
           </div>
         )}
 
-        {/* SIMILAR ITEMS */}
+        {/* ALSO BOUGHT TOGETHER */}
         <div className="product-below-section">
-        <ProductCarousel title="Similar items" products={similarItems.length > 0 ? similarItems : []} />
+        <ProductCarousel title="Also bought together" products={complementary.slice(0, 8)} />
+
+        {/* SIMILAR ITEMS */}
+        <ProductCarousel title="Similar items" products={similarItems} />
 
         {/* YOU MAY ALSO LIKE */}
         <RecentlyViewedCarousel currentProduct={{
