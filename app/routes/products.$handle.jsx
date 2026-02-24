@@ -171,9 +171,12 @@ export default function Product() {
     .filter(p => p.handle !== currentHandle)
     .slice(0, 6);
 
-  // Similar items: mesmo tipo, excluindo produto atual
+  // IDs do wear it with para excluir do similar items
+  const wearItWithHandles = new Set(complementary.map(p => p.handle));
+
+  // Similar items: mesmo tipo, excluindo produto atual E produtos do wear it with
   const similarItems = (similarProducts?.sameType?.nodes || [])
-    .filter(p => p.handle !== currentHandle)
+    .filter(p => p.handle !== currentHandle && !wearItWithHandles.has(p.handle))
     .slice(0, 8);
 
   // currentCategory ja definido no loader, disponivel aqui via similarProducts
