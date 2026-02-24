@@ -41,22 +41,24 @@ async function loadCriticalData({ context, params, request }) {
   ]);
   if (!product?.id) throw new Response('Product not found', { status: 404 });
   redirectIfHandleIsLocalized(request, { handle, data: product });
-  // Definir tipos complementares por tipo do produto atual
-  const productType = (product.productType || '').toLowerCase();
-  const isDress = /dress|skirt|top|bodysuit|jumpsuit/.test(productType) || 
-    (product.tags || []).some(t => /dress|skirt|top|bodysuit|jumpsuit/.test(t.toLowerCase()));
-  const isShoes = /shoe|heel|boot|sandal|sneaker/.test(productType);
-  const isAccessory = /bag|jewel|accessory|accessories|belt|hat|scarf/.test(productType);
+  // Detecta categoria do produto atual pelas tags
+  const CATEGORIES = ['dress','bag','shoe','jewellery','top','skirt','suit','pants','jumpsuit'];
+  const currentCat = (product.tags || []).find(t => CATEGORIES.includes(t)) || 'dress';
 
+  // Wear it with: mostra categorias COMPLEMENTARES (nunca a mesma categoria)
   let complementQuery = '';
-  if (isDress) {
-    complementQuery = 'product_type:accessories OR product_type:shoes OR product_type:bags OR product_type:jewellery OR product_type:jewelry';
-  } else if (isShoes) {
-    complementQuery = 'product_type:dress OR product_type:top OR product_type:skirt OR product_type:accessories';
-  } else if (isAccessory) {
-    complementQuery = 'product_type:dress OR product_type:top OR product_type:skirt OR product_type:shoes';
+  if (currentCat === 'dress' || currentCat === 'skirt' || currentCat === 'jumpsuit' || currentCat === 'suit') {
+    complementQuery = 'tag:bag OR tag:shoe OR tag:jewellery';
+  } else if (currentCat === 'top' || currentCat === 'pants') {
+    complementQuery = 'tag:bag OR tag:shoe OR tag:skirt OR tag:dress OR tag:jewellery';
+  } else if (currentCat === 'bag') {
+    complementQuery = 'tag:dress OR tag:top OR tag:shoe OR tag:jumpsuit';
+  } else if (currentCat === 'shoe') {
+    complementQuery = 'tag:dress OR tag:bag OR tag:top OR tag:jumpsuit';
+  } else if (currentCat === 'jewellery') {
+    complementQuery = 'tag:dress OR tag:bag OR tag:top';
   } else {
-    complementQuery = 'product_type:accessories OR product_type:shoes';
+    complementQuery = 'tag:dress OR tag:bag OR tag:shoe';
   }
 
   const recommendedProducts = await context.storefront
