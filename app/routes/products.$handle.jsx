@@ -173,10 +173,11 @@ export default function Product() {
 
   // IDs do wear it with para excluir do similar items
   const wearItWithHandles = new Set(complementary.map(p => p.handle));
+  const wearItWithIds = new Set(complementary.map(p => p.id));
 
-  // Similar items: mesmo tipo, excluindo produto atual E produtos do wear it with
+  // Similar items: mesmo tipo, excluindo produto atual E produtos do wear it with (por handle E por id)
   const similarItems = (similarProducts?.sameType?.nodes || [])
-    .filter(p => p.handle !== currentHandle && !wearItWithHandles.has(p.handle))
+    .filter(p => p.handle !== currentHandle && !wearItWithHandles.has(p.handle) && !wearItWithIds.has(p.id))
     .slice(0, 8);
 
   // currentCategory ja definido no loader, disponivel aqui via similarProducts
@@ -520,7 +521,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     $language: LanguageCode
     $productType: String
   ) @inContext(country: $country, language: $language) {
-    complementary: products(first: 50, sortKey: UPDATED_AT, reverse: true, query: $productType) {
+    complementary: products(first: 50, sortKey: BEST_SELLING, reverse: false, query: $productType) {
       nodes {
         id title handle vendor productType tags
         priceRange { minVariantPrice { amount currencyCode } }
