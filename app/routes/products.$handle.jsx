@@ -65,22 +65,25 @@ async function loadCriticalData({ context, params, request }) {
     })
     .catch(() => null);
 
-  // Similar items: mesmo tipo do produto atual
-  const currentType = product.productType || '';
-  // Monta query com variantes de capitalização para garantir match
-  const similarQuery = currentType
-    ? (
-        "product_type:\"" + currentType + "\"" +
-        " OR product_type:\"" + currentType.toLowerCase() + "\"" +
-        " OR product_type:\"" + (currentType.charAt(0).toUpperCase() + currentType.slice(1).toLowerCase()) + "\""
-      )
-    : "available_for_sale:true";
+  // Similar items: busca produtos e filtra pelo productType exato no servidor
+  const currentType = (product.productType || '').trim();
+  const currentHandle = product.handle;
 
-  const similarProducts = await context.storefront
+  const allForSimilar = await context.storefront
     .query(SIMILAR_PRODUCTS_QUERY, {
-      variables: { productType: similarQuery },
+      variables: { productType: "available_for_sale:true" },
     })
     .catch(() => null);
+
+  // Filtra no servidor pelo mesmo productType exato (case-insensitive) excluindo produto atual
+  const filteredSimilar = (allForSimilar?.sameType?.nodes || [])
+    .filter(p =>
+      p.handle !== currentHandle &&
+      p.productType &&
+      p.productType.trim().toLowerCase() === currentType.toLowerCase()
+    );
+
+  const similarProducts = { sameType: { nodes: filteredSimilar } };
 
   return { product, recommendedProducts, similarProducts };
 }
@@ -473,7 +476,7 @@ const SIMILAR_PRODUCTS_QUERY = `#graphql
     $productType: String
     $excludeId: String
   ) @inContext(country: $country, language: $language) {
-    sameType: products(first: 8, sortKey: UPDATED_AT, reverse: true, query: $productType) {
+    sameType: products(first: 50, sortKey: UPDATED_AT, reverse: true, query: $productType) {
       nodes {
         id title handle vendor productType
         priceRange { minVariantPrice { amount currencyCode } }
